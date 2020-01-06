@@ -1,0 +1,18 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: medslack-dashboard
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        name: medslack-dashboard
+        run: medslack-dashboard
+    spec:
+      containers:
+      - name: ms-dashboard
+        image: xuanminh129/ms_dashboard:v3
+        ports:
+        - containerPort: 3000
+
