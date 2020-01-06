@@ -7,6 +7,7 @@ const compression = require('compression');
 
 app.use(express.static('./client/static/'));
 app.use(express.static('./client/dist/'));
+const { port} = require('./configs/var');
 
 
 app.use(function(req, res, next) {
@@ -34,6 +35,6 @@ app.get('/*', function (req, res) {
     })
 })
 
-const port = 3000;
+
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
