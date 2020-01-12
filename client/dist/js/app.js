@@ -21360,7 +21360,6 @@ var Metric = function (_Component) {
             });
 
             Promise.all(fetches).then(function () {
-                console.log(fbData);
                 that.setState({
                     dailyData: fbData
                 });
@@ -21371,7 +21370,7 @@ var Metric = function (_Component) {
         value: function fetchIgData() {
             var _this2 = this;
 
-            var uri = "http://nasinsightserver.herokuapp.com/api/info/overview/nasDailyIG/day/" + new Date().getFullYear() + '/page_impressions/2';
+            var uri = "https://nasinsightserver.herokuapp.com/api/info/overview/nasDailyIG/day/" + new Date().getFullYear() + '/page_impressions/2';
             _axios2.default.get(uri).then(function (response) {
                 _this2.setState({
                     currentIgReach: response.data[0].stats[0].stats.filter(function (x) {

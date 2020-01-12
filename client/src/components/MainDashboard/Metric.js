@@ -39,7 +39,6 @@ class Metric extends Component {
         });
 
         Promise.all(fetches).then(function () {
-            console.log(fbData);
             that.setState({
                 dailyData: fbData
             })
@@ -48,7 +47,7 @@ class Metric extends Component {
 
 
     fetchIgData() {
-        let uri = "http://nasinsightserver.herokuapp.com/api/info/overview/nasDailyIG/day/" + new Date().getFullYear() + '/page_impressions/2';
+        let uri = "https://nasinsightserver.herokuapp.com/api/info/overview/nasDailyIG/day/" + new Date().getFullYear() + '/page_impressions/2';
         axios.get(uri)
             .then(response => {
                 this.setState({
