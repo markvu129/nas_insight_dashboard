@@ -12,7 +12,7 @@ class Metric extends Component {
             prevIgReach: false,
             currentIgProfileViews: false,
             prevIgProfileViews: false,
-            pages: ['nasDailyFB', 'nasDailyFBVN', 'nasDailyFBPH', 'nasDailyFBSP','nasDailyFBTH', 'nasDailyFBARB', 'nasDailyFBCH']
+            pages: ['nasDailyFB', 'nasDailyFBVN', 'nasDailyFBPH', 'nasDailyFBSP', 'nasDailyFBTH', 'nasDailyFBARB', 'nasDailyFBCH']
         };
         this.state.fetchFbData = this.fetchFbData.bind(this);
         this.state.fetchIgData = this.fetchIgData.bind(this);
@@ -51,10 +51,10 @@ class Metric extends Component {
         axios.get(uri)
             .then(response => {
                 this.setState({
-                    currentIgReach: response.data[0].stats[0].stats.filter(x => x.name === 'reach')[0].value,
-                    prevIgReach: response.data[1].stats[0].stats.filter(x => x.name === 'reach')[0].value,
-                    currentIgProfileViews: response.data[0].stats[0].stats.filter(x => x.name === 'profile_views')[0].value,
-                    prevIgProfileViews: response.data[1].stats[0].stats.filter(x => x.name === 'profile_views')[0].value,
+                    currentIgReach: response.data[0].stats[0].stats.filter(x => x.name === 'reach')[0].values,
+                    prevIgReach: response.data[1].stats[0].stats.filter(x => x.name === 'reach')[0].values,
+                    currentIgProfileViews: response.data[0].stats[0].stats.filter(x => x.name === 'profile_views')[0].values,
+                    prevIgProfileViews: response.data[1].stats[0].stats.filter(x => x.name === 'profile_views')[0].values,
                 })
             })
             .catch(err => console.log(err))
@@ -67,7 +67,9 @@ class Metric extends Component {
 
 
     render() {
-        if (this.state.currentIgProfileViews && this.state.dailyData.nasDailyFBVN) {
+        if (this.state.currentIgProfileViews && this.state.dailyData.nasDailyFBVN
+            && this.state.dailyData.nasDailyFBCH && this.state.dailyData.nasDailyFBARB && this.state.dailyData.nasDailyFBTH
+            && this.state.dailyData.nasDailyFBPH && this.state.dailyData.nasDailyFBSP && this.state.dailyData.nasDailyFB) {
             return (
                 <div className="col-xl-4 col-md-12">
                     <div className="ms-panel ms-panel-fh">

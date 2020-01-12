@@ -10607,9 +10607,7 @@ var Overview = function (_Component) {
                 "div",
                 { className: "row" },
                 _react2.default.createElement(_Metric2.default, null),
-                _react2.default.createElement(_FacebookInsight2.default, null),
-                _react2.default.createElement(_FacebookFeed2.default, { label: "facebook feed", posts: this.state.topFbPosts,
-                    comments: this.state.topFbComments })
+                _react2.default.createElement(_FacebookInsight2.default, null)
             );
         }
     }]);
@@ -17626,9 +17624,9 @@ var FacebookInsight = function (_Component) {
                                     _react2.default.createElement(
                                         "div",
                                         { className: "chart" },
-                                        _react2.default.createElement(_InstagramChart2.default, { data: this.state.monthlyIgGraphData,
+                                        this.state.monthlyIgGraphData ? _react2.default.createElement(_InstagramChart2.default, { data: this.state.monthlyIgGraphData,
                                             labels: this.state.monthlyIgGraphLabels
-                                        })
+                                        }) : _react2.default.createElement("div", null)
                                     )
                                 )
                             )
@@ -21375,16 +21373,16 @@ var Metric = function (_Component) {
                 _this2.setState({
                     currentIgReach: response.data[0].stats[0].stats.filter(function (x) {
                         return x.name === 'reach';
-                    })[0].value,
+                    })[0].values,
                     prevIgReach: response.data[1].stats[0].stats.filter(function (x) {
                         return x.name === 'reach';
-                    })[0].value,
+                    })[0].values,
                     currentIgProfileViews: response.data[0].stats[0].stats.filter(function (x) {
                         return x.name === 'profile_views';
-                    })[0].value,
+                    })[0].values,
                     prevIgProfileViews: response.data[1].stats[0].stats.filter(function (x) {
                         return x.name === 'profile_views';
-                    })[0].value
+                    })[0].values
                 });
             }).catch(function (err) {
                 return console.log(err);
@@ -21399,7 +21397,7 @@ var Metric = function (_Component) {
     }, {
         key: 'render',
         value: function render() {
-            if (this.state.currentIgProfileViews && this.state.dailyData.nasDailyFBVN) {
+            if (this.state.currentIgProfileViews && this.state.dailyData.nasDailyFBVN && this.state.dailyData.nasDailyFBCH && this.state.dailyData.nasDailyFBARB && this.state.dailyData.nasDailyFBTH && this.state.dailyData.nasDailyFBPH && this.state.dailyData.nasDailyFBSP && this.state.dailyData.nasDailyFB) {
                 return _react2.default.createElement(
                     'div',
                     { className: 'col-xl-4 col-md-12' },

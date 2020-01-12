@@ -90,8 +90,8 @@ class Overview extends Component {
             <div className="row">
                 <Metric/>
                 <FacebookInsight/>
-                <FacebookFeed label="facebook feed" posts={this.state.topFbPosts}
-                                  comments={this.state.topFbComments}/>
+                {/*<FacebookFeed label="facebook feed" posts={this.state.topFbPosts}*/}
+                {/*                  comments={this.state.topFbComments}/>*/}
             </div>
         )
     }

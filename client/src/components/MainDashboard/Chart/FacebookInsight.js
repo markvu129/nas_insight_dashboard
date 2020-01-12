@@ -271,9 +271,11 @@ class FacebookInsight extends Component {
                                     </div>
                                     <br/>
                                     <div className="chart">
-                                        <IgChart data={this.state.monthlyIgGraphData}
-                                                 labels={this.state.monthlyIgGraphLabels}
-                                        />
+                                        {this.state.monthlyIgGraphData ?
+                                            <IgChart data={this.state.monthlyIgGraphData}
+                                                     labels={this.state.monthlyIgGraphLabels}
+                                            /> : <div></div>
+                                        }
                                     </div>
                                 </li>
                             </ul>
