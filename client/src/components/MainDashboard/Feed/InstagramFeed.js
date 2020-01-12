@@ -11,23 +11,14 @@ class InstagramFeed extends Component {
             <div class="col-xl-4 col-md-12">
                 <div class="ms-panel ms-panel-fh">
                     <div class="ms-panel-header">
-                        <h6>Instagram Feed</h6>
+                        <h6>{this.props.label}</h6>
                     </div>
                     <div class="ms-panel-body p-0">
                         <ul class="ms-list ms-feed ms-instagram-feed">
                             <li class="ms-list-item">
                                 <div class="media clearfix">
-                                    <img src="https://via.placeholder.com/270x270" class="ms-img-round ms-img-small"
-                                         alt="people"/>
                                     <div class="media-body">
                                         <h4 class="ms-feed-user">username24</h4>
-                                    </div>
-                                </div>
-                                <img class="ms-fb-feed-img" src="https://via.placeholder.com/530x240" alt="post"/>
-                                <div class="d-flex justify-content-between">
-                                    <div class="ms-feed-controls">
-                                        <i class="material-icons">favorite_border</i>
-                                        <i class="material-icons">chat_bubble_outline</i>
                                     </div>
                                 </div>
                                 <ul class="ms-group-members clearfix">

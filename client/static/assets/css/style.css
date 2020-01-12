@@ -465,12 +465,13 @@ h6{
 }
 
 .ms-panel-header h6 {
-  color: white !important;
+  color: black !important;
 }
 
 #company-title {
   color: black !important;
 }
+
 .nas {
   color: #F9CA47 !important;
 }

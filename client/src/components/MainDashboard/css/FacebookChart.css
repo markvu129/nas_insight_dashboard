@@ -1,0 +1,16 @@
+.ms-facebook-engagements p{
+    font-size: 14px;
+}
+
+.select-container {
+    width: 50%;
+    display: inline-block;
+    clear: right;
+}
+
+.select-metric {
+    width: 50%;
+    float: left;
+}
+
+
