@@ -59,11 +59,10 @@ class FacebookInsight extends Component {
                     data['prevMonthData'] = currentMonthlyGraphData[1];
                     monthlyGraphData[page] = data;
                 })
-                .catch(err => console.log(err)))
-
-
+                .catch(err => console.log(err)));
         });
 
+        // Wait for all fetches to finish
         Promise.all(fetches).then(function () {
             that.setState({
                 monthlyGraphData: monthlyGraphData

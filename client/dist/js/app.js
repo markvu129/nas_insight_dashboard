@@ -19818,6 +19818,7 @@ var FacebookInsight = function (_Component) {
                 }));
             });
 
+            // Wait for all fetches to finish
             Promise.all(fetches).then(function () {
                 that.setState({
                     monthlyGraphData: monthlyGraphData
@@ -23799,7 +23800,8 @@ var Metric = function (_Component) {
                 'nasDailyFBTH': 'NasDaily Thailand',
                 'nasDailyFBPH': 'NasDaily Philipines',
                 'nasDailyFBCH': 'NasDaily Chinese',
-                'nasDailyFBSP': 'NasDaily Espanol'
+                'nasDailyFBSP': 'NasDaily Espanol',
+                'all': 'All Pages'
             },
             activePage: 'nasDailyFB',
             modalIsOpen: {}
@@ -23816,16 +23818,54 @@ var Metric = function (_Component) {
         value: function fetchFbData() {
             var fbData = {};
             var fetches = [];
+            var totalData = {
+                'total_impressions': 0,
+                'total_reach': 0,
+                'total_views': 0,
+                'total_views_unique': 0,
+                'total_view_time': 0,
+                'total_engaged_users': 0,
+                'total_complete_views': 0,
+                'updatedAt': ""
+            };
 
             var that = this;
             this.state.pages.forEach(function (page) {
                 var uri = "https://nasinsightserver.herokuapp.com/api/info/overview/" + page + "/day/" + new Date().getFullYear() + "/page_impressions/2";
-                _axios2.default.get(uri).then(function (response) {
+                fetches.push(_axios2.default.get(uri).then(function (response) {
                     var data = {};
                     data['all_data'] = response.data;
-                    data['currentFbViews'] = response.data[0].stats[0].stats.filter(function (x) {
+                    var view = response.data[0].stats[0].stats.filter(function (x) {
                         return x.name === 'page_video_views';
                     })[0].values[0].value;
+
+                    // Calculate total data
+                    totalData['updatedAt'] = response.data[0].updatedAt;
+                    totalData['total_views'] = totalData['total_views'] + view;
+                    totalData['total_impressions'] = totalData['total_impressions'] + response.data[0].stats[0].stats.filter(function (x) {
+                        return x.name === 'page_impressions';
+                    })[0].values[0].value;
+                    totalData['total_reach'] = totalData['total_impressions_unique'] + response.data[0].stats[0].stats.filter(function (x) {
+                        return x.name === 'page_impressions_unique';
+                    })[0].values[0].value;
+                    totalData['total_views'] = totalData['total_views'] + response.data[0].stats[0].stats.filter(function (x) {
+                        return x.name === 'page_video_views';
+                    })[0].values[0].value;
+                    totalData['total_views_unique'] = totalData['total_views_unique'] + response.data[0].stats[0].stats.filter(function (x) {
+                        return x.name === 'page_video_views_unique';
+                    })[0].values[0].value;
+                    totalData['total_view_time'] = totalData['total_view_time'] + Math.round(response.data[0].stats[0].stats.filter(function (x) {
+                        return x.name === 'page_video_view_time';
+                    })[0].values[0].value / 60000);
+                    totalData['total_engaged_users'] = totalData['total_engaged_users'] + response.data[0].stats[0].stats.filter(function (x) {
+                        return x.name === 'page_engaged_users';
+                    })[0].values[0].value;
+                    totalData['total_complete_views'] = totalData['total_complete_views'] + response.data[0].stats[0].stats.filter(function (x) {
+                        return x.name === 'page_video_complete_views_30s';
+                    })[0].values[0].value;
+
+                    // Calculate current data for each site
+                    data['currentFbViews'] = view;
                     data['prevFbViews'] = response.data[1].stats[0].stats.filter(function (x) {
                         return x.name === 'page_video_views';
                     })[0].values[0].value;
@@ -23838,12 +23878,14 @@ var Metric = function (_Component) {
                     fbData[page] = data;
                 }).catch(function (err) {
                     return console.log(err);
-                });
+                }));
             });
 
+            // Wait for all fetches to finish
             Promise.all(fetches).then(function () {
                 that.setState({
-                    dailyData: fbData
+                    dailyData: fbData,
+                    totalData: totalData
                 });
             });
         }
@@ -23937,11 +23979,11 @@ var Metric = function (_Component) {
                                 _react2.default.createElement(
                                     'div',
                                     { className: 'ms-social-grid' },
-                                    _react2.default.createElement('i', { className: 'fa fa-facebook-f bg-facebook', onClick: this.openModal.bind(null, 'nasDailyFB') }),
-                                    this.state.dailyData.nasDailyFB ? _react2.default.createElement(
+                                    _react2.default.createElement('i', { className: 'fa fa-facebook-f bg-facebook', onClick: this.openModal.bind(null, 'all') }),
+                                    this.state.totalData ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark' },
-                                        this.state.dailyData.nasDailyFB.currentFbViews.toLocaleString()
+                                        this.state.totalData['total_views'].toLocaleString()
                                     ) : _react2.default.createElement('p', null),
                                     _react2.default.createElement(
                                         'span',
@@ -23951,7 +23993,7 @@ var Metric = function (_Component) {
                                     _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark' },
-                                        this.state.dailyData.nasDailyFB.currentFbEngagedUsers.toLocaleString()
+                                        this.state.totalData['total_engaged_users'].toLocaleString()
                                     ),
                                     _react2.default.createElement(
                                         'span',
@@ -23982,6 +24024,62 @@ var Metric = function (_Component) {
                                         'span',
                                         null,
                                         'Views'
+                                    )
+                                )
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'ms-social-media-followers' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'ms-social-grid' },
+                                    _react2.default.createElement('img', { src: 'https://svgshare.com/i/HBs.svg', alt: 'nasdaily-total',
+                                        border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFB') }),
+                                    this.state.dailyData.nasDailyFB ? _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark' },
+                                        this.state.dailyData.nasDailyFB.currentFbViews.toLocaleString()
+                                    ) : _react2.default.createElement('p', null),
+                                    _react2.default.createElement(
+                                        'span',
+                                        null,
+                                        'Video views'
+                                    ),
+                                    _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark' },
+                                        this.state.dailyData.nasDailyFB.currentFbEngagedUsers.toLocaleString()
+                                    ),
+                                    _react2.default.createElement(
+                                        'span',
+                                        null,
+                                        'Engaged users'
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'ms-social-grid' },
+                                    _react2.default.createElement('img', { src: 'https://i.ibb.co/gWMzpzk/thailand-flag-medium.png', alt: 'nasdaily-thailand',
+                                        border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBTH') }),
+                                    this.state.dailyData.nasDailyFBTH ? _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark' },
+                                        this.state.dailyData.nasDailyFBTH.currentFbViews.toLocaleString()
+                                    ) : _react2.default.createElement('p', null),
+                                    _react2.default.createElement(
+                                        'span',
+                                        null,
+                                        'Video views'
+                                    ),
+                                    _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark' },
+                                        this.state.dailyData.nasDailyFBTH.currentFbEngagedUsers.toLocaleString()
+                                    ),
+                                    _react2.default.createElement(
+                                        'span',
+                                        null,
+                                        'Engaged users'
                                     )
                                 )
                             ),
@@ -24104,32 +24202,6 @@ var Metric = function (_Component) {
                                 _react2.default.createElement(
                                     'div',
                                     { className: 'ms-social-grid' },
-                                    _react2.default.createElement('img', { src: 'https://i.ibb.co/gWMzpzk/thailand-flag-medium.png', alt: 'nasdaily-thailand',
-                                        border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBTH') }),
-                                    this.state.dailyData.nasDailyFBTH ? _react2.default.createElement(
-                                        'p',
-                                        { className: 'ms-text-dark' },
-                                        this.state.dailyData.nasDailyFBTH.currentFbViews.toLocaleString()
-                                    ) : _react2.default.createElement('p', null),
-                                    _react2.default.createElement(
-                                        'span',
-                                        null,
-                                        'Video views'
-                                    ),
-                                    _react2.default.createElement(
-                                        'p',
-                                        { className: 'ms-text-dark' },
-                                        this.state.dailyData.nasDailyFBTH.currentFbEngagedUsers.toLocaleString()
-                                    ),
-                                    _react2.default.createElement(
-                                        'span',
-                                        null,
-                                        'Engaged users'
-                                    )
-                                ),
-                                _react2.default.createElement(
-                                    'div',
-                                    { className: 'ms-social-grid' },
                                     _react2.default.createElement('img', { src: 'https://i.ibb.co/CnZbSDS/chinese-character.png', alt: 'nasdaily-chinese',
                                         border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBCH') }),
                                     this.state.dailyData.nasDailyFBCH ? _react2.default.createElement(
@@ -24152,6 +24224,17 @@ var Metric = function (_Component) {
                                         null,
                                         'Engaged users'
                                     )
+                                ),
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'ms-social-grid' },
+                                    _react2.default.createElement('img', { src: 'https://i.ibb.co/WtqGPqr/indonesia-flag-medium.png', alt: 'nasdaily-bahasa',
+                                        border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBTH') }),
+                                    _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark' },
+                                        'Coming soon'
+                                    )
                                 )
                             )
                         )
@@ -24159,7 +24242,7 @@ var Metric = function (_Component) {
                     _react2.default.createElement(_Detail2.default, { modalIsOpen: this.state.modalIsOpen[this.state.activePage],
                         closeModal: this.closeModal,
                         activePage: this.state.title[this.state.activePage],
-                        allData: this.state.dailyData[this.state.activePage]['all_data']
+                        allData: this.state.activePage === 'all' ? this.state.totalData : this.state.dailyData[this.state.activePage]['all_data']
                     })
                 );
             } else {
@@ -53564,7 +53647,36 @@ var Detail = function (_Component) {
     }, {
         key: 'render',
         value: function render() {
-            var stats = this.props.allData[0].stats[0].stats;
+
+            var views = void 0,
+                views_unique = void 0,
+                view_time = void 0,
+                complete_view = void 0,
+                metric_time = void 0;
+            var active_page = this.props.activePage;
+            if (active_page === 'All Pages') {
+                metric_time = new Date(this.props.allData.updatedAt).toISOString().slice(0, 10);
+                views = this.props.allData['total_views'].toLocaleString();
+                views_unique = this.props.allData['total_views_unique'].toLocaleString();
+                view_time = this.props.allData['total_view_time'].toLocaleString();
+                complete_view = this.props.allData['total_complete_views'].toLocaleString();
+            } else {
+                var stats = this.props.allData[0].stats[0].stats;
+                metric_time = new Date(this.props.allData[0].updatedAt).toISOString().slice(0, 10);
+                views = stats.filter(function (x) {
+                    return x.name === 'page_video_views';
+                })[0].values[0].value.toLocaleString();
+                views_unique = stats.filter(function (x) {
+                    return x.name === 'page_video_views_unique';
+                })[0].values[0].value.toLocaleString();
+                view_time = Math.round(stats.filter(function (x) {
+                    return x.name === 'page_video_view_time';
+                })[0].values[0].value / 60000).toLocaleString();
+                complete_view = stats.filter(function (x) {
+                    return x.name === 'page_video_complete_views_30s';
+                })[0].values[0].value.toLocaleString();
+            }
+
             return _react2.default.createElement(
                 _Modal2.default,
                 { id: 'stats', show: this.state.modalIsOpen, onHide: this.props.closeModal, animation: false },
@@ -53574,9 +53686,9 @@ var Detail = function (_Component) {
                     _react2.default.createElement(
                         'h2',
                         { className: 'daily-detail-title', style: { 'color': '#e8c552' } },
-                        this.props.activePage,
+                        active_page,
                         ': ',
-                        new Date(this.props.allData[0].updatedAt).toISOString().slice(0, 10)
+                        metric_time
                     ),
                     _react2.default.createElement(
                         'div',
@@ -53590,9 +53702,7 @@ var Detail = function (_Component) {
                                 _react2.default.createElement(
                                     'p',
                                     { className: 'ms-text-dark' },
-                                    stats.filter(function (x) {
-                                        return x.name === 'page_video_views';
-                                    })[0].values[0].value.toLocaleString()
+                                    views
                                 ),
                                 _react2.default.createElement(
                                     'span',
@@ -53606,9 +53716,7 @@ var Detail = function (_Component) {
                                 _react2.default.createElement(
                                     'p',
                                     { className: 'ms-text-dark' },
-                                    stats.filter(function (x) {
-                                        return x.name === 'page_video_views_unique';
-                                    })[0].values[0].value.toLocaleString()
+                                    views_unique
                                 ),
                                 _react2.default.createElement(
                                     'span',
@@ -53630,15 +53738,12 @@ var Detail = function (_Component) {
                                 _react2.default.createElement(
                                     'p',
                                     { className: 'ms-text-dark' },
-                                    Math.round(stats.filter(function (x) {
-                                        return x.name === 'page_video_view_time';
-                                    })[0].values[0].value / 60000).toLocaleString(),
-                                    ' minutes'
+                                    view_time
                                 ),
                                 _react2.default.createElement(
                                     'span',
                                     null,
-                                    'Page video view time'
+                                    'Page video view time (minutes)'
                                 )
                             ),
                             _react2.default.createElement(
@@ -53647,9 +53752,7 @@ var Detail = function (_Component) {
                                 _react2.default.createElement(
                                     'p',
                                     { className: 'ms-text-dark' },
-                                    stats.filter(function (x) {
-                                        return x.name === 'page_video_complete_views_30s';
-                                    })[0].values[0].value.toLocaleString()
+                                    complete_view
                                 ),
                                 _react2.default.createElement(
                                     'span',

@@ -21,7 +21,8 @@ class Metric extends Component {
                 'nasDailyFBTH': 'NasDaily Thailand',
                 'nasDailyFBPH': 'NasDaily Philipines',
                 'nasDailyFBCH': 'NasDaily Chinese',
-                'nasDailyFBSP': 'NasDaily Espanol'
+                'nasDailyFBSP': 'NasDaily Espanol',
+                'all': 'All Pages'
             },
             activePage: 'nasDailyFB',
             modalIsOpen: {}
@@ -35,27 +36,53 @@ class Metric extends Component {
     fetchFbData() {
         let fbData = {};
         let fetches = [];
+        let totalData = {
+            'total_impressions': 0,
+            'total_reach': 0,
+            'total_views': 0,
+            'total_views_unique': 0,
+            'total_view_time': 0,
+            'total_engaged_users': 0,
+            'total_complete_views': 0,
+            'updatedAt': ""
+        };
 
         const that = this;
         this.state.pages.forEach(page => {
             let uri = "https://nasinsightserver.herokuapp.com/api/info/overview/" + page + "/day/" + new Date().getFullYear() + "/page_impressions/2";
-            axios.get(uri)
+            fetches.push(axios.get(uri)
                 .then(response => {
                     let data = {};
                     data['all_data'] = response.data;
-                    data['currentFbViews'] = response.data[0].stats[0].stats.filter(x => x.name === 'page_video_views')[0].values[0].value;
+                    let view = response.data[0].stats[0].stats.filter(x => x.name === 'page_video_views')[0].values[0].value;
+
+                    // Calculate total data
+                    totalData['updatedAt'] =  response.data[0].updatedAt;
+                    totalData['total_views'] = totalData['total_views'] + view;
+                    totalData['total_impressions'] =   totalData['total_impressions'] + response.data[0].stats[0].stats.filter(x => x.name === 'page_impressions')[0].values[0].value;
+                    totalData['total_reach'] =   totalData['total_impressions_unique'] + response.data[0].stats[0].stats.filter(x => x.name === 'page_impressions_unique')[0].values[0].value;
+                    totalData['total_views'] =   totalData['total_views'] + response.data[0].stats[0].stats.filter(x => x.name === 'page_video_views')[0].values[0].value;
+                    totalData['total_views_unique'] = totalData['total_views_unique'] + response.data[0].stats[0].stats.filter(x => x.name === 'page_video_views_unique')[0].values[0].value;
+                    totalData['total_view_time'] = totalData['total_view_time'] + Math.round((response.data[0].stats[0].stats.filter(x => x.name === 'page_video_view_time')[0].values[0].value)/60000);
+                    totalData['total_engaged_users'] = totalData['total_engaged_users'] + response.data[0].stats[0].stats.filter(x => x.name === 'page_engaged_users')[0].values[0].value;
+                    totalData['total_complete_views'] = totalData['total_complete_views'] + response.data[0].stats[0].stats.filter(x => x.name === 'page_video_complete_views_30s')[0].values[0].value;
+
+                    // Calculate current data for each site
+                    data['currentFbViews'] = view;
                     data['prevFbViews'] = response.data[1].stats[0].stats.filter(x => x.name === 'page_video_views')[0].values[0].value;
                     data['currentFbEngagedUsers'] = response.data[0].stats[0].stats.filter(x => x.name === 'page_engaged_users')[0].values[0].value;
                     data['prevFbEngagedUsers'] = response.data[1].stats[0].stats.filter(x => x.name === 'page_engaged_users')[0].values[0].value;
                     fbData[page] = data;
 
                 })
-                .catch(err => console.log(err))
+                .catch(err => console.log(err)));
         });
 
+        // Wait for all fetches to finish
         Promise.all(fetches).then(function () {
             that.setState({
-                dailyData: fbData
+                dailyData: fbData,
+                totalData: totalData
             })
         })
     }
@@ -112,12 +139,12 @@ class Metric extends Component {
                         <div className="ms-panel-body p-0">
                             <div className="ms-social-media-followers">
                                 <div className="ms-social-grid">
-                                    <i className="fa fa-facebook-f bg-facebook" onClick={this.openModal.bind(null, 'nasDailyFB')}></i>
-                                    {this.state.dailyData.nasDailyFB ?
-                                        <p className="ms-text-dark">{this.state.dailyData.nasDailyFB.currentFbViews.toLocaleString()}</p> :
+                                    <i className="fa fa-facebook-f bg-facebook" onClick={this.openModal.bind(null, 'all')}></i>
+                                    {this.state.totalData ?
+                                        <p className="ms-text-dark">{this.state.totalData['total_views'].toLocaleString()}</p> :
                                         <p></p>}
                                     <span>Video views</span>
-                                    <p className="ms-text-dark">{this.state.dailyData.nasDailyFB.currentFbEngagedUsers.toLocaleString()}</p>
+                                    <p className="ms-text-dark">{this.state.totalData['total_engaged_users'].toLocaleString()}</p>
                                     <span>Engaged users</span>
                                 </div>
                                 <div className="ms-social-grid">
@@ -128,6 +155,30 @@ class Metric extends Component {
                                     <span>Views</span>
                                 </div>
                             </div>
+
+                            <div className="ms-social-media-followers">
+                                <div className="ms-social-grid">
+                                    <img src="https://svgshare.com/i/HBs.svg" alt="nasdaily-total"
+                                         border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFB')}/>
+                                    {this.state.dailyData.nasDailyFB ?
+                                        <p className="ms-text-dark">{this.state.dailyData.nasDailyFB.currentFbViews.toLocaleString()}</p> :
+                                        <p></p>}
+                                    <span>Video views</span>
+                                    <p className="ms-text-dark">{this.state.dailyData.nasDailyFB.currentFbEngagedUsers.toLocaleString()}</p>
+                                    <span>Engaged users</span>
+                                </div>
+                                <div className="ms-social-grid">
+                                    <img src="https://i.ibb.co/gWMzpzk/thailand-flag-medium.png" alt="nasdaily-thailand"
+                                         border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBTH')}/>
+                                    {this.state.dailyData.nasDailyFBTH ?
+                                        <p className="ms-text-dark">{this.state.dailyData.nasDailyFBTH.currentFbViews.toLocaleString()}</p> :
+                                        <p></p>}
+                                    <span>Video views</span>
+                                    <p className="ms-text-dark">{this.state.dailyData.nasDailyFBTH.currentFbEngagedUsers.toLocaleString()}</p>
+                                    <span>Engaged users</span>
+                                </div>
+                            </div>
+
                             <div className="ms-social-media-followers">
                                 <div className="ms-social-grid">
                                     <img src="https://i.ibb.co/jykWfj4/vietnam-flag-icon-128.png" alt="nasdaily-vn"
@@ -176,16 +227,6 @@ class Metric extends Component {
 
                             <div className="ms-social-media-followers">
                                 <div className="ms-social-grid">
-                                    <img src="https://i.ibb.co/gWMzpzk/thailand-flag-medium.png" alt="nasdaily-thailand"
-                                         border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBTH')}/>
-                                    {this.state.dailyData.nasDailyFBTH ?
-                                        <p className="ms-text-dark">{this.state.dailyData.nasDailyFBTH.currentFbViews.toLocaleString()}</p> :
-                                        <p></p>}
-                                    <span>Video views</span>
-                                    <p className="ms-text-dark">{this.state.dailyData.nasDailyFBTH.currentFbEngagedUsers.toLocaleString()}</p>
-                                    <span>Engaged users</span>
-                                </div>
-                                <div className="ms-social-grid">
                                     <img src="https://i.ibb.co/CnZbSDS/chinese-character.png" alt="nasdaily-chinese"
                                          border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBCH')}/>
                                     {this.state.dailyData.nasDailyFBCH ?
@@ -195,6 +236,11 @@ class Metric extends Component {
                                     <p className="ms-text-dark">{this.state.dailyData.nasDailyFBCH.currentFbEngagedUsers.toLocaleString()}</p>
                                     <span>Engaged users</span>
                                 </div>
+                                <div className="ms-social-grid">
+                                    <img src="https://i.ibb.co/WtqGPqr/indonesia-flag-medium.png" alt="nasdaily-bahasa"
+                                         border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBTH')}/>
+                                    <p className="ms-text-dark">Coming soon</p>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -202,7 +248,7 @@ class Metric extends Component {
                     <Detail modalIsOpen={this.state.modalIsOpen[this.state.activePage]}
                             closeModal={this.closeModal}
                             activePage={this.state.title[this.state.activePage]}
-                            allData={this.state.dailyData[this.state.activePage]['all_data']}
+                            allData={this.state.activePage === 'all' ? this.state.totalData : this.state.dailyData[this.state.activePage]['all_data']}
                     />
                 </div>
             )
