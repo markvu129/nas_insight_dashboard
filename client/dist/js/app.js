@@ -1514,6 +1514,57 @@ module.exports = isArguments;
 
 /***/ }),
 
+/***/ "1hM6":
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__("7PXL");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__("MTIv")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../../node_modules/css-loader/index.js!./Loading.css", function() {
+		var newContent = require("!!../../../../../node_modules/css-loader/index.js!./Loading.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
 /***/ "21It":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -3652,6 +3703,21 @@ module.exports = function xhrAdapter(config) {
     return arSa;
 
 })));
+
+
+/***/ }),
+
+/***/ "7PXL":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("FZ+f")(false);
+// imports
+
+
+// module
+exports.push([module.i, "@-webkit-keyframes dot-keyframes {\n    0% {\n        opacity: .4;\n        -webkit-transform: scale(1, 1);\n        transform: scale(1, 1);\n    }\n    50% {\n        opacity: 1;\n        -webkit-transform: scale(1.2, 1.2);\n        transform: scale(1.2, 1.2);\n    }\n    100% {\n        opacity: .4;\n        -webkit-transform: scale(1, 1);\n        transform: scale(1, 1);\n    }\n}\n@keyframes dot-keyframes {\n    0% {\n        opacity: .4;\n        -webkit-transform: scale(1, 1);\n        transform: scale(1, 1);\n    }\n    50% {\n        opacity: 1;\n        -webkit-transform: scale(1.2, 1.2);\n        transform: scale(1.2, 1.2);\n    }\n    100% {\n        opacity: .4;\n        -webkit-transform: scale(1, 1);\n        transform: scale(1, 1);\n    }\n}\n.loading-dots {\n    text-align: center;\n    width: 100%;\n}\n.loading-dots--dot {\n    -webkit-animation: dot-keyframes 1.5s infinite ease-in-out;\n    animation: dot-keyframes 1.5s infinite ease-in-out;\n    background-color:  #F9CA47;\n    border-radius: 50%;\n    display: inline-block;\n    height: 30px;\n    width: 30px;\n    margin-right: 50px;\n}\n.loading-dots--dot:nth-child(2) {\n    -webkit-animation-delay: .5s;\n    animation-delay: .5s;\n}\n.loading-dots--dot:nth-child(3) {\n    -webkit-animation-delay: 1s;\n    animation-delay: 1s;\n}\n\n.loading {\n}\n", ""]);
+
+// exports
 
 
 /***/ }),
@@ -13026,7 +13092,7 @@ var Overview = function (_Component) {
     }, {
         key: "componentDidMount",
         value: function componentDidMount() {
-            this.fetchTopFbPostsAndComments();
+            // this.fetchTopFbPostsAndComments();
             // this.fetchTopIgPostsAndComments();
         }
     }, {
@@ -19744,6 +19810,10 @@ var _InstagramChart = __webpack_require__("yVC0");
 
 var _InstagramChart2 = _interopRequireDefault(_InstagramChart);
 
+var _Loading = __webpack_require__("a1MK");
+
+var _Loading2 = _interopRequireDefault(_Loading);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -19954,7 +20024,7 @@ var FacebookInsight = function (_Component) {
 
             var igMetricOptions = [{ "label": "reach", "value": "reach" }, { "label": "impressions", "value": "impressions" }, { "label": "profile_views", "value": "profile_views" }];
 
-            if (this.state.monthlyGraphData['nasDailyFB']['data'] && this.state.monthlyGraphData['nasDailyFB']['data'].length > 0) {
+            if (this.state.monthlyGraphData['nasDailyFB']['data'] && this.state.monthlyGraphData['nasDailyFB']['data'].length > 0 && this.state.monthlyIgGraphData.length > 0) {
                 return _react2.default.createElement(
                     "div",
                     { className: "col-xl-8 col-md-9" },
@@ -20101,7 +20171,7 @@ var FacebookInsight = function (_Component) {
                     )
                 );
             } else {
-                return _react2.default.createElement("div", null);
+                return _react2.default.createElement(_Loading2.default, null);
             }
         }
     }]);
@@ -22444,6 +22514,42 @@ module.exports = toString;
 
 })));
 
+
+/***/ }),
+
+/***/ "a1MK":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _react = __webpack_require__("GiK3");
+
+var _react2 = _interopRequireDefault(_react);
+
+__webpack_require__("1hM6");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+var Loading = function Loading(props) {
+    return _react2.default.createElement(
+        'div',
+        { 'class': 'container loading' },
+        _react2.default.createElement(
+            'div',
+            { className: 'loading-dots' },
+            _react2.default.createElement('div', { className: 'loading-dots--dot' }),
+            _react2.default.createElement('div', { className: 'loading-dots--dot' }),
+            _react2.default.createElement('div', { className: 'loading-dots--dot' })
+        )
+    );
+};
+
+exports.default = Loading;
 
 /***/ }),
 

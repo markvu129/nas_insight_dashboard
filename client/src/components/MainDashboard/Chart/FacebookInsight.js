@@ -4,6 +4,7 @@ import FbChart from "./FacebookChart";
 import Select from 'react-select';
 import '../css/FacebookChart.css';
 import IgChart from './InstagramChart';
+import Loading from "../../Common/Loading";
 
 class FacebookInsight extends Component {
 
@@ -208,7 +209,7 @@ class FacebookInsight extends Component {
             {"label": "profile_views", "value": "profile_views"}
         ]
 
-        if (this.state.monthlyGraphData['nasDailyFB']['data'] && this.state.monthlyGraphData['nasDailyFB']['data'].length > 0) {
+        if (this.state.monthlyGraphData['nasDailyFB']['data'] && this.state.monthlyGraphData['nasDailyFB']['data'].length > 0 && this.state.monthlyIgGraphData.length > 0) {
             return (
                 <div className="col-xl-8 col-md-9">
                     <div className="ms-panel ms-panel-fh ms-facebook-engagements">
@@ -283,7 +284,7 @@ class FacebookInsight extends Component {
                 </div>
             )
         } else {
-            return (<div></div>)
+            return (<Loading/>)
         }
 
     }

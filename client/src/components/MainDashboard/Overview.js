@@ -80,7 +80,7 @@ class Overview extends Component {
     }
 
     componentDidMount() {
-        this.fetchTopFbPostsAndComments();
+        // this.fetchTopFbPostsAndComments();
         // this.fetchTopIgPostsAndComments();
     }
 
