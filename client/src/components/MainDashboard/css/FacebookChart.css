@@ -13,4 +13,28 @@
     float: left;
 }
 
+.search-btn {
+    padding: 10px 10px;
+    background: #F9CA47;
+    margin-top: 20px;
+    float: right;
+    border: 1px solid transparent;
+    border-radius: 5px;
+}
+
+.clear-btn {
+    margin-right: 10px
+}
+
+.apply-btn {
+    display: inline-block
+}
+
+.filter-desc {
+    margin-bottom: 40px;
+    font-weight: bold;
+    font-size: 1.1em;
+    margin-right: 10px
+}
+
 

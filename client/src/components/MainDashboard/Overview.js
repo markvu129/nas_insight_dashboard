@@ -16,6 +16,7 @@ class Overview extends Component {
             topIgPosts: [],
             topFbComments: [],
             topIgComments: []
+
         };
         this.fetchTopFbPostsAndComments = this.fetchTopFbPostsAndComments.bind(this);
         this.fetchTopIgPostsAndComments = this.fetchTopIgPostsAndComments.bind(this);
@@ -78,6 +79,7 @@ class Overview extends Component {
             })
             .catch(err => console.log(err))
     }
+
 
     componentDidMount() {
         // this.fetchTopFbPostsAndComments();

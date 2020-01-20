@@ -1,0 +1,29 @@
+.start-date {
+    width: 50%;
+    float: left;
+}
+
+.end-date{
+    display: inline-block;
+    float: right;
+    width: 50%;
+}
+
+.filter {
+    padding: 5px 5px;
+    border: 1px solid black;
+    border-radius: 5px;
+    font-size: 18px;
+    text-align:center;
+    width: 50px;
+    float: right;
+
+}
+
+.filter:hover {
+    color: black;
+    background: #F9CA47;
+    border: 1px solid transparent;
+    cursor: pointer;
+}
+

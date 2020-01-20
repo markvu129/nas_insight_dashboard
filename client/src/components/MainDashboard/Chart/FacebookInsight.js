@@ -5,6 +5,10 @@ import Select from 'react-select';
 import '../css/FacebookChart.css';
 import IgChart from './InstagramChart';
 import Loading from "../../Common/Loading";
+import Modal from 'react-bootstrap/Modal';
+import DatePicker from "react-datepicker";
+import '../css/Filter.css';
+import "react-datepicker/dist/react-datepicker.css";
 
 class FacebookInsight extends Component {
 
@@ -24,15 +28,29 @@ class FacebookInsight extends Component {
             monthlyIgGraphData: [],
             igMetric: 'reach',
             pages: ['nasDailyFB', 'nasDailyFBVN', 'nasDailyFBPH', 'nasDailyFBSP', 'nasDailyFBTH', 'nasDailyFBARB', 'nasDailyFBCH'],
-
+            startDate: new Date(),
+            endDate: new Date(),
+            startDateFormatted: new Date(),
+            endDateFormatted: new Date(),
+            modalIsOpen: false,
+            currentFilterState: 'month'
         };
         this.fetchMonthlyData = this.fetchMonthlyData.bind(this);
         this.fetchMonthlyIgData = this.fetchMonthlyIgData.bind(this);
         this.onSelectMetrics = this.onSelectMetrics.bind(this);
         this.onSelectIgMetrics = this.onSelectIgMetrics.bind(this);
+        this.handleStartDateChange = this.handleStartDateChange.bind(this);
+        this.handleEndDateChange = this.handleEndDateChange.bind(this);
+        this.openModal = this.openModal.bind(this);
+        this.closeModal = this.closeModal.bind(this);
+        this.applyFilter = this.applyFilter.bind(this);
+        this.clearFilter = this.clearFilter.bind(this);
     }
 
     fetchMonthlyData(metric) {
+        this.setState({
+            currentFilterState: 'month'
+        });
 
         let monthlyGraphData = {};
         let fetches = [];
@@ -51,6 +69,48 @@ class FacebookInsight extends Component {
                         let monthly_data = response.data[i].stats[0];
                         currentMonthlyGraphLabels.push(monthly_data.month);
                         currentMonthlyGraphData.push(monthly_data.stats.filter(x => x.name === metric)[0].value);
+                    }
+                    let data = {};
+                    data['all_data'] = response.data;
+                    data['labels'] = currentMonthlyGraphLabels;
+                    data['data'] = currentMonthlyGraphData;
+                    data['currentMonthData'] = currentMonthlyGraphData[0];
+                    data['prevMonthData'] = currentMonthlyGraphData[1];
+                    monthlyGraphData[page] = data;
+                })
+                .catch(err => console.log(err)));
+        });
+
+        // Wait for all fetches to finish
+        Promise.all(fetches).then(function () {
+            that.setState({
+                monthlyGraphData: monthlyGraphData
+            })
+        })
+    }
+
+    fetchDataByDateRange(startDate, endDate, metric) {
+        this.setState({
+            currentFilterState: 'day'
+        });
+
+        let monthlyGraphData = {};
+        let fetches = [];
+
+        const that = this;
+
+        this.state.pages.forEach(page => {
+            let uri = "https://nasinsightserver.herokuapp.com/api/info/overview/" + page + "/day/range/" + startDate + "/" + endDate + "/" + metric;
+
+            fetches.push(axios.get(uri)
+                .then(response => {
+                    let currentMonthlyGraphData = [];
+                    let currentMonthlyGraphLabels = [];
+                    // Get engaged users for each month and set to state
+                    let values = response.data.stats[0].stats[0].values;
+                    for (let i = 0; i < values.length; i++) {
+                        currentMonthlyGraphLabels.push(new Date(values[i].end_time).toISOString().slice(0, 10));
+                        currentMonthlyGraphData.push(values[i].value);
                     }
                     let data = {};
                     data['all_data'] = response.data;
@@ -90,7 +150,6 @@ class FacebookInsight extends Component {
                     monthlyIgGraphLabels: currentMonthlyGraphLabels,
                     currentMonthIgData: currentMonthlyGraphData[0],
                     prevMonthIgData: currentMonthlyGraphData[1]
-
                 })
 
             })
@@ -99,7 +158,7 @@ class FacebookInsight extends Component {
     }
 
 
-    onSelectMetrics(value) {
+    onSelectMetrics(value, currentFilterState) {
         this.setState({
             metric: value.value
         });
@@ -108,11 +167,21 @@ class FacebookInsight extends Component {
             let all_data = monthlyGraphData[page]['all_data'];
             let currentMonthlyGraphData = [];
             let currentMonthlyGraphLabels = [];
-            for (let i = 0; i < all_data.length; i++) {
-                let monthly_data = all_data[i].stats[0];
-                currentMonthlyGraphLabels.push(monthly_data.month);
-                currentMonthlyGraphData.push(monthly_data.stats.filter(x => x.name === value.value)[0].value);
+            if (currentFilterState === 'month') {
+                for (let i = 0; i < all_data.length; i++) {
+                    let monthly_data = all_data[i].stats[0];
+                    currentMonthlyGraphLabels.push(monthly_data.month);
+                    currentMonthlyGraphData.push(monthly_data.stats.filter(x => x.name === value.value)[0].value);
+                }
             }
+            else if (currentFilterState === 'day') {
+                let values = all_data.stats[0].stats[0].values;
+                for (let i = 0; i < values.length; i++) {
+                    currentMonthlyGraphLabels.push(new Date(values[i].end_time).toISOString().slice(0, 10));
+                    currentMonthlyGraphData.push(values[i].value);
+                }
+            }
+
             let data = {};
             data['all_data'] = all_data;
             data['labels'] = currentMonthlyGraphLabels;
@@ -147,8 +216,49 @@ class FacebookInsight extends Component {
             prevMonthIgData: currentMonthlyGraphData[1]
 
         })
-
     }
+
+    handleStartDateChange(date) {
+        this.setState({
+            startDate: date,
+            startDateFormatted: new Date(date).toISOString().slice(0, 10)
+        });
+    };
+
+    handleEndDateChange(date) {
+        this.setState({
+            endDate: date,
+            endDateFormatted: new Date(date).toISOString().slice(0, 10)
+        })
+    };
+
+    openModal() {
+        this.setState({
+            modalIsOpen: true
+        })
+    }
+
+    closeModal() {
+        this.setState({
+            modalIsOpen: false
+        })
+    }
+
+    applyFilter(startDate, endDate, metric) {
+        this.fetchDataByDateRange(startDate, endDate, metric);
+        this.setState({
+            modalIsOpen: false
+        })
+    }
+
+    clearFilter() {
+        this.fetchMonthlyData('page_impressions');
+        this.setState({
+            modalIsOpen: false,
+            metric: 'page_impressions'
+        })
+    }
+
 
     componentDidMount() {
         this.fetchMonthlyData(this.state.metric);
@@ -160,6 +270,9 @@ class FacebookInsight extends Component {
             || this.state.metric != nextState.metric
             || this.state.igMetric != nextState.igMetric
             || this.state.monthlyIgGraphData != nextState.monthlyIgGraphData
+            || this.state.modalIsOpen != nextState.modalIsOpen
+            || this.state.startDate != nextState.startDate
+            || this.state.endDate != nextState.endDate
     }
 
     render() {
@@ -221,16 +334,18 @@ class FacebookInsight extends Component {
                                 <li className="ms-list-item">
                                     <div className="ms-graph-data-div">
                                         <div className="ms-graph-data-title">
-                                            <div>
-                                                <h2 className="select-metric">{metricMap[this.state.metric]}</h2>
-                                                <Select className="select-container"
-                                                        placeholder={this.state.metric ? this.state.metric : "Select metric"}
-                                                        options={metricOptions}
-                                                        onChange={(value) => this.onSelectMetrics(value)}/>
+                                            <h2 className="select-metric">{metricMap[this.state.metric]}</h2>
+                                            <div className="select-metric">
+                                                <div className="filter" onClick={this.openModal}><i
+                                                    className="fa fa-filter"></i></div>
                                             </div>
-                                            <p className="ms-text-dark">{this.state.monthlyGraphData['nasDailyFB']['currentMonthData'].toLocaleString()}</p>
-                                            <p className="ms-text-success">{Math.round(((this.state.monthlyGraphData['nasDailyFB']['currentMonthData'] - this.state.monthlyGraphData['nasDailyFB']['prevMonthData']) / this.state.monthlyGraphData['nasDailyFB']['prevMonthData']) * 100)}%</p>
-                                            <p>{this.state.monthlyGraphData['nasDailyFB']['prevMonthData'].toLocaleString()} (Prev)</p>
+                                            {this.state.monthlyGraphData['nasDailyFB']['currentMonthData'] ? <div>
+
+                                                <p className="ms-text-dark">{this.state.monthlyGraphData['nasDailyFB']['currentMonthData'].toLocaleString()}</p>
+                                                <p className="ms-text-success">{Math.round(((this.state.monthlyGraphData['nasDailyFB']['currentMonthData'] - this.state.monthlyGraphData['nasDailyFB']['prevMonthData']) / this.state.monthlyGraphData['nasDailyFB']['prevMonthData']) * 100)}%</p>
+                                                <p>{this.state.monthlyGraphData['nasDailyFB']['prevMonthData'].toLocaleString()} (Prev)</p>
+                                            </div> : <div></div>}
+
                                         </div>
                                     </div>
                                     <br/>
@@ -281,7 +396,43 @@ class FacebookInsight extends Component {
                             </ul>
                         </div>
                     </div>
+
+                    <Modal show={this.state.modalIsOpen} onHide={this.closeModal} animation={false}>
+                        <Modal.Body>
+                            <div className="date-picker">
+                                <div className="start-date">
+                                    <span className="filter-desc">From</span>
+                                    <DatePicker
+                                        selected={this.state.startDate}
+                                        onChange={this.handleStartDateChange}
+                                    />
+                                </div>
+                                <div className="end-date">
+                                    <span className="filter-desc">To</span>
+                                    <DatePicker
+                                        selected={this.state.endDate}
+                                        onChange={this.handleEndDateChange}
+                                    />
+                                </div>
+                            </div>
+                            <br/>
+                            <br/>
+                            <span className="filter-desc">Metrics</span>
+                            <div>
+                                <Select className=""
+                                        placeholder={this.state.metric ? this.state.metric : "Select metric"}
+                                        options={metricOptions}
+                                        onChange={(value) => this.onSelectMetrics(value, this.state.currentFilterState)}/>
+                            </div>
+                            <button className="search-btn apply-btn"
+                                    onClick={() => this.applyFilter(this.state.startDateFormatted, this.state.endDateFormatted, this.state.metric)}>
+                                Apply
+                            </button>
+                            <button className="search-btn clear-btn" onClick={this.clearFilter}>Clear</button>
+                        </Modal.Body>
+                    </Modal>
                 </div>
+
             )
         } else {
             return (<Loading/>)
