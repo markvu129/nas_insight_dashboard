@@ -339,12 +339,12 @@ class FacebookInsight extends Component {
                                                 <div className="filter" onClick={this.openModal}><i
                                                     className="fa fa-filter"></i></div>
                                             </div>
-                                            {this.state.monthlyGraphData['nasDailyFB']['currentMonthData'] ? <div>
+                                            {this.state.monthlyGraphData['nasDailyFB']['currentMonthData']  && this.state.monthlyGraphData['nasDailyFB']['prevMonthData'] ? <div>
 
                                                 <p className="ms-text-dark">{this.state.monthlyGraphData['nasDailyFB']['currentMonthData'].toLocaleString()}</p>
                                                 <p className="ms-text-success">{Math.round(((this.state.monthlyGraphData['nasDailyFB']['currentMonthData'] - this.state.monthlyGraphData['nasDailyFB']['prevMonthData']) / this.state.monthlyGraphData['nasDailyFB']['prevMonthData']) * 100)}%</p>
                                                 <p>{this.state.monthlyGraphData['nasDailyFB']['prevMonthData'].toLocaleString()} (Prev)</p>
-                                            </div> : <div></div>}
+                                            </div> : <div style={{height: "50px"}}></div>}
 
                                         </div>
                                     </div>

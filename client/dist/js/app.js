@@ -24950,7 +24950,7 @@ var FacebookInsight = function (_Component) {
                                                         className: "fa fa-filter" })
                                                 )
                                             ),
-                                            this.state.monthlyGraphData['nasDailyFB']['currentMonthData'] ? _react2.default.createElement(
+                                            this.state.monthlyGraphData['nasDailyFB']['currentMonthData'] && this.state.monthlyGraphData['nasDailyFB']['prevMonthData'] ? _react2.default.createElement(
                                                 "div",
                                                 null,
                                                 _react2.default.createElement(
@@ -24970,7 +24970,7 @@ var FacebookInsight = function (_Component) {
                                                     this.state.monthlyGraphData['nasDailyFB']['prevMonthData'].toLocaleString(),
                                                     " (Prev)"
                                                 )
-                                            ) : _react2.default.createElement("div", null)
+                                            ) : _react2.default.createElement("div", { style: { height: "50px" } })
                                         )
                                     ),
                                     _react2.default.createElement("br", null),
