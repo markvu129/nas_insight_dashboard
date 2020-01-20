@@ -23900,7 +23900,7 @@ exports = module.exports = __webpack_require__("FZ+f")(false);
 
 
 // module
-exports.push([module.i, ".flag-icon {\n    width: 64px !important;\n    height: 45px !important;\n    margin-bottom: 10px;\n    border-radius: 5px;\n    border: 1px transparent;\n}\n", ""]);
+exports.push([module.i, ".flag-icon {\n    width: 64px !important;\n    height: 45px !important;\n    margin-bottom: 10px;\n    border-radius: 5px;\n    border: 1px transparent;\n}\n\n.section-icon i {\n    font-size: 2.5em !important;\n    color: black !important\n}", ""]);
 
 // exports
 
@@ -66207,6 +66207,11 @@ var Detail = function (_Component) {
                                 'div',
                                 { className: 'ms-social-grid' },
                                 _react2.default.createElement(
+                                    'div',
+                                    { className: 'section-icon' },
+                                    _react2.default.createElement('i', { className: 'fa fa-tv' })
+                                ),
+                                _react2.default.createElement(
                                     'p',
                                     { className: 'ms-text-dark' },
                                     views
@@ -66220,6 +66225,11 @@ var Detail = function (_Component) {
                             _react2.default.createElement(
                                 'div',
                                 { className: 'ms-social-grid' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'section-icon' },
+                                    _react2.default.createElement('i', { className: 'fa fa-user' })
+                                ),
                                 _react2.default.createElement(
                                     'p',
                                     { className: 'ms-text-dark' },
@@ -66243,6 +66253,11 @@ var Detail = function (_Component) {
                                 'div',
                                 { className: 'ms-social-grid' },
                                 _react2.default.createElement(
+                                    'div',
+                                    { className: 'section-icon' },
+                                    _react2.default.createElement('i', { className: 'fa fa-hourglass-1' })
+                                ),
+                                _react2.default.createElement(
                                     'p',
                                     { className: 'ms-text-dark' },
                                     view_time
@@ -66256,6 +66271,11 @@ var Detail = function (_Component) {
                             _react2.default.createElement(
                                 'div',
                                 { className: 'ms-social-grid' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'section-icon' },
+                                    _react2.default.createElement('i', { className: 'fa fa-history' })
+                                ),
                                 _react2.default.createElement(
                                     'p',
                                     { className: 'ms-text-dark' },

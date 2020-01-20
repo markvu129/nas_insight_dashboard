@@ -45,11 +45,13 @@ class Detail extends Component {
                     <div className="ms-panel-body p-0">
                         <div className="ms-social-media-followers">
                             <div className="ms-social-grid">
+                                <div className="section-icon"><i className="fa fa-tv"></i></div>
                                 <p className="ms-text-dark">{views}</p>
                                 <span>Video views</span>
 
                             </div>
                             <div className="ms-social-grid">
+                                <div className="section-icon"><i className="fa fa-user"></i></div>
                                 <p className="ms-text-dark">{views_unique}</p>
                                 <span>Video views unique</span>
                             </div>
@@ -58,10 +60,12 @@ class Detail extends Component {
                     <div className="ms-panel-body p-0">
                         <div className="ms-social-media-followers">
                             <div className="ms-social-grid">
+                                <div className="section-icon"><i className="fa fa-hourglass-1"></i></div>
                                 <p className="ms-text-dark">{view_time}</p>
                                 <span>Page video view time (minutes)</span>
                             </div>
                             <div className="ms-social-grid">
+                                <div className="section-icon"><i className="fa fa-history"></i></div>
                                 <p className="ms-text-dark">{complete_view}</p>
                                 <span>Video views complete 30s</span>
                             </div>

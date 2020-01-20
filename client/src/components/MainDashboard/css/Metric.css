@@ -5,3 +5,8 @@
     border-radius: 5px;
     border: 1px transparent;
 }
+
+.section-icon i {
+    font-size: 2.5em !important;
+    color: black !important
+}
