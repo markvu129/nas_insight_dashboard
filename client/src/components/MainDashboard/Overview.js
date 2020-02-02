@@ -1,10 +1,8 @@
 import React, {Component} from 'react';
 import Metric from "../MainDashboard/Metric";
 import FacebookInsight from "./Chart/FacebookInsight";
-import FacebookFeed from "../MainDashboard/Feed/FacebookFeed";
-import YoutubeFeed from "../MainDashboard/Feed/YoutubeFeed";
-import InstagramFeed from "../MainDashboard/Feed/InstagramFeed";
 import axios from "axios";
+import TopVideos from "./TopVideos";
 
 
 class Overview extends Component {
@@ -89,11 +87,15 @@ class Overview extends Component {
 
     render() {
         return (
-            <div className="row">
-                <Metric/>
-                <FacebookInsight/>
-                {/*<FacebookFeed label="facebook feed" posts={this.state.topFbPosts}*/}
-                {/*                  comments={this.state.topFbComments}/>*/}
+            <div>
+                <div className="row">
+                    <Metric/>
+                    <FacebookInsight/>
+                    {/*<FacebookFeed label="facebook feed" posts={this.state.topFbPosts}*/}
+                    {/*                  comments={this.state.topFbComments}/>*/}
+
+                </div>
+                <TopVideos />
             </div>
         )
     }

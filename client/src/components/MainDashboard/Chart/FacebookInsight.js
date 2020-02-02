@@ -266,13 +266,13 @@ class FacebookInsight extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContent) {
-        return this.state.monthlyGraphData != nextState.monthlyGraphData
-            || this.state.metric != nextState.metric
-            || this.state.igMetric != nextState.igMetric
-            || this.state.monthlyIgGraphData != nextState.monthlyIgGraphData
-            || this.state.modalIsOpen != nextState.modalIsOpen
-            || this.state.startDate != nextState.startDate
-            || this.state.endDate != nextState.endDate
+        return this.state.monthlyGraphData !== nextState.monthlyGraphData
+            || this.state.metric !== nextState.metric
+            || this.state.igMetric !== nextState.igMetric
+            || this.state.monthlyIgGraphData !== nextState.monthlyIgGraphData
+            || this.state.modalIsOpen !== nextState.modalIsOpen
+            || this.state.startDate !== nextState.startDate
+            || this.state.endDate !== nextState.endDate
     }
 
     render() {

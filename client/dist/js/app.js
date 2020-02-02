@@ -5485,6 +5485,271 @@ module.exports = _inheritsLoose;
 
 /***/ }),
 
+/***/ "8CBH":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__("GiK3");
+
+var _react2 = _interopRequireDefault(_react);
+
+__webpack_require__("mFdI");
+
+var _axios = __webpack_require__("mtWM");
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _reactSelect = __webpack_require__("sOAP");
+
+var _reactSelect2 = _interopRequireDefault(_reactSelect);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var TopVideos = function (_Component) {
+    _inherits(TopVideos, _Component);
+
+    function TopVideos(props) {
+        _classCallCheck(this, TopVideos);
+
+        var _this = _possibleConstructorReturn(this, (TopVideos.__proto__ || Object.getPrototypeOf(TopVideos)).call(this, props));
+
+        _this.state = {
+            source: "nasDailyFB",
+            recentVideos: []
+        };
+        _this.fetchVideos = _this.fetchVideos.bind(_this);
+        _this.renderVideos = _this.renderVideos.bind(_this);
+        _this.onSelectMetrics = _this.onSelectMetrics.bind(_this);
+        return _this;
+    }
+
+    _createClass(TopVideos, [{
+        key: 'fetchVideos',
+        value: function fetchVideos(value) {
+            var _this2 = this;
+
+            var uri = "https://nasinsightserver.herokuapp.com/api/videos/" + value + "/latest";
+            _axios2.default.get(uri).then(function (response) {
+                console.log(response);
+                _this2.setState({
+                    recentVideos: response.data
+                });
+            });
+        }
+    }, {
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            this.fetchVideos(this.state.source);
+        }
+    }, {
+        key: 'shouldComponentUpdate',
+        value: function shouldComponentUpdate(nextProps, nextState, nextContent) {
+            return this.state.recentVideos !== nextState.recentVideos;
+        }
+    }, {
+        key: 'onSelectMetrics',
+        value: function onSelectMetrics(value) {
+            this.fetchVideos(value.value);
+            this.setState({
+                source: value.value
+            });
+        }
+    }, {
+        key: 'renderVideos',
+        value: function renderVideos(videos) {
+            var listOfVideos = videos.map(function (video) {
+                return _react2.default.createElement(
+                    'tr',
+                    { key: video.id },
+                    _react2.default.createElement(
+                        'td',
+                        { 'data-column': 'Video' },
+                        _react2.default.createElement('img', { className: 'video-widget-img', src: video.picture }),
+                        _react2.default.createElement('br', null),
+                        _react2.default.createElement(
+                            'p',
+                            { className: 'video-widget-title' },
+                            video.title
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'td',
+                        { 'data-column': 'Total views' },
+                        _react2.default.createElement(
+                            'p',
+                            { className: 'video-widget-metric' },
+                            video.data.filter(function (x) {
+                                return x.name === 'total_video_views';
+                            })[0].values[0].value.toLocaleString()
+                        ),
+                        _react2.default.createElement(
+                            'p',
+                            { className: 'video-widget-annotation' },
+                            'Views'
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'td',
+                        { 'data-column': 'Total impressions' },
+                        _react2.default.createElement(
+                            'p',
+                            { className: 'video-widget-metric' },
+                            video.data.filter(function (x) {
+                                return x.name === 'total_video_impressions';
+                            })[0].values[0].value.toLocaleString()
+                        ),
+                        _react2.default.createElement(
+                            'p',
+                            { className: 'video-widget-annotation' },
+                            'Impressions'
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'td',
+                        { 'data-column': 'Engagement' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'video-widget-reactions' },
+                            _react2.default.createElement(
+                                'p',
+                                { className: 'video-widget-metric' },
+                                video.data.filter(function (x) {
+                                    return x.name === 'total_video_stories_by_action_type';
+                                })[0].values[0].value['share'].toLocaleString()
+                            ),
+                            _react2.default.createElement(
+                                'p',
+                                { className: 'video-widget-annotation' },
+                                'Share'
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'video-widget-reactions' },
+                            _react2.default.createElement(
+                                'p',
+                                { className: 'video-widget-metric' },
+                                video.data.filter(function (x) {
+                                    return x.name === 'total_video_stories_by_action_type';
+                                })[0].values[0].value['like'].toLocaleString()
+                            ),
+                            _react2.default.createElement(
+                                'p',
+                                { className: 'video-widget-annotation' },
+                                'Like'
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'video-widget-reactions' },
+                            _react2.default.createElement(
+                                'p',
+                                { className: 'video-widget-metric' },
+                                video.data.filter(function (x) {
+                                    return x.name === 'total_video_stories_by_action_type';
+                                })[0].values[0].value['comment'].toLocaleString()
+                            ),
+                            _react2.default.createElement(
+                                'p',
+                                { className: 'video-widget-annotation' },
+                                'Comments'
+                            )
+                        )
+                    )
+                );
+            });
+            return _react2.default.createElement(
+                'tbody',
+                null,
+                listOfVideos
+            );
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this3 = this;
+
+            if (this.state.recentVideos.length > 0) {
+
+                var sourceOptions = [{ "label": "NasDaily", "value": "nasDailyFB" }, { "label": "NasDaily VN", "value": "nasDailyFBVN" }, { "label": "NasDaily SP", "value": "nasDailyFBSP" }, { "label": "NasDaily CN", "value": "nasDailyFBCH" }, { "label": "NasDaily PH", "value": "nasDailyFBPH" }, { "label": "NasDaily ARB", "value": "nasDailyFBARB" }, { "label": "NasDaily TH", "value": "nasDailyFBTH" }];
+                return _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(
+                        'table',
+                        null,
+                        _react2.default.createElement(
+                            'thead',
+                            null,
+                            _react2.default.createElement(
+                                'tr',
+                                null,
+                                _react2.default.createElement(
+                                    'th',
+                                    { className: 'video-column' },
+                                    _react2.default.createElement(
+                                        'p',
+                                        { className: 'video-column-title' },
+                                        'Video'
+                                    ),
+                                    _react2.default.createElement(
+                                        'p',
+                                        null,
+                                        _react2.default.createElement(_reactSelect2.default, { className: 'select-video-source',
+                                            placeholder: this.state.source ? this.state.source : "Select source",
+                                            options: sourceOptions,
+                                            onChange: function onChange(value) {
+                                                return _this3.onSelectMetrics(value);
+                                            } })
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    'th',
+                                    null,
+                                    'Total views'
+                                ),
+                                _react2.default.createElement(
+                                    'th',
+                                    null,
+                                    'Total impressions'
+                                ),
+                                _react2.default.createElement(
+                                    'th',
+                                    null,
+                                    'Engagement'
+                                )
+                            )
+                        ),
+                        this.renderVideos(this.state.recentVideos)
+                    )
+                );
+            } else {
+                return _react2.default.createElement('div', null);
+            }
+        }
+    }]);
+
+    return TopVideos;
+}(_react.Component);
+
+exports.default = TopVideos;
+
+/***/ }),
+
 /***/ "8Czx":
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -16866,266 +17131,6 @@ exports.default = (0, _history.createBrowserHistory)();
 
 /***/ }),
 
-/***/ "MnFW":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__("GiK3");
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var InstagramFeed = function (_Component) {
-    _inherits(InstagramFeed, _Component);
-
-    function InstagramFeed(props) {
-        _classCallCheck(this, InstagramFeed);
-
-        return _possibleConstructorReturn(this, (InstagramFeed.__proto__ || Object.getPrototypeOf(InstagramFeed)).call(this, props));
-    }
-
-    _createClass(InstagramFeed, [{
-        key: "render",
-        value: function render() {
-            return _react2.default.createElement(
-                "div",
-                { "class": "col-xl-4 col-md-12" },
-                _react2.default.createElement(
-                    "div",
-                    { "class": "ms-panel ms-panel-fh" },
-                    _react2.default.createElement(
-                        "div",
-                        { "class": "ms-panel-header" },
-                        _react2.default.createElement(
-                            "h6",
-                            null,
-                            this.props.label
-                        )
-                    ),
-                    _react2.default.createElement(
-                        "div",
-                        { "class": "ms-panel-body p-0" },
-                        _react2.default.createElement(
-                            "ul",
-                            { "class": "ms-list ms-feed ms-instagram-feed" },
-                            _react2.default.createElement(
-                                "li",
-                                { "class": "ms-list-item" },
-                                _react2.default.createElement(
-                                    "div",
-                                    { "class": "media clearfix" },
-                                    _react2.default.createElement(
-                                        "div",
-                                        { "class": "media-body" },
-                                        _react2.default.createElement(
-                                            "h4",
-                                            { "class": "ms-feed-user" },
-                                            "username24"
-                                        )
-                                    )
-                                ),
-                                _react2.default.createElement(
-                                    "ul",
-                                    { "class": "ms-group-members clearfix" },
-                                    _react2.default.createElement(
-                                        "li",
-                                        null,
-                                        _react2.default.createElement("img", { src: "https://via.placeholder.com/270x270", alt: "member" })
-                                    ),
-                                    _react2.default.createElement(
-                                        "li",
-                                        null,
-                                        _react2.default.createElement("img", { src: "https://via.placeholder.com/270x270", alt: "member" })
-                                    ),
-                                    _react2.default.createElement(
-                                        "li",
-                                        { "class": "ms-group-count" },
-                                        _react2.default.createElement(
-                                            "p",
-                                            null,
-                                            "48 likes"
-                                        )
-                                    )
-                                ),
-                                _react2.default.createElement(
-                                    "p",
-                                    null,
-                                    _react2.default.createElement(
-                                        "span",
-                                        { "class": "ms-text-dark medium" },
-                                        "username24"
-                                    ),
-                                    " website design in progress "
-                                ),
-                                _react2.default.createElement(
-                                    "p",
-                                    null,
-                                    _react2.default.createElement(
-                                        "a",
-                                        { href: "#", "class": "btn-link" },
-                                        "#design"
-                                    ),
-                                    " ",
-                                    _react2.default.createElement(
-                                        "a",
-                                        { href: "#", "class": "btn-link" },
-                                        "#ui"
-                                    ),
-                                    " ",
-                                    _react2.default.createElement(
-                                        "a",
-                                        {
-                                            href: "#", "class": "btn-link" },
-                                        "#ux"
-                                    ),
-                                    " ",
-                                    _react2.default.createElement(
-                                        "a",
-                                        { href: "#", "class": "btn-link" },
-                                        "#website"
-                                    )
-                                )
-                            ),
-                            _react2.default.createElement(
-                                "li",
-                                { "class": "ms-list-item" },
-                                _react2.default.createElement(
-                                    "div",
-                                    { "class": "media clearfix" },
-                                    _react2.default.createElement("img", { src: "https://via.placeholder.com/270x270", "class": "ms-img-round ms-img-small",
-                                        alt: "people" }),
-                                    _react2.default.createElement(
-                                        "div",
-                                        { "class": "media-body" },
-                                        _react2.default.createElement(
-                                            "h4",
-                                            { "class": "ms-feed-user" },
-                                            "username24"
-                                        )
-                                    )
-                                ),
-                                _react2.default.createElement("img", { "class": "ms-fb-feed-img", src: "https://via.placeholder.com/530x240", alt: "post" }),
-                                _react2.default.createElement(
-                                    "div",
-                                    { "class": "d-flex justify-content-between" },
-                                    _react2.default.createElement(
-                                        "div",
-                                        { "class": "ms-feed-controls" },
-                                        _react2.default.createElement(
-                                            "i",
-                                            { "class": "material-icons" },
-                                            "favorite_border"
-                                        ),
-                                        _react2.default.createElement(
-                                            "i",
-                                            { "class": "material-icons" },
-                                            "chat_bubble_outline"
-                                        )
-                                    )
-                                ),
-                                _react2.default.createElement(
-                                    "ul",
-                                    { "class": "ms-group-members clearfix" },
-                                    _react2.default.createElement(
-                                        "li",
-                                        null,
-                                        _react2.default.createElement("img", { src: "https://via.placeholder.com/270x270", alt: "member" })
-                                    ),
-                                    _react2.default.createElement(
-                                        "li",
-                                        null,
-                                        _react2.default.createElement("img", { src: "https://via.placeholder.com/270x270", alt: "member" })
-                                    ),
-                                    _react2.default.createElement(
-                                        "li",
-                                        { "class": "ms-group-count" },
-                                        _react2.default.createElement(
-                                            "p",
-                                            null,
-                                            "Liked By ",
-                                            _react2.default.createElement(
-                                                "span",
-                                                {
-                                                    "class": "ms-text-dark medium" },
-                                                "user5"
-                                            ),
-                                            " and ",
-                                            _react2.default.createElement(
-                                                "span",
-                                                { "class": "ms-text-dark medium" },
-                                                "37 others"
-                                            )
-                                        )
-                                    )
-                                ),
-                                _react2.default.createElement(
-                                    "p",
-                                    null,
-                                    _react2.default.createElement(
-                                        "span",
-                                        { "class": "ms-text-dark medium" },
-                                        "username24"
-                                    ),
-                                    " website design in progress "
-                                ),
-                                _react2.default.createElement(
-                                    "p",
-                                    null,
-                                    _react2.default.createElement(
-                                        "a",
-                                        { href: "#", "class": "btn-link" },
-                                        "#design"
-                                    ),
-                                    " ",
-                                    _react2.default.createElement(
-                                        "a",
-                                        { href: "#", "class": "btn-link" },
-                                        "#ui"
-                                    ),
-                                    " ",
-                                    _react2.default.createElement(
-                                        "a",
-                                        {
-                                            href: "#", "class": "btn-link" },
-                                        "#ux"
-                                    ),
-                                    " ",
-                                    _react2.default.createElement(
-                                        "a",
-                                        { href: "#", "class": "btn-link" },
-                                        "#website"
-                                    )
-                                )
-                            )
-                        )
-                    )
-                )
-            );
-        }
-    }]);
-
-    return InstagramFeed;
-}(_react.Component);
-
-exports.default = InstagramFeed;
-
-/***/ }),
-
 /***/ "MoMe":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -17173,21 +17178,13 @@ var _FacebookInsight = __webpack_require__("UhJn");
 
 var _FacebookInsight2 = _interopRequireDefault(_FacebookInsight);
 
-var _FacebookFeed = __webpack_require__("Ym6h");
-
-var _FacebookFeed2 = _interopRequireDefault(_FacebookFeed);
-
-var _YoutubeFeed = __webpack_require__("X/23");
-
-var _YoutubeFeed2 = _interopRequireDefault(_YoutubeFeed);
-
-var _InstagramFeed = __webpack_require__("MnFW");
-
-var _InstagramFeed2 = _interopRequireDefault(_InstagramFeed);
-
 var _axios = __webpack_require__("mtWM");
 
 var _axios2 = _interopRequireDefault(_axios);
+
+var _TopVideos = __webpack_require__("8CBH");
+
+var _TopVideos2 = _interopRequireDefault(_TopVideos);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17285,9 +17282,14 @@ var Overview = function (_Component) {
         value: function render() {
             return _react2.default.createElement(
                 "div",
-                { className: "row" },
-                _react2.default.createElement(_Metric2.default, null),
-                _react2.default.createElement(_FacebookInsight2.default, null)
+                null,
+                _react2.default.createElement(
+                    "div",
+                    { className: "row" },
+                    _react2.default.createElement(_Metric2.default, null),
+                    _react2.default.createElement(_FacebookInsight2.default, null)
+                ),
+                _react2.default.createElement(_TopVideos2.default, null)
             );
         }
     }]);
@@ -23900,7 +23902,7 @@ exports = module.exports = __webpack_require__("FZ+f")(false);
 
 
 // module
-exports.push([module.i, ".flag-icon {\n    width: 64px !important;\n    height: 45px !important;\n    margin-bottom: 10px;\n    border-radius: 5px;\n    border: 1px transparent;\n}\n\n.section-icon i {\n    font-size: 2.5em !important;\n    color: black !important\n}", ""]);
+exports.push([module.i, ".flag-icon {\n    width: 64px !important;\n    height: 45px !important;\n    margin-bottom: 10px;\n    border-radius: 5px;\n    border: 1px transparent;\n}\n\n.section-icon i {\n    font-size: 2.5em !important;\n    color: black !important;\n}", ""]);
 
 // exports
 
@@ -24870,7 +24872,7 @@ var FacebookInsight = function (_Component) {
     }, {
         key: "shouldComponentUpdate",
         value: function shouldComponentUpdate(nextProps, nextState, nextContent) {
-            return this.state.monthlyGraphData != nextState.monthlyGraphData || this.state.metric != nextState.metric || this.state.igMetric != nextState.igMetric || this.state.monthlyIgGraphData != nextState.monthlyIgGraphData || this.state.modalIsOpen != nextState.modalIsOpen || this.state.startDate != nextState.startDate || this.state.endDate != nextState.endDate;
+            return this.state.monthlyGraphData !== nextState.monthlyGraphData || this.state.metric !== nextState.metric || this.state.igMetric !== nextState.igMetric || this.state.monthlyIgGraphData !== nextState.monthlyIgGraphData || this.state.modalIsOpen !== nextState.modalIsOpen || this.state.startDate !== nextState.startDate || this.state.endDate !== nextState.endDate;
         }
     }, {
         key: "render",
@@ -26102,376 +26104,6 @@ module.exports = listCacheClear;
 
 /***/ }),
 
-/***/ "X/23":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__("GiK3");
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-var YoutubeFeed = function (_Component) {
-    _inherits(YoutubeFeed, _Component);
-
-    function YoutubeFeed(props) {
-        _classCallCheck(this, YoutubeFeed);
-
-        return _possibleConstructorReturn(this, (YoutubeFeed.__proto__ || Object.getPrototypeOf(YoutubeFeed)).call(this, props));
-    }
-
-    _createClass(YoutubeFeed, [{
-        key: "render",
-        value: function render() {
-            if (this.props.posts.length > 0 && this.props.comments.length > 0) {
-                return _react2.default.createElement(
-                    "div",
-                    { className: "col-xl-4 col-md-12" },
-                    _react2.default.createElement(
-                        "div",
-                        { className: "ms-panel ms-panel-fh" },
-                        _react2.default.createElement(
-                            "div",
-                            { className: "ms-panel-header" },
-                            _react2.default.createElement(
-                                "h6",
-                                null,
-                                "Youtube Feed"
-                            )
-                        ),
-                        _react2.default.createElement(
-                            "div",
-                            { className: "ms-panel-body p-0" },
-                            _react2.default.createElement(
-                                "ul",
-                                { className: "ms-list ms-feed ms-twitter-feed" },
-                                _react2.default.createElement(
-                                    "li",
-                                    { className: "ms-list-item" },
-                                    _react2.default.createElement(
-                                        "div",
-                                        { className: "media clearfix" },
-                                        _react2.default.createElement("img", { src: "https://via.placeholder.com/270x270", className: "ms-img-round ms-img-small",
-                                            alt: "people" }),
-                                        _react2.default.createElement(
-                                            "div",
-                                            { className: "media-body" },
-                                            _react2.default.createElement(
-                                                "h4",
-                                                { className: "ms-feed-user" },
-                                                "Rakhan Potik"
-                                            ),
-                                            " ",
-                                            _react2.default.createElement(
-                                                "p",
-                                                null,
-                                                "@rakhan45"
-                                            ),
-                                            _react2.default.createElement(
-                                                "p",
-                                                null,
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "@zurak"
-                                                ),
-                                                " Thanks for sharing this awesome article with us, it is truly inspiring and an eye opener"
-                                            ),
-                                            _react2.default.createElement(
-                                                "p",
-                                                null,
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "#design"
-                                                ),
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "#article"
-                                                ),
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "#interface"
-                                                )
-                                            )
-                                        )
-                                    )
-                                ),
-                                _react2.default.createElement(
-                                    "li",
-                                    { className: "ms-list-item" },
-                                    _react2.default.createElement(
-                                        "div",
-                                        { className: "media clearfix" },
-                                        _react2.default.createElement("img", { src: "https://via.placeholder.com/270x270", className: "ms-img-round ms-img-small",
-                                            alt: "people" }),
-                                        _react2.default.createElement(
-                                            "div",
-                                            { className: "media-body" },
-                                            _react2.default.createElement(
-                                                "h4",
-                                                { className: "ms-feed-user" },
-                                                "Rakhan Potik"
-                                            ),
-                                            " ",
-                                            _react2.default.createElement(
-                                                "p",
-                                                null,
-                                                "@rakhan45"
-                                            ),
-                                            _react2.default.createElement(
-                                                "p",
-                                                null,
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "@zurak"
-                                                ),
-                                                " Thanks for sharing this awesome article with us, it is truly inspiring and an eye opener"
-                                            ),
-                                            _react2.default.createElement(
-                                                "p",
-                                                null,
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "#design"
-                                                ),
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "#article"
-                                                ),
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "#interface"
-                                                )
-                                            )
-                                        )
-                                    )
-                                ),
-                                _react2.default.createElement(
-                                    "li",
-                                    { className: "ms-list-item" },
-                                    _react2.default.createElement(
-                                        "div",
-                                        { className: "media clearfix" },
-                                        _react2.default.createElement("img", { src: "https://via.placeholder.com/270x270", className: "ms-img-round ms-img-small",
-                                            alt: "people" }),
-                                        _react2.default.createElement(
-                                            "div",
-                                            { className: "media-body" },
-                                            _react2.default.createElement(
-                                                "h4",
-                                                { className: "ms-feed-user" },
-                                                "Rakhan Potik"
-                                            ),
-                                            " ",
-                                            _react2.default.createElement(
-                                                "p",
-                                                null,
-                                                "@rakhan45"
-                                            ),
-                                            _react2.default.createElement(
-                                                "p",
-                                                null,
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "@zurak"
-                                                ),
-                                                " Thanks for sharing this awesome article with us, it is truly inspiring and an eye opener"
-                                            ),
-                                            _react2.default.createElement(
-                                                "p",
-                                                null,
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "#design"
-                                                ),
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "#article"
-                                                ),
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "#interface"
-                                                )
-                                            )
-                                        )
-                                    )
-                                ),
-                                _react2.default.createElement(
-                                    "li",
-                                    { className: "ms-list-item" },
-                                    _react2.default.createElement(
-                                        "div",
-                                        { className: "media clearfix" },
-                                        _react2.default.createElement("img", { src: "https://via.placeholder.com/270x270", className: "ms-img-round ms-img-small",
-                                            alt: "people" }),
-                                        _react2.default.createElement(
-                                            "div",
-                                            { className: "media-body" },
-                                            _react2.default.createElement(
-                                                "h4",
-                                                { className: "ms-feed-user" },
-                                                "Rakhan Potik"
-                                            ),
-                                            " ",
-                                            _react2.default.createElement(
-                                                "p",
-                                                null,
-                                                "@rakhan45"
-                                            ),
-                                            _react2.default.createElement(
-                                                "p",
-                                                null,
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "@zurak"
-                                                ),
-                                                " Thanks for sharing this awesome article with us, it is truly inspiring and an eye opener"
-                                            ),
-                                            _react2.default.createElement(
-                                                "p",
-                                                null,
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "#design"
-                                                ),
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "#article"
-                                                ),
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "#interface"
-                                                )
-                                            )
-                                        )
-                                    )
-                                ),
-                                _react2.default.createElement(
-                                    "li",
-                                    { className: "ms-list-item" },
-                                    _react2.default.createElement(
-                                        "div",
-                                        { className: "media clearfix" },
-                                        _react2.default.createElement("img", { src: "https://via.placeholder.com/270x270", className: "ms-img-round ms-img-small",
-                                            alt: "people" }),
-                                        _react2.default.createElement(
-                                            "div",
-                                            { className: "media-body" },
-                                            _react2.default.createElement(
-                                                "h4",
-                                                { className: "ms-feed-user" },
-                                                "Rakhan Potik"
-                                            ),
-                                            " ",
-                                            _react2.default.createElement(
-                                                "p",
-                                                null,
-                                                "@rakhan45"
-                                            ),
-                                            _react2.default.createElement(
-                                                "p",
-                                                null,
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "@zurak"
-                                                ),
-                                                " Thanks for sharing this awesome article with us, it is truly inspiring and an eye opener"
-                                            ),
-                                            _react2.default.createElement(
-                                                "p",
-                                                null,
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "#design"
-                                                ),
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "#article"
-                                                ),
-                                                _react2.default.createElement(
-                                                    "a",
-                                                    { href: "#", className: "btn-link" },
-                                                    "#interface"
-                                                )
-                                            )
-                                        )
-                                    )
-                                )
-                            )
-                        )
-                    )
-                );
-            } else {
-                return _react2.default.createElement(
-                    "div",
-                    { className: "col-xl-4 col-md-12" },
-                    _react2.default.createElement(
-                        "div",
-                        { className: "ms-panel ms-panel-fh" },
-                        _react2.default.createElement(
-                            "div",
-                            { className: "ms-panel-header" },
-                            _react2.default.createElement(
-                                "h6",
-                                null,
-                                "Youtube Feed"
-                            )
-                        ),
-                        _react2.default.createElement(
-                            "div",
-                            { className: "ms-panel-body p-0" },
-                            _react2.default.createElement(
-                                "h4",
-                                null,
-                                "Coming soon"
-                            )
-                        )
-                    )
-                );
-            }
-        }
-    }]);
-
-    return YoutubeFeed;
-}(_react.Component);
-
-exports.default = YoutubeFeed;
-
-/***/ }),
-
 /***/ "XU1s":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -27051,138 +26683,6 @@ MapCache.prototype.set = mapCacheSet;
 
 module.exports = MapCache;
 
-
-/***/ }),
-
-/***/ "Ym6h":
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__("GiK3");
-
-var _react2 = _interopRequireDefault(_react);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /**
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Created by markvu129 on 6/1/20 on
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                * Includes module purpose here
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                */
-
-var FacebookFeed = function (_Component) {
-    _inherits(FacebookFeed, _Component);
-
-    function FacebookFeed(props) {
-        _classCallCheck(this, FacebookFeed);
-
-        var _this = _possibleConstructorReturn(this, (FacebookFeed.__proto__ || Object.getPrototypeOf(FacebookFeed)).call(this, props));
-
-        _this.renderTopPosts = _this.renderTopPosts.bind(_this);
-        return _this;
-    }
-
-    _createClass(FacebookFeed, [{
-        key: "renderTopPosts",
-        value: function renderTopPosts() {
-            if (this.props.posts.length > 0) {
-                return this.props.posts.map(function (post, index) {
-                    return _react2.default.createElement(
-                        "li",
-                        { className: "ms-list-item", key: post.id },
-                        _react2.default.createElement(
-                            "div",
-                            { className: "media clearfix" },
-                            _react2.default.createElement(
-                                "div",
-                                { className: "media-body" },
-                                _react2.default.createElement(
-                                    "h4",
-                                    { className: "ms-feed-user" },
-                                    post.id
-                                )
-                            )
-                        ),
-                        _react2.default.createElement(
-                            "ul",
-                            { className: "ms-group-members clearfix" },
-                            _react2.default.createElement(
-                                "li",
-                                null,
-                                _react2.default.createElement("img", { src: "https://via.placeholder.com/270x270", alt: "member" })
-                            ),
-                            _react2.default.createElement(
-                                "li",
-                                null,
-                                _react2.default.createElement("img", { src: "https://via.placeholder.com/270x270", alt: "member" })
-                            ),
-                            _react2.default.createElement(
-                                "li",
-                                { className: "ms-group-count" },
-                                _react2.default.createElement(
-                                    "p",
-                                    null,
-                                    post.insights.data.filter(function (x) {
-                                        return x.name === 'post_reactions_like_total';
-                                    })[0].values[0].value.toLocaleString(),
-                                    " likes"
-                                )
-                            )
-                        )
-                    );
-                });
-            }
-        }
-    }, {
-        key: "componentDidMount",
-        value: function componentDidMount() {}
-    }, {
-        key: "render",
-        value: function render() {
-            return _react2.default.createElement(
-                "div",
-                { className: "col-xl-4 col-md-12" },
-                _react2.default.createElement(
-                    "div",
-                    { className: "ms-panel ms-panel-fh" },
-                    _react2.default.createElement(
-                        "div",
-                        { className: "ms-panel-header" },
-                        _react2.default.createElement(
-                            "h6",
-                            null,
-                            this.props.label
-                        )
-                    ),
-                    _react2.default.createElement(
-                        "div",
-                        { className: "ms-panel-body p-0" },
-                        _react2.default.createElement(
-                            "ul",
-                            { className: "ms-list ms-feed ms-facebook-feed" },
-                            this.renderTopPosts()
-                        )
-                    )
-                )
-            );
-        }
-    }]);
-
-    return FacebookFeed;
-}(_react.Component);
-
-exports.default = FacebookFeed;
 
 /***/ }),
 
@@ -35393,6 +34893,21 @@ module.exports = {
   extend: extend,
   trim: trim
 };
+
+
+/***/ }),
+
+/***/ "cU1x":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("FZ+f")(false);
+// imports
+
+
+// module
+exports.push([module.i, "table {\n    width: 100%;\n    border-collapse: collapse;\n    margin:50px auto;\n    font-family: 'Roboto', 'sans-serif'\n}\n\n/* Zebra striping */\ntr {\n    background: white\n}\n\ntr:nth-of-type(odd) {\n    background: #eee;\n}\n\nth {\n    background: #F9CA47;\n    color: white;\n    font-weight: bold;\n}\n\ntd, th {\n    padding: 10px;\n    border: 1px solid #ccc;\n    text-align: left;\n    font-size: 18px;\n}\n\n/*\nMax width before this PARTICULAR table gets nasty\nThis query will take effect for any screen smaller than 760px\nand also iPads specifically.\n*/\n@media\nonly screen and (max-width: 760px),\n(min-device-width: 768px) and (max-device-width: 1024px)  {\n\n    .select-video-source {\n        display: none;\n    }\n    \n    table {\n        width: 100%;\n    }\n\n    /* Force table to not be like tables anymore */\n    table, thead, tbody, th, td, tr {\n        display: block;\n    }\n\n    /* Hide table headers (but not display: none;, for accessibility) */\n    thead tr {\n        position: absolute;\n        top: -9999px;\n        left: -9999px;\n    }\n\n    tr { border: 1px solid #ccc; }\n\n    td {\n        /* Behave  like a \"row\" */\n        border: none;\n        border-bottom: 1px solid #eee;\n        position: relative;\n        padding-left: 50%;\n    }\n\n    td:before {\n        /* Now like a table header */\n        position: absolute;\n        /* Top/left values mimic padding */\n        top: 6px;\n        left: 6px;\n        width: 45%;\n        padding-right: 10px;\n        white-space: nowrap;\n        /* Label the data */\n        content: attr(data-column);\n\n        color: #000;\n        font-weight: bold;\n    }\n\n}\n\n.video-widget-img {\n    width: 200px;\n    max-width: 200px !important;\n    height: 100px;\n    border-radius: 5px;\n}\n\n.video-widget-title {\n    color: #878793;\n    font-size: 14px;\n    margin-top: 20px\n}\n\n.video-widget-metric {\n    margin-bottom: 0;\n    font-size: 1.3rem;\n    font-weight: 700;\n    color: #34334a\n}\n\n.video-widget-annotation {\n    color: #878793;\n    font-size: 14px;\n}\n\n.video-widget-reactions {\n    width: 30%;\n    display: inline-block;\n    float: left;\n}\n\n.select-video-source {\n    display: inline-block;\n    width: 70%;\n    font-size: 14px\n}\n.video-column-title {\n    width: 20%;\n    float:left;\n    font-size: 18px;\n    color: white;\n}\n\n.video-column {\n    padding-top: 20px\n}", ""]);
+
+// exports
 
 
 /***/ }),
@@ -55858,6 +55373,57 @@ module.exports = _extends;
 
 })));
 
+
+/***/ }),
+
+/***/ "mFdI":
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__("cU1x");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__("MTIv")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../../node_modules/css-loader/index.js!./TopVideos.css", function() {
+		var newContent = require("!!../../../../../node_modules/css-loader/index.js!./TopVideos.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
 
 /***/ }),
 
