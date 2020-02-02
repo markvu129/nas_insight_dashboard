@@ -33603,14 +33603,6 @@ var _Detail = __webpack_require__("tsZ6");
 
 var _Detail2 = _interopRequireDefault(_Detail);
 
-var _Modal = __webpack_require__("GMga");
-
-var _Modal2 = _interopRequireDefault(_Modal);
-
-var _reactFacebookPlayer = __webpack_require__("ry0+");
-
-var _reactFacebookPlayer2 = _interopRequireDefault(_reactFacebookPlayer);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -34079,7 +34071,12 @@ var Metric = function (_Component) {
                                 )
                             )
                         )
-                    )
+                    ),
+                    _react2.default.createElement(_Detail2.default, { modalIsOpen: this.state.modalIsOpen[this.state.activePage],
+                        closeModal: this.closeModal,
+                        activePage: this.state.title[this.state.activePage],
+                        allData: this.state.activePage === 'all' ? this.state.totalData : this.state.dailyData[this.state.activePage]['all_data']
+                    })
                 );
             } else {
                 return _react2.default.createElement('div', null);
