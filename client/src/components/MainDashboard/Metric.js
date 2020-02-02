@@ -2,6 +2,8 @@ import React, {Component} from 'react';
 import axios from "axios";
 import './css/Metric.css';
 import Detail from "./Modal/Detail";
+import Modal from "react-bootstrap/Modal";
+import FacebookPlayer from "react-facebook-player";
 
 class Metric extends Component {
 
@@ -245,11 +247,6 @@ class Metric extends Component {
                         </div>
                     </div>
 
-                    <Detail modalIsOpen={this.state.modalIsOpen[this.state.activePage]}
-                            closeModal={this.closeModal}
-                            activePage={this.state.title[this.state.activePage]}
-                            allData={this.state.activePage === 'all' ? this.state.totalData : this.state.dailyData[this.state.activePage]['all_data']}
-                    />
                 </div>
             )
         } else {

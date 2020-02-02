@@ -36,10 +36,17 @@ and also iPads specifically.
 only screen and (max-width: 760px),
 (min-device-width: 768px) and (max-device-width: 1024px)  {
 
+    .select-video-source-mobile {
+        display: block !important;
+        width: 100%;
+        margin-top: 20px;
+        margin-bottom: 20px;
+    }
+
     .select-video-source {
         display: none;
     }
-    
+
     table {
         width: 100%;
     }
@@ -64,6 +71,7 @@ only screen and (max-width: 760px),
         border-bottom: 1px solid #eee;
         position: relative;
         padding-left: 50%;
+        min-height: 150px;
     }
 
     td:before {
@@ -80,6 +88,18 @@ only screen and (max-width: 760px),
 
         color: #000;
         font-weight: bold;
+    }
+
+    .video-widget-metric {
+        margin-bottom: 0;
+        font-size: 1.1rem !important;
+        font-weight: 700;
+        color: #34334a
+    }
+
+    .video-widget-reactions {
+        margin-right: 5px;
+        font-size: 1.0rem !important;
     }
 
 }
@@ -129,4 +149,8 @@ only screen and (max-width: 760px),
 
 .video-column {
     padding-top: 20px
+}
+
+.select-video-source-mobile {
+    display: none;
 }

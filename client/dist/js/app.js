@@ -5511,6 +5511,16 @@ var _reactSelect = __webpack_require__("sOAP");
 
 var _reactSelect2 = _interopRequireDefault(_reactSelect);
 
+var _Modal = __webpack_require__("GMga");
+
+var _Modal2 = _interopRequireDefault(_Modal);
+
+var _reactFacebookPlayer = __webpack_require__("ry0+");
+
+var _reactFacebookPlayer2 = _interopRequireDefault(_reactFacebookPlayer);
+
+__webpack_require__("Y7y/");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -5529,11 +5539,16 @@ var TopVideos = function (_Component) {
 
         _this.state = {
             source: "nasDailyFB",
-            recentVideos: []
+            recentVideos: [],
+            currentVideo: {},
+            modalIsOpen: false
         };
         _this.fetchVideos = _this.fetchVideos.bind(_this);
         _this.renderVideos = _this.renderVideos.bind(_this);
         _this.onSelectMetrics = _this.onSelectMetrics.bind(_this);
+        _this.setCurrentVideo = _this.setCurrentVideo.bind(_this);
+        _this.closeModal = _this.closeModal.bind(_this);
+        _this.onPlayerReady = _this.onPlayerReady.bind(_this);
         return _this;
     }
 
@@ -5544,9 +5559,9 @@ var TopVideos = function (_Component) {
 
             var uri = "https://nasinsightserver.herokuapp.com/api/videos/" + value + "/latest";
             _axios2.default.get(uri).then(function (response) {
-                console.log(response);
                 _this2.setState({
-                    recentVideos: response.data
+                    recentVideos: response.data,
+                    currentVideo: response.data[0]
                 });
             });
         }
@@ -5558,7 +5573,7 @@ var TopVideos = function (_Component) {
     }, {
         key: 'shouldComponentUpdate',
         value: function shouldComponentUpdate(nextProps, nextState, nextContent) {
-            return this.state.recentVideos !== nextState.recentVideos;
+            return this.state.recentVideos !== nextState.recentVideos || this.state.currentVideo !== nextState.currentVideo || this.state.modalIsOpen !== nextState.modalIsOpen;
         }
     }, {
         key: 'onSelectMetrics',
@@ -5569,8 +5584,34 @@ var TopVideos = function (_Component) {
             });
         }
     }, {
+        key: 'setCurrentVideo',
+        value: function setCurrentVideo(id) {
+            var videos = this.state.recentVideos;
+            this.setState({
+                currentVideo: videos.filter(function (v) {
+                    return v.id === id;
+                })[0],
+                modalIsOpen: true
+            });
+        }
+    }, {
+        key: 'closeModal',
+        value: function closeModal() {
+            this.setState({
+                modalIsOpen: false
+            });
+        }
+    }, {
+        key: 'onPlayerReady',
+        value: function onPlayerReady(_id, player) {
+            player.unmute();
+            player.play();
+        }
+    }, {
         key: 'renderVideos',
         value: function renderVideos(videos) {
+            var _this3 = this;
+
             var listOfVideos = videos.map(function (video) {
                 return _react2.default.createElement(
                     'tr',
@@ -5578,7 +5619,9 @@ var TopVideos = function (_Component) {
                     _react2.default.createElement(
                         'td',
                         { 'data-column': 'Video' },
-                        _react2.default.createElement('img', { className: 'video-widget-img', src: video.picture }),
+                        _react2.default.createElement('img', { className: 'video-widget-img', src: video.picture, onClick: function onClick() {
+                                return _this3.setCurrentVideo(video.id);
+                            } }),
                         _react2.default.createElement('br', null),
                         _react2.default.createElement(
                             'p',
@@ -5621,7 +5664,7 @@ var TopVideos = function (_Component) {
                     _react2.default.createElement(
                         'td',
                         { 'data-column': 'Engagement' },
-                        _react2.default.createElement(
+                        _this3.state.source !== 'nasDailyFBCH' ? _react2.default.createElement(
                             'div',
                             { className: 'video-widget-reactions' },
                             _react2.default.createElement(
@@ -5634,9 +5677,9 @@ var TopVideos = function (_Component) {
                             _react2.default.createElement(
                                 'p',
                                 { className: 'video-widget-annotation' },
-                                'Share'
+                                'Shares'
                             )
-                        ),
+                        ) : _react2.default.createElement('div', null),
                         _react2.default.createElement(
                             'div',
                             { className: 'video-widget-reactions' },
@@ -5650,10 +5693,10 @@ var TopVideos = function (_Component) {
                             _react2.default.createElement(
                                 'p',
                                 { className: 'video-widget-annotation' },
-                                'Like'
+                                'Likes'
                             )
                         ),
-                        _react2.default.createElement(
+                        _this3.state.source !== 'nasDailyFBCH' ? _react2.default.createElement(
                             'div',
                             { className: 'video-widget-reactions' },
                             _react2.default.createElement(
@@ -5668,7 +5711,7 @@ var TopVideos = function (_Component) {
                                 { className: 'video-widget-annotation' },
                                 'Comments'
                             )
-                        )
+                        ) : _react2.default.createElement('div', null)
                     )
                 );
             });
@@ -5681,7 +5724,7 @@ var TopVideos = function (_Component) {
     }, {
         key: 'render',
         value: function render() {
-            var _this3 = this;
+            var _this4 = this;
 
             if (this.state.recentVideos.length > 0) {
 
@@ -5689,6 +5732,12 @@ var TopVideos = function (_Component) {
                 return _react2.default.createElement(
                     'div',
                     null,
+                    _react2.default.createElement(_reactSelect2.default, { className: 'select-video-source-mobile',
+                        placeholder: this.state.source ? "Video source: " + this.state.source : "Select source",
+                        options: sourceOptions,
+                        onChange: function onChange(value) {
+                            return _this4.onSelectMetrics(value);
+                        } }),
                     _react2.default.createElement(
                         'table',
                         null,
@@ -5713,7 +5762,7 @@ var TopVideos = function (_Component) {
                                             placeholder: this.state.source ? this.state.source : "Select source",
                                             options: sourceOptions,
                                             onChange: function onChange(value) {
-                                                return _this3.onSelectMetrics(value);
+                                                return _this4.onSelectMetrics(value);
                                             } })
                                     )
                                 ),
@@ -5735,7 +5784,130 @@ var TopVideos = function (_Component) {
                             )
                         ),
                         this.renderVideos(this.state.recentVideos)
-                    )
+                    ),
+                    this.state.currentVideo ? _react2.default.createElement(
+                        _Modal2.default,
+                        { id: 'stats', show: this.state.modalIsOpen, onHide: this.closeModal, animation: false },
+                        _react2.default.createElement(
+                            _Modal2.default.Body,
+                            null,
+                            _react2.default.createElement(
+                                'h2',
+                                { className: 'daily-detail-title', style: { 'color': '#e8c552' } },
+                                this.state.currentVideo.title
+                            ),
+                            _react2.default.createElement(_reactFacebookPlayer2.default, {
+                                width: 200,
+                                height: 100,
+                                appId: 880756785680649,
+                                videoId: this.state.currentVideo.id,
+                                id: 'video-id-' + this.state.currentVideo.id,
+                                onReady: this.onPlayerReady
+                            }),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'ms-panel-body p-0' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'ms-social-media-followers' },
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'ms-social-grid' },
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'section-icon' },
+                                            _react2.default.createElement('i', { className: 'fa fa-tv' })
+                                        ),
+                                        _react2.default.createElement(
+                                            'p',
+                                            { className: 'ms-text-dark' },
+                                            this.state.currentVideo.data.filter(function (x) {
+                                                return x.name === 'total_video_views_unique';
+                                            })[0].values[0].value.toLocaleString()
+                                        ),
+                                        _react2.default.createElement(
+                                            'span',
+                                            null,
+                                            'Total Views unique'
+                                        )
+                                    ),
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'ms-social-grid' },
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'section-icon' },
+                                            _react2.default.createElement('i', { className: 'fa fa-volume-up' })
+                                        ),
+                                        _react2.default.createElement(
+                                            'p',
+                                            { className: 'ms-text-dark' },
+                                            this.state.currentVideo.data.filter(function (x) {
+                                                return x.name === 'total_video_views_sound_on';
+                                            })[0].values[0].value.toLocaleString()
+                                        ),
+                                        _react2.default.createElement(
+                                            'span',
+                                            null,
+                                            'Views sound on'
+                                        )
+                                    )
+                                )
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'ms-panel-body p-0' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'ms-social-media-followers' },
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'ms-social-grid' },
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'section-icon' },
+                                            _react2.default.createElement('i', { className: 'fa fa-history' })
+                                        ),
+                                        _react2.default.createElement(
+                                            'p',
+                                            { className: 'ms-text-dark' },
+                                            this.state.currentVideo.data.filter(function (x) {
+                                                return x.name === 'total_video_views_unique';
+                                            })[0].values[0].value.toLocaleString()
+                                        ),
+                                        _react2.default.createElement(
+                                            'span',
+                                            null,
+                                            'Video view complete ',
+                                            _react2.default.createElement('br', null),
+                                            '(95% length)'
+                                        )
+                                    ),
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'ms-social-grid' },
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'section-icon' },
+                                            _react2.default.createElement('i', { className: 'fa fa-user' })
+                                        ),
+                                        _react2.default.createElement(
+                                            'p',
+                                            { className: 'ms-text-dark' },
+                                            this.state.currentVideo.data.filter(function (x) {
+                                                return x.name === 'total_video_impressions_unique';
+                                            })[0].values[0].value.toLocaleString()
+                                        ),
+                                        _react2.default.createElement(
+                                            'span',
+                                            null,
+                                            'Impressions unique'
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    ) : _react2.default.createElement('div', null)
                 );
             } else {
                 return _react2.default.createElement('div', null);
@@ -23902,7 +24074,7 @@ exports = module.exports = __webpack_require__("FZ+f")(false);
 
 
 // module
-exports.push([module.i, ".flag-icon {\n    width: 64px !important;\n    height: 45px !important;\n    margin-bottom: 10px;\n    border-radius: 5px;\n    border: 1px transparent;\n}\n\n.section-icon i {\n    font-size: 2.5em !important;\n    color: black !important;\n}", ""]);
+exports.push([module.i, ".flag-icon {\n    width: 64px !important;\n    height: 45px !important;\n    margin-bottom: 10px;\n    border-radius: 5px;\n    border: 1px transparent;\n}\n\n.section-icon i {\n    font-size: 2.5em !important;\n    color: black !important;\n}\n\n.fb_iframe_widget_fluid_desktop iframe {\n    min-width: 450px !important\n}", ""]);
 
 // exports
 
@@ -33431,6 +33603,14 @@ var _Detail = __webpack_require__("tsZ6");
 
 var _Detail2 = _interopRequireDefault(_Detail);
 
+var _Modal = __webpack_require__("GMga");
+
+var _Modal2 = _interopRequireDefault(_Modal);
+
+var _reactFacebookPlayer = __webpack_require__("ry0+");
+
+var _reactFacebookPlayer2 = _interopRequireDefault(_reactFacebookPlayer);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -33899,12 +34079,7 @@ var Metric = function (_Component) {
                                 )
                             )
                         )
-                    ),
-                    _react2.default.createElement(_Detail2.default, { modalIsOpen: this.state.modalIsOpen[this.state.activePage],
-                        closeModal: this.closeModal,
-                        activePage: this.state.title[this.state.activePage],
-                        allData: this.state.activePage === 'all' ? this.state.totalData : this.state.dailyData[this.state.activePage]['all_data']
-                    })
+                    )
                 );
             } else {
                 return _react2.default.createElement('div', null);
@@ -34905,7 +35080,7 @@ exports = module.exports = __webpack_require__("FZ+f")(false);
 
 
 // module
-exports.push([module.i, "table {\n    width: 100%;\n    border-collapse: collapse;\n    margin:50px auto;\n    font-family: 'Roboto', 'sans-serif'\n}\n\n/* Zebra striping */\ntr {\n    background: white\n}\n\ntr:nth-of-type(odd) {\n    background: #eee;\n}\n\nth {\n    background: #F9CA47;\n    color: white;\n    font-weight: bold;\n}\n\ntd, th {\n    padding: 10px;\n    border: 1px solid #ccc;\n    text-align: left;\n    font-size: 18px;\n}\n\n/*\nMax width before this PARTICULAR table gets nasty\nThis query will take effect for any screen smaller than 760px\nand also iPads specifically.\n*/\n@media\nonly screen and (max-width: 760px),\n(min-device-width: 768px) and (max-device-width: 1024px)  {\n\n    .select-video-source {\n        display: none;\n    }\n    \n    table {\n        width: 100%;\n    }\n\n    /* Force table to not be like tables anymore */\n    table, thead, tbody, th, td, tr {\n        display: block;\n    }\n\n    /* Hide table headers (but not display: none;, for accessibility) */\n    thead tr {\n        position: absolute;\n        top: -9999px;\n        left: -9999px;\n    }\n\n    tr { border: 1px solid #ccc; }\n\n    td {\n        /* Behave  like a \"row\" */\n        border: none;\n        border-bottom: 1px solid #eee;\n        position: relative;\n        padding-left: 50%;\n    }\n\n    td:before {\n        /* Now like a table header */\n        position: absolute;\n        /* Top/left values mimic padding */\n        top: 6px;\n        left: 6px;\n        width: 45%;\n        padding-right: 10px;\n        white-space: nowrap;\n        /* Label the data */\n        content: attr(data-column);\n\n        color: #000;\n        font-weight: bold;\n    }\n\n}\n\n.video-widget-img {\n    width: 200px;\n    max-width: 200px !important;\n    height: 100px;\n    border-radius: 5px;\n}\n\n.video-widget-title {\n    color: #878793;\n    font-size: 14px;\n    margin-top: 20px\n}\n\n.video-widget-metric {\n    margin-bottom: 0;\n    font-size: 1.3rem;\n    font-weight: 700;\n    color: #34334a\n}\n\n.video-widget-annotation {\n    color: #878793;\n    font-size: 14px;\n}\n\n.video-widget-reactions {\n    width: 30%;\n    display: inline-block;\n    float: left;\n}\n\n.select-video-source {\n    display: inline-block;\n    width: 70%;\n    font-size: 14px\n}\n.video-column-title {\n    width: 20%;\n    float:left;\n    font-size: 18px;\n    color: white;\n}\n\n.video-column {\n    padding-top: 20px\n}", ""]);
+exports.push([module.i, "table {\n    width: 100%;\n    border-collapse: collapse;\n    margin:50px auto;\n    font-family: 'Roboto', 'sans-serif'\n}\n\n/* Zebra striping */\ntr {\n    background: white\n}\n\ntr:nth-of-type(odd) {\n    background: #eee;\n}\n\nth {\n    background: #F9CA47;\n    color: white;\n    font-weight: bold;\n}\n\ntd, th {\n    padding: 10px;\n    border: 1px solid #ccc;\n    text-align: left;\n    font-size: 18px;\n}\n\n/*\nMax width before this PARTICULAR table gets nasty\nThis query will take effect for any screen smaller than 760px\nand also iPads specifically.\n*/\n@media\nonly screen and (max-width: 760px),\n(min-device-width: 768px) and (max-device-width: 1024px)  {\n\n    .select-video-source-mobile {\n        display: block !important;\n        width: 100%;\n        margin-top: 20px;\n        margin-bottom: 20px;\n    }\n\n    .select-video-source {\n        display: none;\n    }\n\n    table {\n        width: 100%;\n    }\n\n    /* Force table to not be like tables anymore */\n    table, thead, tbody, th, td, tr {\n        display: block;\n    }\n\n    /* Hide table headers (but not display: none;, for accessibility) */\n    thead tr {\n        position: absolute;\n        top: -9999px;\n        left: -9999px;\n    }\n\n    tr { border: 1px solid #ccc; }\n\n    td {\n        /* Behave  like a \"row\" */\n        border: none;\n        border-bottom: 1px solid #eee;\n        position: relative;\n        padding-left: 50%;\n        min-height: 150px;\n    }\n\n    td:before {\n        /* Now like a table header */\n        position: absolute;\n        /* Top/left values mimic padding */\n        top: 6px;\n        left: 6px;\n        width: 45%;\n        padding-right: 10px;\n        white-space: nowrap;\n        /* Label the data */\n        content: attr(data-column);\n\n        color: #000;\n        font-weight: bold;\n    }\n\n    .video-widget-metric {\n        margin-bottom: 0;\n        font-size: 1.1rem !important;\n        font-weight: 700;\n        color: #34334a\n    }\n\n    .video-widget-reactions {\n        margin-right: 5px;\n        font-size: 1.0rem !important;\n    }\n\n}\n\n.video-widget-img {\n    width: 200px;\n    max-width: 200px !important;\n    height: 100px;\n    border-radius: 5px;\n}\n\n.video-widget-title {\n    color: #878793;\n    font-size: 14px;\n    margin-top: 20px\n}\n\n.video-widget-metric {\n    margin-bottom: 0;\n    font-size: 1.3rem;\n    font-weight: 700;\n    color: #34334a\n}\n\n.video-widget-annotation {\n    color: #878793;\n    font-size: 14px;\n}\n\n.video-widget-reactions {\n    width: 30%;\n    display: inline-block;\n    float: left;\n}\n\n.select-video-source {\n    display: inline-block;\n    width: 70%;\n    font-size: 14px\n}\n.video-column-title {\n    width: 20%;\n    float:left;\n    font-size: 18px;\n    color: white;\n}\n\n.video-column {\n    padding-top: 20px\n}\n\n.select-video-source-mobile {\n    display: none;\n}", ""]);
 
 // exports
 
@@ -58054,6 +58229,308 @@ module.exports = baseFor;
 
 })));
 
+
+/***/ }),
+
+/***/ "ry0+":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__("GiK3");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = __webpack_require__("KSGD");
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var FacebookPlayer = function (_React$Component) {
+  _inherits(FacebookPlayer, _React$Component);
+
+  function FacebookPlayer(props) {
+    _classCallCheck(this, FacebookPlayer);
+
+    /**
+     * Set events that will be added to listen list.
+     * REF: https://developers.facebook.com/docs/plugins/embedded-video-player/api#event-reference
+     */
+    var _this = _possibleConstructorReturn(this, (FacebookPlayer.__proto__ || Object.getPrototypeOf(FacebookPlayer)).call(this, props));
+
+    _this.loadFB = function () {
+      if (window.FB) {
+        return new Promise(function (resolve) {
+          return resolve(window.FB);
+        });
+      }
+
+      return new Promise(function (resolve) {
+        window.fbAsyncInit = function () {
+          return resolve(window.FB);
+        };
+        (function (d, s, id) {
+          var js,
+              fjs = d.getElementsByTagName(s)[0];
+          if (d.getElementById(id)) {
+            return;
+          }
+          js = d.createElement(s);js.id = id;
+          js.src = "//connect.facebook.net/en_US/sdk.js#xfbml=1&version=v2.3";
+          js.onload = function () {
+            return resolve(window.FB);
+          };
+          fjs.parentNode.insertBefore(js, fjs);
+        })(document, 'script', 'facebook-jssdk');
+      });
+    };
+
+    _this.createPlayer = function (videoId) {
+      var _this$props = _this.props,
+          id = _this$props.id,
+          appId = _this$props.appId,
+          allowfullscreen = _this$props.allowfullscreen,
+          autoplay = _this$props.autoplay,
+          width = _this$props.width,
+          showText = _this$props.showText,
+          showCaptions = _this$props.showCaptions,
+          onReady = _this$props.onReady;
+
+      var FB = _this.FB;
+
+      var playerId = id + '--player';
+
+      // Clear
+      _this.container.innerHTML = '';
+      // this.unsubscribe();
+
+      var playerDiv = document.createElement('div');
+      playerDiv.classList.add('fb-video');
+      playerDiv.id = playerId;
+      playerDiv.setAttribute('data-href', 'https://www.facebook.com/facebook/videos/' + videoId);
+      playerDiv.setAttribute('data-allowfullscreen', allowfullscreen);
+      playerDiv.setAttribute('data-autoplay', autoplay);
+      playerDiv.setAttribute('data-width', width);
+      playerDiv.setAttribute('data-show-text', showText);
+      playerDiv.setAttribute('data-show-captions', showCaptions);
+
+      _this.container.appendChild(playerDiv);
+
+      FB.init({
+        appId: appId,
+        xfbml: true,
+        version: 'v2.5'
+      });
+
+      FB.Event.subscribe('xfbml.ready', function (msg) {
+        window.msg = msg;
+        if (msg.type === 'video' && (id && msg.id === playerId || !id)) {
+          _this.videoPlayer = msg.instance;
+
+          // Dispatch ready event
+          if (onReady) onReady(id, _this.videoPlayer);
+
+          // Subscribe to events
+          _this.subscribe();
+        }
+      });
+    };
+
+    _this.subscribe = function () {
+      _this.eventHandlers = [];
+      _this.eventsToListen.map(function (ev) {
+        if (ev.listener) {
+          var handler = _this.videoPlayer.subscribe(ev.event, ev.listener);
+          _this.eventHandlers.push({
+            event: ev.event,
+            handler: handler
+          });
+        };
+      });
+    };
+
+    _this.unsubscribe = function () {
+      if (_this.eventHandlers && _this.eventHandlers.length) {
+        _this.eventHandlers.map(function (ev) {
+          if (ev.handler.removeListener) ev.handler.removeListener(ev.event);
+        });
+      }
+    };
+
+    _this.refContainer = function (container) {
+      _this.container = container;
+    };
+
+    _this.eventsToListen = [{
+      event: 'startedPlaying',
+      listener: props.onStartedPlaying ? function () {
+        return _this.props.onStartedPlaying(_this.props.id);
+      } : null
+    }, {
+      event: 'paused',
+      listener: props.onStartedPlaying ? function () {
+        return _this.props.onPaused(_this.props.id);
+      } : null
+    }, {
+      event: 'finishedPlaying',
+      listener: props.onFinishedPlaying ? function () {
+        return _this.props.onFinishedPlaying(_this.props.id);
+      } : null
+    }, {
+      event: 'startedBuffering',
+      listener: props.onStartedBuffering ? function () {
+        return _this.props.onStartedBuffering(_this.props.id);
+      } : null
+    }, {
+      event: 'finishedBuffering',
+      listener: props.onFinishedBuffering ? function () {
+        return _this.props.onFinishedBuffering(_this.props.id);
+      } : null
+    }, {
+      event: 'error',
+      listener: props.onError ? function () {
+        return _this.props.onError(_this.props.id);
+      } : null
+    }];
+
+    _this.FB = null;
+    _this.videoPlayer = null;
+    _this.eventHandlers = null;
+    return _this;
+  }
+
+  /**
+   * Load Facebook SDK and set FB to global vars
+   */
+
+
+  _createClass(FacebookPlayer, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var _this2 = this;
+
+      var videoId = this.props.videoId;
+
+
+      if (typeof window !== "undefined") {
+        this.loadFB().then(function (res) {
+          if (res) {
+            _this2.FB = res;
+            _this2.createPlayer(videoId);
+          }
+        });
+      }
+    }
+
+    /**
+     * Refresh component if a new video id is set,
+     */
+
+  }, {
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(newProps) {
+      if (this.FB && newProps.videoId !== this.props.videoId) {
+        this.createPlayer(newProps.videoId);
+      }
+    }
+
+    /**
+     * Kill all event listeners
+     */
+
+  }, {
+    key: 'componentWillUnmount',
+    value: function componentWillUnmount() {}
+    // this.unsubscribe();
+
+
+    /**
+     * Load Facebook SDK if it is not loaded already.
+     */
+
+
+    /**
+     * Create player.
+     *
+     * @param {string} Facebook video id
+     */
+
+
+    /**
+     * Listen to events based on eventsToListen var.
+     */
+
+
+    /**
+     * Stop listening to events.
+     */
+
+
+    /**
+     * Set container var to reuse as DOM object.
+     */
+
+  }, {
+    key: 'render',
+    value: function render() {
+      var _props = this.props,
+          id = _props.id,
+          className = _props.className;
+
+
+      return _react2.default.createElement(
+        'span',
+        null,
+        _react2.default.createElement('div', {
+          id: id,
+          className: className,
+          ref: this.refContainer
+        })
+      );
+    }
+  }]);
+
+  return FacebookPlayer;
+}(_react2.default.Component);
+
+FacebookPlayer.propTypes = {
+  id: _propTypes.string,
+  className: _propTypes.string,
+  appId: _propTypes.string.isRequired,
+  videoId: _propTypes.string.isRequired,
+  width: _propTypes.number,
+  allowfullscreen: _propTypes.bool,
+  autoplay: _propTypes.bool,
+  showText: _propTypes.bool,
+  showCaptions: _propTypes.bool,
+  onReady: _propTypes.func,
+  onStartedPlaying: _propTypes.func,
+  onPaused: _propTypes.func,
+  onFinishedPlaying: _propTypes.func,
+  onStartedBuffering: _propTypes.func,
+  onFinishedBuffering: _propTypes.func,
+  onError: _propTypes.func
+};
+FacebookPlayer.defaultProps = {
+  allowfullscreen: false,
+  autoplay: false,
+  showText: false,
+  showCaptions: false,
+  width: 'auto'
+};
+exports.default = FacebookPlayer;
 
 /***/ }),
 
