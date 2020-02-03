@@ -1486,6 +1486,21 @@ function setHours(dirtyDate, dirtyHours) {
 
 /***/ }),
 
+/***/ "/mxS":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("FZ+f")(false);
+// imports
+
+
+// module
+exports.push([module.i, ".ms-social-media-emoticon-grid {\n    width: 15%;\n    text-align: center;\n    margin: 0 auto;\n    display: inline-block;\n    float: left;\n    padding: 5px 5px;\n    margin-left: 6px\n}\n\n.ms-panel-emoticon-div {\n    margin-top: 40px\n}\n\n.ms-social-media-emoticon-grid img {\n    width: 50px;\n    height: 50px\n}\n\n.ms-social-media-emoticon-grid p {\n    color: #34334a;\n    margin-top: 20px;\n    font-weight: 700;\n    font-size: 1.3rem\n}\n\n\n\n\n", ""]);
+
+// exports
+
+
+/***/ }),
+
 /***/ "/ymf":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -5521,6 +5536,8 @@ var _reactFacebookPlayer2 = _interopRequireDefault(_reactFacebookPlayer);
 
 __webpack_require__("Y7y/");
 
+__webpack_require__("lvOW");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -5903,6 +5920,106 @@ var TopVideos = function (_Component) {
                                             null,
                                             'Impressions unique'
                                         )
+                                    )
+                                )
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'ms-panel-body p-0 ms-panel-emotion-div' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'ms-social-media-emoticon-grid' },
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'section-icon' },
+                                        _react2.default.createElement('img', { src: '/assets/img/images/emoticons/like.svg' })
+                                    ),
+                                    _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark' },
+                                        this.state.currentVideo.data.filter(function (x) {
+                                            return x.name === 'total_video_reactions_by_type_total';
+                                        })[0].values[0].value['like'].toLocaleString()
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'ms-social-media-emoticon-grid' },
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'section-icon' },
+                                        _react2.default.createElement('img', { src: '/assets/img/images/emoticons/love.svg' })
+                                    ),
+                                    _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark' },
+                                        this.state.currentVideo.data.filter(function (x) {
+                                            return x.name === 'total_video_reactions_by_type_total';
+                                        })[0].values[0].value['love'].toLocaleString()
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'ms-social-media-emoticon-grid' },
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'section-icon' },
+                                        _react2.default.createElement('img', { src: '/assets/img/images/emoticons/wow.svg' })
+                                    ),
+                                    _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark' },
+                                        this.state.currentVideo.data.filter(function (x) {
+                                            return x.name === 'total_video_reactions_by_type_total';
+                                        })[0].values[0].value['wow'].toLocaleString()
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'ms-social-media-emoticon-grid' },
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'section-icon' },
+                                        _react2.default.createElement('img', { src: '/assets/img/images/emoticons/haha.svg' })
+                                    ),
+                                    _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark' },
+                                        this.state.currentVideo.data.filter(function (x) {
+                                            return x.name === 'total_video_reactions_by_type_total';
+                                        })[0].values[0].value['haha'].toLocaleString()
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'ms-social-media-emoticon-grid' },
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'section-icon' },
+                                        _react2.default.createElement('img', { src: '/assets/img/images/emoticons/sad.svg' })
+                                    ),
+                                    _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark' },
+                                        this.state.currentVideo.data.filter(function (x) {
+                                            return x.name === 'total_video_reactions_by_type_total';
+                                        })[0].values[0].value['sorry'].toLocaleString()
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'ms-social-media-emoticon-grid' },
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'section-icon' },
+                                        _react2.default.createElement('img', { src: '/assets/img/images/emoticons/angry.svg' })
+                                    ),
+                                    _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark' },
+                                        this.state.currentVideo.data.filter(function (x) {
+                                            return x.name === 'total_video_reactions_by_type_total';
+                                        })[0].values[0].value['anger'].toLocaleString()
                                     )
                                 )
                             )
@@ -24074,7 +24191,7 @@ exports = module.exports = __webpack_require__("FZ+f")(false);
 
 
 // module
-exports.push([module.i, ".flag-icon {\n    width: 64px !important;\n    height: 45px !important;\n    margin-bottom: 10px;\n    border-radius: 5px;\n    border: 1px transparent;\n}\n\n.section-icon i {\n    font-size: 2.5em !important;\n    color: black !important;\n}\n\n.fb_iframe_widget_fluid_desktop iframe {\n    min-width: 450px !important\n}", ""]);
+exports.push([module.i, ".flag-icon {\n    width: 64px !important;\n    height: 45px !important;\n    margin-bottom: 10px;\n    border-radius: 5px;\n    border: 1px transparent;\n}\n\n.section-icon i {\n    font-size: 2.5em !important;\n    color: black !important;\n}\n\n.fb_iframe_widget_fluid_desktop iframe {\n    min-width: 450px !important\n}\n\n", ""]);
 
 // exports
 
@@ -55418,6 +55535,57 @@ function _extends() {
 }
 
 module.exports = _extends;
+
+/***/ }),
+
+/***/ "lvOW":
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__("/mxS");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__("MTIv")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../../node_modules/css-loader/index.js!./VideoDetail.css", function() {
+		var newContent = require("!!../../../../../node_modules/css-loader/index.js!./VideoDetail.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
 
 /***/ }),
 

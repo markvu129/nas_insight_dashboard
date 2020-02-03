@@ -5,6 +5,7 @@ import Select from "react-select";
 import Modal from "react-bootstrap/Modal";
 import FacebookPlayer from "react-facebook-player";
 import './css/Metric.css';
+import './css/VideoDetail.css';
 
 class TopVideos extends Component {
 
@@ -187,6 +188,32 @@ class TopVideos extends Component {
                                             <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_impressions_unique')[0].values[0].value.toLocaleString()}</p>
                                             <span>Impressions unique</span>
                                         </div>
+                                    </div>
+                                </div>
+                                <div className="ms-panel-body p-0 ms-panel-emotion-div">
+                                    <div className="ms-social-media-emoticon-grid">
+                                        <div className="section-icon"><img src="/assets/img/images/emoticons/like.svg"/></div>
+                                        <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['like'].toLocaleString()}</p>
+                                    </div>
+                                    <div className="ms-social-media-emoticon-grid">
+                                        <div className="section-icon"><img src="/assets/img/images/emoticons/love.svg"/></div>
+                                        <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['love'].toLocaleString()}</p>
+                                    </div>
+                                    <div className="ms-social-media-emoticon-grid">
+                                        <div className="section-icon"><img src="/assets/img/images/emoticons/wow.svg"/></div>
+                                        <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['wow'].toLocaleString()}</p>
+                                    </div>
+                                    <div className="ms-social-media-emoticon-grid">
+                                        <div className="section-icon"><img src="/assets/img/images/emoticons/haha.svg"/></div>
+                                        <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['haha'].toLocaleString()}</p>
+                                    </div>
+                                    <div className="ms-social-media-emoticon-grid">
+                                        <div className="section-icon"><img src="/assets/img/images/emoticons/sad.svg"/></div>
+                                        <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['sorry'].toLocaleString()}</p>
+                                    </div>
+                                    <div className="ms-social-media-emoticon-grid">
+                                        <div className="section-icon"><img src="/assets/img/images/emoticons/angry.svg"/></div>
+                                        <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['anger'].toLocaleString()}</p>
                                     </div>
                                 </div>
                             </Modal.Body>

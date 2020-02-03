@@ -74,6 +74,7 @@ class VideoDetail extends Component {
                                 </div>
                             </div>
                         </div>
+
                     </Modal.Body>
                 </Modal>
             )
