@@ -111,6 +111,12 @@ only screen and (max-width: 760px),
     border-radius: 5px;
 }
 
+.video-widget-img:hover {
+    transform: scale(1.1);
+    opacity: 0.7;
+    cursor: pointer
+}
+
 .video-widget-title {
     color: #878793;
     font-size: 14px;
@@ -153,4 +159,41 @@ only screen and (max-width: 760px),
 
 .select-video-source-mobile {
     display: none;
+}
+
+.comment-button {
+    color: #0089e9;
+    text-decoration: underline
+}
+
+.comment-button:hover {
+    opacity: 0.5;
+    cursor: pointer;
+}
+
+.comment-div {
+    margin-bottom: 20px;
+}
+
+.comment-title {
+    color: #0089e9;
+    text-decoration: underline;
+    margin-top: 20px;
+    margin-bottom: 20px
+}
+
+.comment-icon {
+    margin-right: 10px
+}
+
+.comment-msg {
+    margin-bottom: 5px;
+    font-size: 1.1em;
+    font-weight: 700;
+    color: #34334a
+}
+
+.comment-time {
+    color: #878793;
+    font-size: 12px;
 }

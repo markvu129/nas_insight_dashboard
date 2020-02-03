@@ -5558,7 +5558,8 @@ var TopVideos = function (_Component) {
             source: "nasDailyFB",
             recentVideos: [],
             currentVideo: {},
-            modalIsOpen: false
+            modalIsOpen: false,
+            commentModalIsOpen: false
         };
         _this.fetchVideos = _this.fetchVideos.bind(_this);
         _this.renderVideos = _this.renderVideos.bind(_this);
@@ -5566,6 +5567,7 @@ var TopVideos = function (_Component) {
         _this.setCurrentVideo = _this.setCurrentVideo.bind(_this);
         _this.closeModal = _this.closeModal.bind(_this);
         _this.onPlayerReady = _this.onPlayerReady.bind(_this);
+        _this.setCurrentComments = _this.setCurrentComments.bind(_this);
         return _this;
     }
 
@@ -5576,6 +5578,7 @@ var TopVideos = function (_Component) {
 
             var uri = "https://nasinsightserver.herokuapp.com/api/videos/" + value + "/latest";
             _axios2.default.get(uri).then(function (response) {
+                console.log(response.data);
                 _this2.setState({
                     recentVideos: response.data,
                     currentVideo: response.data[0]
@@ -5590,7 +5593,7 @@ var TopVideos = function (_Component) {
     }, {
         key: 'shouldComponentUpdate',
         value: function shouldComponentUpdate(nextProps, nextState, nextContent) {
-            return this.state.recentVideos !== nextState.recentVideos || this.state.currentVideo !== nextState.currentVideo || this.state.modalIsOpen !== nextState.modalIsOpen;
+            return this.state.recentVideos !== nextState.recentVideos || this.state.currentVideo !== nextState.currentVideo || this.state.modalIsOpen !== nextState.modalIsOpen || this.state.commentModalIsOpen !== nextState.commentModalIsOpen;
         }
     }, {
         key: 'onSelectMetrics',
@@ -5612,10 +5615,22 @@ var TopVideos = function (_Component) {
             });
         }
     }, {
+        key: 'setCurrentComments',
+        value: function setCurrentComments(id) {
+            var videos = this.state.recentVideos;
+            this.setState({
+                currentVideo: videos.filter(function (v) {
+                    return v.id === id;
+                })[0],
+                commentModalIsOpen: true
+            });
+        }
+    }, {
         key: 'closeModal',
         value: function closeModal() {
             this.setState({
-                modalIsOpen: false
+                modalIsOpen: false,
+                commentModalIsOpen: false
             });
         }
     }, {
@@ -5681,7 +5696,9 @@ var TopVideos = function (_Component) {
                     _react2.default.createElement(
                         'td',
                         { 'data-column': 'Engagement' },
-                        _this3.state.source !== 'nasDailyFBCH' ? _react2.default.createElement(
+                        video.data.filter(function (x) {
+                            return x.name === 'total_video_stories_by_action_type';
+                        })[0].values[0].value['share'] ? _react2.default.createElement(
                             'div',
                             { className: 'video-widget-reactions' },
                             _react2.default.createElement(
@@ -5713,7 +5730,9 @@ var TopVideos = function (_Component) {
                                 'Likes'
                             )
                         ),
-                        _this3.state.source !== 'nasDailyFBCH' ? _react2.default.createElement(
+                        video.data.filter(function (x) {
+                            return x.name === 'total_video_stories_by_action_type';
+                        })[0].values[0].value['comment'] ? _react2.default.createElement(
                             'div',
                             { className: 'video-widget-reactions' },
                             _react2.default.createElement(
@@ -5727,7 +5746,14 @@ var TopVideos = function (_Component) {
                                 'p',
                                 { className: 'video-widget-annotation' },
                                 'Comments'
-                            )
+                            ),
+                            video.comments.length > 0 ? _react2.default.createElement(
+                                'p',
+                                { className: 'comment-button', onClick: function onClick() {
+                                        return _this3.setCurrentComments(video.id);
+                                    } },
+                                'See comments '
+                            ) : _react2.default.createElement('p', null)
                         ) : _react2.default.createElement('div', null)
                     )
                 );
@@ -5737,6 +5763,29 @@ var TopVideos = function (_Component) {
                 null,
                 listOfVideos
             );
+        }
+    }, {
+        key: 'renderComments',
+        value: function renderComments(comments) {
+            var listOfComments = comments.map(function (comment) {
+                return _react2.default.createElement(
+                    'div',
+                    { className: 'comment-div' },
+                    _react2.default.createElement(
+                        'p',
+                        { className: 'comment-msg' },
+                        ' ',
+                        comment.message
+                    ),
+                    _react2.default.createElement(
+                        'p',
+                        { className: 'comment-time' },
+                        new Date(comment.created_time).toLocaleString()
+                    )
+                );
+            });
+
+            return listOfComments;
         }
     }, {
         key: 'render',
@@ -5926,7 +5975,9 @@ var TopVideos = function (_Component) {
                             _react2.default.createElement(
                                 'div',
                                 { className: 'ms-panel-body p-0 ms-panel-emotion-div' },
-                                _react2.default.createElement(
+                                this.state.currentVideo.data.filter(function (x) {
+                                    return x.name === 'total_video_reactions_by_type_total';
+                                })[0].values[0].value['like'] ? _react2.default.createElement(
                                     'div',
                                     { className: 'ms-social-media-emoticon-grid' },
                                     _react2.default.createElement(
@@ -5941,8 +5992,10 @@ var TopVideos = function (_Component) {
                                             return x.name === 'total_video_reactions_by_type_total';
                                         })[0].values[0].value['like'].toLocaleString()
                                     )
-                                ),
-                                _react2.default.createElement(
+                                ) : _react2.default.createElement('div', null),
+                                this.state.currentVideo.data.filter(function (x) {
+                                    return x.name === 'total_video_reactions_by_type_total';
+                                })[0].values[0].value['love'] ? _react2.default.createElement(
                                     'div',
                                     { className: 'ms-social-media-emoticon-grid' },
                                     _react2.default.createElement(
@@ -5957,8 +6010,10 @@ var TopVideos = function (_Component) {
                                             return x.name === 'total_video_reactions_by_type_total';
                                         })[0].values[0].value['love'].toLocaleString()
                                     )
-                                ),
-                                _react2.default.createElement(
+                                ) : _react2.default.createElement('div', null),
+                                this.state.currentVideo.data.filter(function (x) {
+                                    return x.name === 'total_video_reactions_by_type_total';
+                                })[0].values[0].value['wow'] ? _react2.default.createElement(
                                     'div',
                                     { className: 'ms-social-media-emoticon-grid' },
                                     _react2.default.createElement(
@@ -5973,8 +6028,10 @@ var TopVideos = function (_Component) {
                                             return x.name === 'total_video_reactions_by_type_total';
                                         })[0].values[0].value['wow'].toLocaleString()
                                     )
-                                ),
-                                _react2.default.createElement(
+                                ) : _react2.default.createElement('div', null),
+                                this.state.currentVideo.data.filter(function (x) {
+                                    return x.name === 'total_video_reactions_by_type_total';
+                                })[0].values[0].value['haha'] ? _react2.default.createElement(
                                     'div',
                                     { className: 'ms-social-media-emoticon-grid' },
                                     _react2.default.createElement(
@@ -5989,8 +6046,10 @@ var TopVideos = function (_Component) {
                                             return x.name === 'total_video_reactions_by_type_total';
                                         })[0].values[0].value['haha'].toLocaleString()
                                     )
-                                ),
-                                _react2.default.createElement(
+                                ) : _react2.default.createElement('div', null),
+                                this.state.currentVideo.data.filter(function (x) {
+                                    return x.name === 'total_video_reactions_by_type_total';
+                                })[0].values[0].value['sorry'] ? _react2.default.createElement(
                                     'div',
                                     { className: 'ms-social-media-emoticon-grid' },
                                     _react2.default.createElement(
@@ -6005,8 +6064,10 @@ var TopVideos = function (_Component) {
                                             return x.name === 'total_video_reactions_by_type_total';
                                         })[0].values[0].value['sorry'].toLocaleString()
                                     )
-                                ),
-                                _react2.default.createElement(
+                                ) : _react2.default.createElement('div', null),
+                                this.state.currentVideo.data.filter(function (x) {
+                                    return x.name === 'total_video_reactions_by_type_total';
+                                })[0].values[0].value['anger'] ? _react2.default.createElement(
                                     'div',
                                     { className: 'ms-social-media-emoticon-grid' },
                                     _react2.default.createElement(
@@ -6021,7 +6082,39 @@ var TopVideos = function (_Component) {
                                             return x.name === 'total_video_reactions_by_type_total';
                                         })[0].values[0].value['anger'].toLocaleString()
                                     )
-                                )
+                                ) : _react2.default.createElement('div', null)
+                            )
+                        )
+                    ) : _react2.default.createElement('div', null),
+                    this.state.currentVideo.comments && this.state.currentVideo.comments.length > 0 ? _react2.default.createElement(
+                        _Modal2.default,
+                        { id: 'stats', show: this.state.commentModalIsOpen, onHide: this.closeModal, animation: false },
+                        _react2.default.createElement(
+                            _Modal2.default.Body,
+                            null,
+                            _react2.default.createElement(
+                                'h2',
+                                { className: 'daily-detail-title', style: { 'color': '#e8c552' } },
+                                this.state.currentVideo.title
+                            ),
+                            _react2.default.createElement(_reactFacebookPlayer2.default, {
+                                width: 200,
+                                height: 100,
+                                appId: 880756785680649,
+                                videoId: this.state.currentVideo.id,
+                                id: 'video-id-' + this.state.currentVideo.id,
+                                onReady: this.onPlayerReady
+                            }),
+                            _react2.default.createElement(
+                                'h2',
+                                { className: 'comment-title' },
+                                _react2.default.createElement('i', { className: 'comment-icon fa fa-comments' }),
+                                'Comments'
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                null,
+                                this.renderComments(this.state.currentVideo.comments.slice(0, 10))
                             )
                         )
                     ) : _react2.default.createElement('div', null)
@@ -35194,7 +35287,7 @@ exports = module.exports = __webpack_require__("FZ+f")(false);
 
 
 // module
-exports.push([module.i, "table {\n    width: 100%;\n    border-collapse: collapse;\n    margin:50px auto;\n    font-family: 'Roboto', 'sans-serif'\n}\n\n/* Zebra striping */\ntr {\n    background: white\n}\n\ntr:nth-of-type(odd) {\n    background: #eee;\n}\n\nth {\n    background: #F9CA47;\n    color: white;\n    font-weight: bold;\n}\n\ntd, th {\n    padding: 10px;\n    border: 1px solid #ccc;\n    text-align: left;\n    font-size: 18px;\n}\n\n/*\nMax width before this PARTICULAR table gets nasty\nThis query will take effect for any screen smaller than 760px\nand also iPads specifically.\n*/\n@media\nonly screen and (max-width: 760px),\n(min-device-width: 768px) and (max-device-width: 1024px)  {\n\n    .select-video-source-mobile {\n        display: block !important;\n        width: 100%;\n        margin-top: 20px;\n        margin-bottom: 20px;\n    }\n\n    .select-video-source {\n        display: none;\n    }\n\n    table {\n        width: 100%;\n    }\n\n    /* Force table to not be like tables anymore */\n    table, thead, tbody, th, td, tr {\n        display: block;\n    }\n\n    /* Hide table headers (but not display: none;, for accessibility) */\n    thead tr {\n        position: absolute;\n        top: -9999px;\n        left: -9999px;\n    }\n\n    tr { border: 1px solid #ccc; }\n\n    td {\n        /* Behave  like a \"row\" */\n        border: none;\n        border-bottom: 1px solid #eee;\n        position: relative;\n        padding-left: 50%;\n        min-height: 150px;\n    }\n\n    td:before {\n        /* Now like a table header */\n        position: absolute;\n        /* Top/left values mimic padding */\n        top: 6px;\n        left: 6px;\n        width: 45%;\n        padding-right: 10px;\n        white-space: nowrap;\n        /* Label the data */\n        content: attr(data-column);\n\n        color: #000;\n        font-weight: bold;\n    }\n\n    .video-widget-metric {\n        margin-bottom: 0;\n        font-size: 1.1rem !important;\n        font-weight: 700;\n        color: #34334a\n    }\n\n    .video-widget-reactions {\n        margin-right: 5px;\n        font-size: 1.0rem !important;\n    }\n\n}\n\n.video-widget-img {\n    width: 200px;\n    max-width: 200px !important;\n    height: 100px;\n    border-radius: 5px;\n}\n\n.video-widget-title {\n    color: #878793;\n    font-size: 14px;\n    margin-top: 20px\n}\n\n.video-widget-metric {\n    margin-bottom: 0;\n    font-size: 1.3rem;\n    font-weight: 700;\n    color: #34334a\n}\n\n.video-widget-annotation {\n    color: #878793;\n    font-size: 14px;\n}\n\n.video-widget-reactions {\n    width: 30%;\n    display: inline-block;\n    float: left;\n}\n\n.select-video-source {\n    display: inline-block;\n    width: 70%;\n    font-size: 14px\n}\n.video-column-title {\n    width: 20%;\n    float:left;\n    font-size: 18px;\n    color: white;\n}\n\n.video-column {\n    padding-top: 20px\n}\n\n.select-video-source-mobile {\n    display: none;\n}", ""]);
+exports.push([module.i, "table {\n    width: 100%;\n    border-collapse: collapse;\n    margin:50px auto;\n    font-family: 'Roboto', 'sans-serif'\n}\n\n/* Zebra striping */\ntr {\n    background: white\n}\n\ntr:nth-of-type(odd) {\n    background: #eee;\n}\n\nth {\n    background: #F9CA47;\n    color: white;\n    font-weight: bold;\n}\n\ntd, th {\n    padding: 10px;\n    border: 1px solid #ccc;\n    text-align: left;\n    font-size: 18px;\n}\n\n/*\nMax width before this PARTICULAR table gets nasty\nThis query will take effect for any screen smaller than 760px\nand also iPads specifically.\n*/\n@media\nonly screen and (max-width: 760px),\n(min-device-width: 768px) and (max-device-width: 1024px)  {\n\n    .select-video-source-mobile {\n        display: block !important;\n        width: 100%;\n        margin-top: 20px;\n        margin-bottom: 20px;\n    }\n\n    .select-video-source {\n        display: none;\n    }\n\n    table {\n        width: 100%;\n    }\n\n    /* Force table to not be like tables anymore */\n    table, thead, tbody, th, td, tr {\n        display: block;\n    }\n\n    /* Hide table headers (but not display: none;, for accessibility) */\n    thead tr {\n        position: absolute;\n        top: -9999px;\n        left: -9999px;\n    }\n\n    tr { border: 1px solid #ccc; }\n\n    td {\n        /* Behave  like a \"row\" */\n        border: none;\n        border-bottom: 1px solid #eee;\n        position: relative;\n        padding-left: 50%;\n        min-height: 150px;\n    }\n\n    td:before {\n        /* Now like a table header */\n        position: absolute;\n        /* Top/left values mimic padding */\n        top: 6px;\n        left: 6px;\n        width: 45%;\n        padding-right: 10px;\n        white-space: nowrap;\n        /* Label the data */\n        content: attr(data-column);\n\n        color: #000;\n        font-weight: bold;\n    }\n\n    .video-widget-metric {\n        margin-bottom: 0;\n        font-size: 1.1rem !important;\n        font-weight: 700;\n        color: #34334a\n    }\n\n    .video-widget-reactions {\n        margin-right: 5px;\n        font-size: 1.0rem !important;\n    }\n\n}\n\n.video-widget-img {\n    width: 200px;\n    max-width: 200px !important;\n    height: 100px;\n    border-radius: 5px;\n}\n\n.video-widget-img:hover {\n    transform: scale(1.1);\n    opacity: 0.7;\n    cursor: pointer\n}\n\n.video-widget-title {\n    color: #878793;\n    font-size: 14px;\n    margin-top: 20px\n}\n\n.video-widget-metric {\n    margin-bottom: 0;\n    font-size: 1.3rem;\n    font-weight: 700;\n    color: #34334a\n}\n\n.video-widget-annotation {\n    color: #878793;\n    font-size: 14px;\n}\n\n.video-widget-reactions {\n    width: 30%;\n    display: inline-block;\n    float: left;\n}\n\n.select-video-source {\n    display: inline-block;\n    width: 70%;\n    font-size: 14px\n}\n.video-column-title {\n    width: 20%;\n    float:left;\n    font-size: 18px;\n    color: white;\n}\n\n.video-column {\n    padding-top: 20px\n}\n\n.select-video-source-mobile {\n    display: none;\n}\n\n.comment-button {\n    color: #0089e9;\n    text-decoration: underline\n}\n\n.comment-button:hover {\n    opacity: 0.5;\n    cursor: pointer;\n}\n\n.comment-div {\n    margin-bottom: 20px;\n}\n\n.comment-title {\n    color: #0089e9;\n    text-decoration: underline;\n    margin-top: 20px;\n    margin-bottom: 20px\n}\n\n.comment-icon {\n    margin-right: 10px\n}\n\n.comment-msg {\n    margin-bottom: 5px;\n    font-size: 1.1em;\n    font-weight: 700;\n    color: #34334a\n}\n\n.comment-time {\n    color: #878793;\n    font-size: 12px;\n}", ""]);
 
 // exports
 

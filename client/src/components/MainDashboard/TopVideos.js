@@ -15,7 +15,8 @@ class TopVideos extends Component {
             source: "nasDailyFB",
             recentVideos: [],
             currentVideo: {},
-            modalIsOpen: false
+            modalIsOpen: false,
+            commentModalIsOpen: false
         };
         this.fetchVideos = this.fetchVideos.bind(this);
         this.renderVideos = this.renderVideos.bind(this);
@@ -23,12 +24,14 @@ class TopVideos extends Component {
         this.setCurrentVideo = this.setCurrentVideo.bind(this);
         this.closeModal = this.closeModal.bind(this);
         this.onPlayerReady = this.onPlayerReady.bind(this);
+        this.setCurrentComments = this.setCurrentComments.bind(this);
     }
 
     fetchVideos(value) {
         let uri = "https://nasinsightserver.herokuapp.com/api/videos/" + value + "/latest";
         axios.get(uri)
             .then(response => {
+               console.log(response.data)
                 this.setState({
                     recentVideos: response.data,
                     currentVideo: response.data[0]
@@ -41,7 +44,10 @@ class TopVideos extends Component {
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContent) {
-        return this.state.recentVideos !== nextState.recentVideos || this.state.currentVideo !== nextState.currentVideo || this.state.modalIsOpen !== nextState.modalIsOpen
+        return this.state.recentVideos !== nextState.recentVideos
+            || this.state.currentVideo !== nextState.currentVideo
+            || this.state.modalIsOpen !== nextState.modalIsOpen
+            || this.state.commentModalIsOpen !== nextState.commentModalIsOpen
     }
 
     onSelectMetrics(value) {
@@ -59,9 +65,19 @@ class TopVideos extends Component {
         })
     }
 
+    setCurrentComments(id){
+        const videos = this.state.recentVideos;
+        this.setState({
+            currentVideo: videos.filter(v => v.id === id)[0],
+            commentModalIsOpen: true
+        })
+    }
+
+
     closeModal() {
         this.setState({
-            modalIsOpen: false
+            modalIsOpen: false,
+            commentModalIsOpen: false
         })
     }
 
@@ -88,7 +104,7 @@ class TopVideos extends Component {
                   <p className="video-widget-annotation">Impressions</p>
               </td>
               <td data-column="Engagement">
-                  {this.state.source !== 'nasDailyFBCH' ? (
+                  { video.data.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value['share'] ? (
                       <div className="video-widget-reactions">
                           <p className="video-widget-metric">{video.data.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value['share'].toLocaleString()}</p>
                           <p className="video-widget-annotation">Shares</p>
@@ -98,10 +114,11 @@ class TopVideos extends Component {
                       <p className="video-widget-metric">{video.data.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value['like'].toLocaleString()}</p>
                       <p className="video-widget-annotation">Likes</p>
                   </div>
-                  { this.state.source !== 'nasDailyFBCH' ? (
+                  { video.data.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value['comment'] ? (
                   <div className="video-widget-reactions">
                       <p className="video-widget-metric">{video.data.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value['comment'].toLocaleString()}</p>
                       <p className="video-widget-annotation">Comments</p>
+                      {video.comments.length > 0 ? (<p className="comment-button" onClick={() => this.setCurrentComments(video.id)}>See comments </p>) : (<p></p>)}
                   </div>) : (<div></div>)}
               </td>
           </tr>
@@ -111,6 +128,17 @@ class TopVideos extends Component {
                 {listOfVideos}
             </tbody>
         )
+    }
+
+    renderComments(comments){
+        const listOfComments = comments.map(comment =>
+            <div className="comment-div">
+                <p className="comment-msg"> {comment.message}</p>
+                <p className="comment-time">{new Date(comment.created_time).toLocaleString()}</p>
+            </div>
+        );
+
+        return listOfComments;
     }
 
     render() {
@@ -191,35 +219,79 @@ class TopVideos extends Component {
                                     </div>
                                 </div>
                                 <div className="ms-panel-body p-0 ms-panel-emotion-div">
-                                    <div className="ms-social-media-emoticon-grid">
-                                        <div className="section-icon"><img src="/assets/img/images/emoticons/like.svg"/></div>
-                                        <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['like'].toLocaleString()}</p>
-                                    </div>
-                                    <div className="ms-social-media-emoticon-grid">
-                                        <div className="section-icon"><img src="/assets/img/images/emoticons/love.svg"/></div>
-                                        <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['love'].toLocaleString()}</p>
-                                    </div>
-                                    <div className="ms-social-media-emoticon-grid">
-                                        <div className="section-icon"><img src="/assets/img/images/emoticons/wow.svg"/></div>
-                                        <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['wow'].toLocaleString()}</p>
-                                    </div>
-                                    <div className="ms-social-media-emoticon-grid">
-                                        <div className="section-icon"><img src="/assets/img/images/emoticons/haha.svg"/></div>
-                                        <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['haha'].toLocaleString()}</p>
-                                    </div>
-                                    <div className="ms-social-media-emoticon-grid">
-                                        <div className="section-icon"><img src="/assets/img/images/emoticons/sad.svg"/></div>
-                                        <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['sorry'].toLocaleString()}</p>
-                                    </div>
-                                    <div className="ms-social-media-emoticon-grid">
-                                        <div className="section-icon"><img src="/assets/img/images/emoticons/angry.svg"/></div>
-                                        <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['anger'].toLocaleString()}</p>
-                                    </div>
+                                    {
+                                        this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['like'] ? (
+                                            <div className="ms-social-media-emoticon-grid">
+                                                <div className="section-icon"><img src="/assets/img/images/emoticons/like.svg"/></div>
+                                                <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['like'].toLocaleString()}</p>
+                                            </div>
+                                        ) : (<div></div>)
+                                    }
+                                    {
+                                        this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['love'] ? (
+                                            <div className="ms-social-media-emoticon-grid">
+                                                <div className="section-icon"><img src="/assets/img/images/emoticons/love.svg"/></div>
+                                                <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['love'].toLocaleString()}</p>
+                                            </div>
+                                        ) : (<div></div>)
+                                    }
+                                    {
+                                        this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['wow'] ? (
+                                            <div className="ms-social-media-emoticon-grid">
+                                                <div className="section-icon"><img src="/assets/img/images/emoticons/wow.svg"/></div>
+                                                <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['wow'].toLocaleString()}</p>
+                                            </div>
+                                        ) : (<div></div>)
+                                    }
+                                    {
+                                        this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['haha'] ? (
+                                            <div className="ms-social-media-emoticon-grid">
+                                                <div className="section-icon"><img src="/assets/img/images/emoticons/haha.svg"/></div>
+                                                <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['haha'].toLocaleString()}</p>
+                                            </div>
+                                        ) : (<div></div>)
+                                    }
+                                    {
+                                        this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['sorry'] ? (
+                                            <div className="ms-social-media-emoticon-grid">
+                                                <div className="section-icon"><img src="/assets/img/images/emoticons/sad.svg"/></div>
+                                                <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['sorry'].toLocaleString()}</p>
+                                            </div>
+                                        ) : (<div></div>)
+                                    }
+                                    {
+                                        this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['anger'] ? (
+                                            <div className="ms-social-media-emoticon-grid">
+                                                <div className="section-icon"><img src="/assets/img/images/emoticons/angry.svg"/></div>
+                                                <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_reactions_by_type_total')[0].values[0].value['anger'].toLocaleString()}</p>
+                                            </div>
+                                        ) : (<div></div>)
+                                    }
                                 </div>
                             </Modal.Body>
                         </Modal>) : (<div></div>)
                     }
-
+                    {
+                        this.state.currentVideo.comments && this.state.currentVideo.comments.length > 0 ? (
+                            <Modal id='stats' show={this.state.commentModalIsOpen} onHide={this.closeModal} animation={false}>
+                                <Modal.Body>
+                                    <h2 className="daily-detail-title" style={{ 'color': '#e8c552'}}>{this.state.currentVideo.title}</h2>
+                                    <FacebookPlayer
+                                        width={200}
+                                        height={100}
+                                        appId={880756785680649}
+                                        videoId={this.state.currentVideo.id}
+                                        id={`video-id-${this.state.currentVideo.id}`}
+                                        onReady={this.onPlayerReady}
+                                    />
+                                    <h2 className="comment-title"><i className="comment-icon fa fa-comments"></i>Comments</h2>
+                                    <div>
+                                        {this.renderComments(this.state.currentVideo.comments.slice(0, 10))}
+                                    </div>
+                                </Modal.Body>
+                            </Modal>
+                        ) : (<div></div>)
+                    }
                 </div>
             );
         }
