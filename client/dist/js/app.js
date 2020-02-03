@@ -1494,7 +1494,7 @@ exports = module.exports = __webpack_require__("FZ+f")(false);
 
 
 // module
-exports.push([module.i, ".ms-social-media-emoticon-grid {\n    width: 15%;\n    text-align: center;\n    margin: 0 auto;\n    display: inline-block;\n    float: left;\n    padding: 5px 5px;\n    margin-left: 6px\n}\n\n.ms-panel-emoticon-div {\n    margin-top: 40px\n}\n\n.ms-social-media-emoticon-grid img {\n    width: 50px;\n    height: 50px\n}\n\n.ms-social-media-emoticon-grid p {\n    color: #34334a;\n    margin-top: 20px;\n    font-weight: 700;\n    font-size: 1.3rem\n}\n\n\n\n\n", ""]);
+exports.push([module.i, ".ms-social-media-emoticon-grid {\n    width: 15%;\n    text-align: center;\n    margin: 0 auto;\n    display: inline-block;\n    float: left;\n    padding: 5px 5px;\n    margin-left: 6px\n}\n\n.ms-panel-emoticon-div {\n    margin-top: 40px\n}\n\n.ms-social-media-emoticon-grid img {\n    width: 50px;\n    height: 50px\n}\n\n.ms-social-media-emoticon-grid p {\n    color: #34334a;\n    margin-top: 20px;\n    font-weight: 700;\n    font-size: 1.1rem\n}\n\n\n\n\n", ""]);
 
 // exports
 
