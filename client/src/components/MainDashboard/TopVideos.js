@@ -18,7 +18,8 @@ class TopVideos extends Component {
             currentVideo: {},
             modalIsOpen: false,
             commentModalIsOpen: false,
-            viewModalIsOpen: false
+            viewModalIsOpen: false,
+            impressionModalIsOpen: false
         };
         this.fetchVideos = this.fetchVideos.bind(this);
         this.renderVideos = this.renderVideos.bind(this);
@@ -28,6 +29,7 @@ class TopVideos extends Component {
         this.onPlayerReady = this.onPlayerReady.bind(this);
         this.setCurrentComments = this.setCurrentComments.bind(this);
         this.setCurrentViews = this.setCurrentViews.bind(this);
+        this.setImpressionViews = this.setImpressionViews.bind(this)
     }
 
     fetchVideos(value) {
@@ -51,6 +53,7 @@ class TopVideos extends Component {
             || this.state.modalIsOpen !== nextState.modalIsOpen
             || this.state.commentModalIsOpen !== nextState.commentModalIsOpen
             || this.state.viewModalIsOpen !== nextState.viewModalIsOpen
+            || this.state.impressionModalIsOpen !== nextState.impressionModalIsOpen
     }
 
     onSelectMetrics(value) {
@@ -84,11 +87,20 @@ class TopVideos extends Component {
         })
     }
 
+    setImpressionViews(id) {
+        const videos = this.state.recentVideos;
+        this.setState({
+            currentVideo: videos.filter(v => v.id === id)[0],
+            impressionModalIsOpen: true
+        })
+    }
+
     closeModal() {
         this.setState({
             modalIsOpen: false,
             commentModalIsOpen: false,
-            viewModalIsOpen: false
+            viewModalIsOpen: false,
+            impressionModalIsOpen: false
         })
     }
 
@@ -115,6 +127,7 @@ class TopVideos extends Component {
                 <td data-column="Total impressions">
                     <p className="video-widget-metric">{video.data.filter(x => x.name === 'total_video_impressions')[0].values[0].value.toLocaleString()}</p>
                     <p className="video-widget-annotation">Impressions</p>
+                    <p className="comment-button" onClick={() => this.setImpressionViews(video.id)}>See reach </p>
                 </td>
                 <td data-column="Engagement">
                     {video.data.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value['share'] ? (
@@ -194,8 +207,7 @@ class TopVideos extends Component {
             let topViewCountryData = viewCountryData.slice(0, 3);
             let otherViewCountryData = viewCountryData.slice(3, viewByCountryData.length).reduce((a, b) => a + b, 0);
             topViewCountryData.push(otherViewCountryData);
-            console.log(topViewCountryData);
-            console.log(otherViewCountryData);
+            ;
             let viewCountryGraphLabels = viewCountryLabels.slice(0, 3);
             viewCountryGraphLabels.push('Others');
 
@@ -205,6 +217,24 @@ class TopVideos extends Component {
                 labels: viewCountryGraphLabels,
                 datasets: [{
                     data: topViewCountryData,
+                    backgroundColor: listOfPieColors,
+                    hoverBackgroundColor: listOfPieColors
+                }]
+            }
+
+            let viewByCategoryData = this.state.currentVideo.data.filter(x => x.name === 'total_video_view_time_by_age_bucket_and_gender')[0].values[0].value;
+            let viewCategoryData = Object.values(viewByCategoryData).sort((a, b) => b - a);
+            let viewCategoryLabels = Object.keys(viewByCategoryData).sort((a, b) => viewByCategoryData[b] - viewByCategoryData[a]);
+            let topViewCategoryData = viewCategoryData.slice(0, 3);
+            let otherViewCategoryData = viewCategoryData.slice(3, viewByCategoryData.length).reduce((a, b) => a + b, 0);
+            topViewCategoryData.push(otherViewCategoryData);
+            let viewCategoryGraphLabels = viewCategoryLabels.slice(0, 3);
+            viewCategoryGraphLabels.push('Others');
+
+            let viewByCategoryGraphData = {
+                labels: viewCategoryGraphLabels,
+                datasets: [{
+                    data: topViewCategoryData,
                     backgroundColor: listOfPieColors,
                     hoverBackgroundColor: listOfPieColors
                 }]
@@ -271,6 +301,33 @@ class TopVideos extends Component {
                         </thead>
                         {this.renderVideos(this.state.recentVideos)}
                     </table>
+
+                    {
+                        this.state.currentVideo ?
+                            (<Modal id='views' show={this.state.impressionModalIsOpen} onHide={this.closeModal}
+                                    animation={false}>
+                                    <Modal.Body>
+                                        <h2 className="daily-detail-title"
+                                            style={{'color': '#0089e9'}}>{this.state.currentVideo.title}</h2>
+                                        <div className="ms-panel-body p-0">
+                                            <div className="ms-social-media-followers">
+                                                <div className="ms-social-grid">
+                                                    <div className="section-icon"><i className="fa fa-tv"></i></div>
+                                                    <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_impressions_unique')[0].values[0].value.toLocaleString()}</p>
+                                                    <span>Total Impressions unique</span>
+
+                                                </div>
+                                                <div className="ms-social-grid">
+                                                    <div className="section-icon"><i className="fa fa-users"></i></div>
+                                                    <p className="ms-text-dark">{this.state.currentVideo.data.filter(x => x.name === 'total_video_impressions_viral')[0].values[0].value.toLocaleString()}</p>
+                                                    <span>Total Impressions viral</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Modal.Body>
+                                </Modal>
+                            ) : (<div></div>)
+                    }
                     {
                         this.state.currentVideo ?
                             (<Modal id='views' show={this.state.viewModalIsOpen} onHide={this.closeModal}
@@ -278,11 +335,11 @@ class TopVideos extends Component {
                                     <Modal.Body>
                                         <div className="ms-panel-body p-0">
                                             <h2 className="daily-detail-title"
-                                                style={{'color': '#e8c552'}}>{this.state.currentVideo.title}</h2>
+                                                style={{'color': '#0089e9'}}>{this.state.currentVideo.title}</h2>
                                             <div className="ms-social-media-followers">
                                                 <div className="ms-social-grid">
                                                     <div className="section-icon"><i className="fa fa-tv"></i></div>
-                                                    <p className="ms-text-dark">{Math.round((this.state.currentVideo.data.filter(x => x.name === 'total_video_view_total_time')[0].values[0].value)/60000).toLocaleString()}</p>
+                                                    <p className="ms-text-dark">{Math.round((this.state.currentVideo.data.filter(x => x.name === 'total_video_view_total_time')[0].values[0].value) / 60000).toLocaleString()}</p>
                                                     <span>Total View Time (Mins)</span>
 
                                                 </div>
@@ -313,6 +370,20 @@ class TopVideos extends Component {
                                                 }}/>
 
                                             </div>
+                                            <p>Views by age and gender bucket</p>
+                                            <div className="ms-social-media-followers">
+                                                <Pie data={viewByCategoryGraphData} options={{
+                                                    tooltips: {
+                                                        callbacks: {
+                                                            label: function (tooltipItem, data) {
+                                                                var dataset = data.datasets[tooltipItem.datasetIndex];
+                                                                return dataset.data[tooltipItem.index].toLocaleString()
+                                                            }
+                                                        }
+                                                    }
+                                                }}/>
+
+                                            </div>
                                         </div>
                                     </Modal.Body>
                                 </Modal>
@@ -324,7 +395,7 @@ class TopVideos extends Component {
                             <Modal id='stats' show={this.state.modalIsOpen} onHide={this.closeModal} animation={false}>
                                 <Modal.Body>
                                     <h2 className="daily-detail-title"
-                                        style={{'color': '#e8c552'}}>{this.state.currentVideo.title}</h2>
+                                        style={{'color': '#0089e9'}}>{this.state.currentVideo.title}</h2>
                                     <FacebookPlayer
                                         width={200}
                                         height={100}
@@ -427,7 +498,7 @@ class TopVideos extends Component {
                                    animation={false}>
                                 <Modal.Body>
                                     <h2 className="daily-detail-title"
-                                        style={{'color': '#e8c552'}}>{this.state.currentVideo.title}</h2>
+                                        style={{'color': '#0089e9'}}>{this.state.currentVideo.title}</h2>
                                     <FacebookPlayer
                                         width={200}
                                         height={100}

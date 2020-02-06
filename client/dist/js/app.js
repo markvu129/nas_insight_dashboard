@@ -5562,7 +5562,8 @@ var TopVideos = function (_Component) {
             currentVideo: {},
             modalIsOpen: false,
             commentModalIsOpen: false,
-            viewModalIsOpen: false
+            viewModalIsOpen: false,
+            impressionModalIsOpen: false
         };
         _this.fetchVideos = _this.fetchVideos.bind(_this);
         _this.renderVideos = _this.renderVideos.bind(_this);
@@ -5572,6 +5573,7 @@ var TopVideos = function (_Component) {
         _this.onPlayerReady = _this.onPlayerReady.bind(_this);
         _this.setCurrentComments = _this.setCurrentComments.bind(_this);
         _this.setCurrentViews = _this.setCurrentViews.bind(_this);
+        _this.setImpressionViews = _this.setImpressionViews.bind(_this);
         return _this;
     }
 
@@ -5596,7 +5598,7 @@ var TopVideos = function (_Component) {
     }, {
         key: 'shouldComponentUpdate',
         value: function shouldComponentUpdate(nextProps, nextState, nextContent) {
-            return this.state.recentVideos !== nextState.recentVideos || this.state.currentVideo !== nextState.currentVideo || this.state.modalIsOpen !== nextState.modalIsOpen || this.state.commentModalIsOpen !== nextState.commentModalIsOpen || this.state.viewModalIsOpen !== nextState.viewModalIsOpen;
+            return this.state.recentVideos !== nextState.recentVideos || this.state.currentVideo !== nextState.currentVideo || this.state.modalIsOpen !== nextState.modalIsOpen || this.state.commentModalIsOpen !== nextState.commentModalIsOpen || this.state.viewModalIsOpen !== nextState.viewModalIsOpen || this.state.impressionModalIsOpen !== nextState.impressionModalIsOpen;
         }
     }, {
         key: 'onSelectMetrics',
@@ -5640,12 +5642,24 @@ var TopVideos = function (_Component) {
             });
         }
     }, {
+        key: 'setImpressionViews',
+        value: function setImpressionViews(id) {
+            var videos = this.state.recentVideos;
+            this.setState({
+                currentVideo: videos.filter(function (v) {
+                    return v.id === id;
+                })[0],
+                impressionModalIsOpen: true
+            });
+        }
+    }, {
         key: 'closeModal',
         value: function closeModal() {
             this.setState({
                 modalIsOpen: false,
                 commentModalIsOpen: false,
-                viewModalIsOpen: false
+                viewModalIsOpen: false,
+                impressionModalIsOpen: false
             });
         }
     }, {
@@ -5714,6 +5728,13 @@ var TopVideos = function (_Component) {
                             'p',
                             { className: 'video-widget-annotation' },
                             'Impressions'
+                        ),
+                        _react2.default.createElement(
+                            'p',
+                            { className: 'comment-button', onClick: function onClick() {
+                                    return _this3.setImpressionViews(video.id);
+                                } },
+                            'See reach '
                         )
                     ),
                     _react2.default.createElement(
@@ -5853,8 +5874,7 @@ var TopVideos = function (_Component) {
                     return a + b;
                 }, 0);
                 topViewCountryData.push(otherViewCountryData);
-                console.log(topViewCountryData);
-                console.log(otherViewCountryData);
+                ;
                 var viewCountryGraphLabels = viewCountryLabels.slice(0, 3);
                 viewCountryGraphLabels.push('Others');
 
@@ -5864,6 +5884,32 @@ var TopVideos = function (_Component) {
                     labels: viewCountryGraphLabels,
                     datasets: [{
                         data: topViewCountryData,
+                        backgroundColor: listOfPieColors,
+                        hoverBackgroundColor: listOfPieColors
+                    }]
+                };
+
+                var viewByCategoryData = this.state.currentVideo.data.filter(function (x) {
+                    return x.name === 'total_video_view_time_by_age_bucket_and_gender';
+                })[0].values[0].value;
+                var viewCategoryData = Object.values(viewByCategoryData).sort(function (a, b) {
+                    return b - a;
+                });
+                var viewCategoryLabels = Object.keys(viewByCategoryData).sort(function (a, b) {
+                    return viewByCategoryData[b] - viewByCategoryData[a];
+                });
+                var topViewCategoryData = viewCategoryData.slice(0, 3);
+                var otherViewCategoryData = viewCategoryData.slice(3, viewByCategoryData.length).reduce(function (a, b) {
+                    return a + b;
+                }, 0);
+                topViewCategoryData.push(otherViewCategoryData);
+                var viewCategoryGraphLabels = viewCategoryLabels.slice(0, 3);
+                viewCategoryGraphLabels.push('Others');
+
+                var viewByCategoryGraphData = {
+                    labels: viewCategoryGraphLabels,
+                    datasets: [{
+                        data: topViewCategoryData,
                         backgroundColor: listOfPieColors,
                         hoverBackgroundColor: listOfPieColors
                     }]
@@ -5958,6 +6004,71 @@ var TopVideos = function (_Component) {
                     ),
                     this.state.currentVideo ? _react2.default.createElement(
                         _Modal2.default,
+                        { id: 'views', show: this.state.impressionModalIsOpen, onHide: this.closeModal,
+                            animation: false },
+                        _react2.default.createElement(
+                            _Modal2.default.Body,
+                            null,
+                            _react2.default.createElement(
+                                'h2',
+                                { className: 'daily-detail-title',
+                                    style: { 'color': '#0089e9' } },
+                                this.state.currentVideo.title
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'ms-panel-body p-0' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'ms-social-media-followers' },
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'ms-social-grid' },
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'section-icon' },
+                                            _react2.default.createElement('i', { className: 'fa fa-tv' })
+                                        ),
+                                        _react2.default.createElement(
+                                            'p',
+                                            { className: 'ms-text-dark' },
+                                            this.state.currentVideo.data.filter(function (x) {
+                                                return x.name === 'total_video_impressions_unique';
+                                            })[0].values[0].value.toLocaleString()
+                                        ),
+                                        _react2.default.createElement(
+                                            'span',
+                                            null,
+                                            'Total Impressions unique'
+                                        )
+                                    ),
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'ms-social-grid' },
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'section-icon' },
+                                            _react2.default.createElement('i', { className: 'fa fa-users' })
+                                        ),
+                                        _react2.default.createElement(
+                                            'p',
+                                            { className: 'ms-text-dark' },
+                                            this.state.currentVideo.data.filter(function (x) {
+                                                return x.name === 'total_video_impressions_viral';
+                                            })[0].values[0].value.toLocaleString()
+                                        ),
+                                        _react2.default.createElement(
+                                            'span',
+                                            null,
+                                            'Total Impressions viral'
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    ) : _react2.default.createElement('div', null),
+                    this.state.currentVideo ? _react2.default.createElement(
+                        _Modal2.default,
                         { id: 'views', show: this.state.viewModalIsOpen, onHide: this.closeModal,
                             animation: false },
                         _react2.default.createElement(
@@ -5969,7 +6080,7 @@ var TopVideos = function (_Component) {
                                 _react2.default.createElement(
                                     'h2',
                                     { className: 'daily-detail-title',
-                                        style: { 'color': '#e8c552' } },
+                                        style: { 'color': '#0089e9' } },
                                     this.state.currentVideo.title
                                 ),
                                 _react2.default.createElement(
@@ -6044,6 +6155,25 @@ var TopVideos = function (_Component) {
                                                 }
                                             }
                                         } })
+                                ),
+                                _react2.default.createElement(
+                                    'p',
+                                    null,
+                                    'Views by age and gender bucket'
+                                ),
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'ms-social-media-followers' },
+                                    _react2.default.createElement(_reactChartjs.Pie, { data: viewByCategoryGraphData, options: {
+                                            tooltips: {
+                                                callbacks: {
+                                                    label: function label(tooltipItem, data) {
+                                                        var dataset = data.datasets[tooltipItem.datasetIndex];
+                                                        return dataset.data[tooltipItem.index].toLocaleString();
+                                                    }
+                                                }
+                                            }
+                                        } })
                                 )
                             )
                         )
@@ -6057,7 +6187,7 @@ var TopVideos = function (_Component) {
                             _react2.default.createElement(
                                 'h2',
                                 { className: 'daily-detail-title',
-                                    style: { 'color': '#e8c552' } },
+                                    style: { 'color': '#0089e9' } },
                                 this.state.currentVideo.title
                             ),
                             _react2.default.createElement(_reactFacebookPlayer2.default, {
@@ -6300,7 +6430,7 @@ var TopVideos = function (_Component) {
                             _react2.default.createElement(
                                 'h2',
                                 { className: 'daily-detail-title',
-                                    style: { 'color': '#e8c552' } },
+                                    style: { 'color': '#0089e9' } },
                                 this.state.currentVideo.title
                             ),
                             _react2.default.createElement(_reactFacebookPlayer2.default, {
