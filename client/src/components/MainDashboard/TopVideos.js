@@ -181,9 +181,15 @@ class TopVideos extends Component {
                 {"label": "NasDaily TH", "value": "nasDailyFBTH"}
             ];
 
+            const plugins = [{
+                afterDraw: (chartInstance, easing) => {
+                    const ctx = chartInstance.chart.ctx;
+                }
+            }];
+
 
             let viewGraphData = {
-                labels: ['10 secs views', '30 secs views', 'Complete views'],
+                labels: ['Complete views', '30 secs view', '10 secs view'],
                 datasets: [
                     {
                         label: 'View Retention',
@@ -354,7 +360,10 @@ class TopVideos extends Component {
                                                 <Bar data={viewGraphData}
                                                      width={100}
                                                      height={300}
-                                                     options={graphOptions}/>
+                                                     options={graphOptions}
+                                                     plugins={plugins}
+
+                                                />
                                             </div>
                                             <p>Views by country</p>
                                             <div className="ms-social-media-followers">

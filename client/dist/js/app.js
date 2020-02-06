@@ -5840,8 +5840,14 @@ var TopVideos = function (_Component) {
 
                 var sourceOptions = [{ "label": "NasDaily", "value": "nasDailyFB" }, { "label": "NasDaily VN", "value": "nasDailyFBVN" }, { "label": "NasDaily SP", "value": "nasDailyFBSP" }, { "label": "NasDaily CN", "value": "nasDailyFBCH" }, { "label": "NasDaily PH", "value": "nasDailyFBPH" }, { "label": "NasDaily ARB", "value": "nasDailyFBARB" }, { "label": "NasDaily TH", "value": "nasDailyFBTH" }];
 
+                var plugins = [{
+                    afterDraw: function afterDraw(chartInstance, easing) {
+                        var ctx = chartInstance.chart.ctx;
+                    }
+                }];
+
                 var viewGraphData = {
-                    labels: ['10 secs views', '30 secs views', 'Complete views'],
+                    labels: ['Complete views', '30 secs view', '10 secs view'],
                     datasets: [{
                         label: 'View Retention',
                         backgroundColor: ['rgba(255,99,132,1)', '#298ae9', '#3b7464'],
@@ -6135,7 +6141,10 @@ var TopVideos = function (_Component) {
                                     _react2.default.createElement(_reactChartjs.Bar, { data: viewGraphData,
                                         width: 100,
                                         height: 300,
-                                        options: graphOptions })
+                                        options: graphOptions,
+                                        plugins: plugins
+
+                                    })
                                 ),
                                 _react2.default.createElement(
                                     'p',
