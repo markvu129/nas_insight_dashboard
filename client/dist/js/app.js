@@ -5538,6 +5538,8 @@ __webpack_require__("Y7y/");
 
 __webpack_require__("lvOW");
 
+var _reactChartjs = __webpack_require__("ChjH");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -5559,7 +5561,8 @@ var TopVideos = function (_Component) {
             recentVideos: [],
             currentVideo: {},
             modalIsOpen: false,
-            commentModalIsOpen: false
+            commentModalIsOpen: false,
+            viewModalIsOpen: false
         };
         _this.fetchVideos = _this.fetchVideos.bind(_this);
         _this.renderVideos = _this.renderVideos.bind(_this);
@@ -5568,6 +5571,7 @@ var TopVideos = function (_Component) {
         _this.closeModal = _this.closeModal.bind(_this);
         _this.onPlayerReady = _this.onPlayerReady.bind(_this);
         _this.setCurrentComments = _this.setCurrentComments.bind(_this);
+        _this.setCurrentViews = _this.setCurrentViews.bind(_this);
         return _this;
     }
 
@@ -5578,7 +5582,6 @@ var TopVideos = function (_Component) {
 
             var uri = "https://nasinsightserver.herokuapp.com/api/videos/" + value + "/latest";
             _axios2.default.get(uri).then(function (response) {
-                console.log(response.data);
                 _this2.setState({
                     recentVideos: response.data,
                     currentVideo: response.data[0]
@@ -5593,7 +5596,7 @@ var TopVideos = function (_Component) {
     }, {
         key: 'shouldComponentUpdate',
         value: function shouldComponentUpdate(nextProps, nextState, nextContent) {
-            return this.state.recentVideos !== nextState.recentVideos || this.state.currentVideo !== nextState.currentVideo || this.state.modalIsOpen !== nextState.modalIsOpen || this.state.commentModalIsOpen !== nextState.commentModalIsOpen;
+            return this.state.recentVideos !== nextState.recentVideos || this.state.currentVideo !== nextState.currentVideo || this.state.modalIsOpen !== nextState.modalIsOpen || this.state.commentModalIsOpen !== nextState.commentModalIsOpen || this.state.viewModalIsOpen !== nextState.viewModalIsOpen;
         }
     }, {
         key: 'onSelectMetrics',
@@ -5626,11 +5629,23 @@ var TopVideos = function (_Component) {
             });
         }
     }, {
+        key: 'setCurrentViews',
+        value: function setCurrentViews(id) {
+            var videos = this.state.recentVideos;
+            this.setState({
+                currentVideo: videos.filter(function (v) {
+                    return v.id === id;
+                })[0],
+                viewModalIsOpen: true
+            });
+        }
+    }, {
         key: 'closeModal',
         value: function closeModal() {
             this.setState({
                 modalIsOpen: false,
-                commentModalIsOpen: false
+                commentModalIsOpen: false,
+                viewModalIsOpen: false
             });
         }
     }, {
@@ -5651,7 +5666,8 @@ var TopVideos = function (_Component) {
                     _react2.default.createElement(
                         'td',
                         { 'data-column': 'Video' },
-                        _react2.default.createElement('img', { className: 'video-widget-img', src: video.picture, onClick: function onClick() {
+                        _react2.default.createElement('img', { className: 'video-widget-img', src: video.picture,
+                            onClick: function onClick() {
                                 return _this3.setCurrentVideo(video.id);
                             } }),
                         _react2.default.createElement('br', null),
@@ -5675,6 +5691,13 @@ var TopVideos = function (_Component) {
                             'p',
                             { className: 'video-widget-annotation' },
                             'Views'
+                        ),
+                        _react2.default.createElement(
+                            'p',
+                            { className: 'comment-button', onClick: function onClick() {
+                                    return _this3.setCurrentViews(video.id);
+                                } },
+                            'See retention '
                         )
                     ),
                     _react2.default.createElement(
@@ -5795,6 +5818,88 @@ var TopVideos = function (_Component) {
             if (this.state.recentVideos.length > 0) {
 
                 var sourceOptions = [{ "label": "NasDaily", "value": "nasDailyFB" }, { "label": "NasDaily VN", "value": "nasDailyFBVN" }, { "label": "NasDaily SP", "value": "nasDailyFBSP" }, { "label": "NasDaily CN", "value": "nasDailyFBCH" }, { "label": "NasDaily PH", "value": "nasDailyFBPH" }, { "label": "NasDaily ARB", "value": "nasDailyFBARB" }, { "label": "NasDaily TH", "value": "nasDailyFBTH" }];
+
+                var viewGraphData = {
+                    labels: ['10 secs views', '30 secs views', 'Complete views'],
+                    datasets: [{
+                        label: 'View Retention',
+                        backgroundColor: ['rgba(255,99,132,1)', '#298ae9', '#3b7464'],
+                        borderColor: ['rgba(255,99,132,1)', '#298ae9', '#3b7464'],
+                        borderWidth: 1,
+                        hoverBackgroundColor: ['rgba(255,99,132,1)', '#298ae9', '#3b7464'],
+                        hoverBorderColor: ['rgba(255,99,132,1)', '#298ae9', '#3b7464'],
+                        data: [this.state.currentVideo.data.filter(function (x) {
+                            return x.name === 'total_video_complete_views';
+                        })[0].values[0].value, this.state.currentVideo.data.filter(function (x) {
+                            return x.name === 'total_video_30s_views';
+                        })[0].values[0].value, this.state.currentVideo.data.filter(function (x) {
+                            return x.name === 'total_video_10s_views';
+                        })[0].values[0].value]
+                    }]
+
+                };
+
+                var viewByCountryData = this.state.currentVideo.data.filter(function (x) {
+                    return x.name === 'total_video_view_time_by_country_id';
+                })[0].values[0].value;
+                var viewCountryData = Object.values(viewByCountryData).sort(function (a, b) {
+                    return b - a;
+                });
+                var viewCountryLabels = Object.keys(viewByCountryData).sort(function (a, b) {
+                    return viewByCountryData[b] - viewByCountryData[a];
+                });
+                var topViewCountryData = viewCountryData.slice(0, 3);
+                var otherViewCountryData = viewCountryData.slice(3, viewByCountryData.length).reduce(function (a, b) {
+                    return a + b;
+                }, 0);
+                topViewCountryData.push(otherViewCountryData);
+                console.log(topViewCountryData);
+                console.log(otherViewCountryData);
+                var viewCountryGraphLabels = viewCountryLabels.slice(0, 3);
+                viewCountryGraphLabels.push('Others');
+
+                var listOfPieColors = ['rgba(255,99,132,1)', '#298ae9', '#3b7464', '#9f3db6'];
+
+                var viewByCountryGraphData = {
+                    labels: viewCountryGraphLabels,
+                    datasets: [{
+                        data: topViewCountryData,
+                        backgroundColor: listOfPieColors,
+                        hoverBackgroundColor: listOfPieColors
+                    }]
+                };
+
+                var graphOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        xAxes: [{
+                            gridLines: {
+                                color: '#ffffff',
+                                borderDash: [1, 3]
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                callback: function callback(label, index, labels) {
+                                    return label.toLocaleString();
+                                }
+                            }
+
+                        }]
+                    },
+                    legend: {
+                        display: true
+                    },
+                    tooltips: {
+                        callbacks: {
+                            label: function label(tooltipItem, data) {
+                                return tooltipItem.yLabel.toLocaleString();
+                            }
+                        }
+                    }
+                };
+
                 return _react2.default.createElement(
                     'div',
                     null,
@@ -5853,13 +5958,106 @@ var TopVideos = function (_Component) {
                     ),
                     this.state.currentVideo ? _react2.default.createElement(
                         _Modal2.default,
+                        { id: 'views', show: this.state.viewModalIsOpen, onHide: this.closeModal,
+                            animation: false },
+                        _react2.default.createElement(
+                            _Modal2.default.Body,
+                            null,
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'ms-panel-body p-0' },
+                                _react2.default.createElement(
+                                    'h2',
+                                    { className: 'daily-detail-title',
+                                        style: { 'color': '#e8c552' } },
+                                    this.state.currentVideo.title
+                                ),
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'ms-social-media-followers' },
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'ms-social-grid' },
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'section-icon' },
+                                            _react2.default.createElement('i', { className: 'fa fa-tv' })
+                                        ),
+                                        _react2.default.createElement(
+                                            'p',
+                                            { className: 'ms-text-dark' },
+                                            Math.round(this.state.currentVideo.data.filter(function (x) {
+                                                return x.name === 'total_video_view_total_time';
+                                            })[0].values[0].value / 60000).toLocaleString()
+                                        ),
+                                        _react2.default.createElement(
+                                            'span',
+                                            null,
+                                            'Total View Time (Mins)'
+                                        )
+                                    ),
+                                    _react2.default.createElement(
+                                        'div',
+                                        { className: 'ms-social-grid' },
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'section-icon' },
+                                            _react2.default.createElement('i', { className: 'fa fa-tv' })
+                                        ),
+                                        _react2.default.createElement(
+                                            'p',
+                                            { className: 'ms-text-dark' },
+                                            this.state.currentVideo.data.filter(function (x) {
+                                                return x.name === 'total_video_avg_time_watched';
+                                            })[0].values[0].value.toLocaleString()
+                                        ),
+                                        _react2.default.createElement(
+                                            'span',
+                                            null,
+                                            'Average time video viewed'
+                                        )
+                                    )
+                                ),
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'ms-social-media-followers' },
+                                    _react2.default.createElement(_reactChartjs.Bar, { data: viewGraphData,
+                                        width: 100,
+                                        height: 300,
+                                        options: graphOptions })
+                                ),
+                                _react2.default.createElement(
+                                    'p',
+                                    null,
+                                    'Views by country'
+                                ),
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'ms-social-media-followers' },
+                                    _react2.default.createElement(_reactChartjs.Pie, { data: viewByCountryGraphData, options: {
+                                            tooltips: {
+                                                callbacks: {
+                                                    label: function label(tooltipItem, data) {
+                                                        var dataset = data.datasets[tooltipItem.datasetIndex];
+                                                        return dataset.data[tooltipItem.index].toLocaleString();
+                                                    }
+                                                }
+                                            }
+                                        } })
+                                )
+                            )
+                        )
+                    ) : _react2.default.createElement('div', null),
+                    this.state.currentVideo ? _react2.default.createElement(
+                        _Modal2.default,
                         { id: 'stats', show: this.state.modalIsOpen, onHide: this.closeModal, animation: false },
                         _react2.default.createElement(
                             _Modal2.default.Body,
                             null,
                             _react2.default.createElement(
                                 'h2',
-                                { className: 'daily-detail-title', style: { 'color': '#e8c552' } },
+                                { className: 'daily-detail-title',
+                                    style: { 'color': '#e8c552' } },
                                 this.state.currentVideo.title
                             ),
                             _react2.default.createElement(_reactFacebookPlayer2.default, {
@@ -5983,7 +6181,8 @@ var TopVideos = function (_Component) {
                                     _react2.default.createElement(
                                         'div',
                                         { className: 'section-icon' },
-                                        _react2.default.createElement('img', { src: '/assets/img/images/emoticons/like.svg' })
+                                        _react2.default.createElement('img', {
+                                            src: '/assets/img/images/emoticons/like.svg' })
                                     ),
                                     _react2.default.createElement(
                                         'p',
@@ -6001,7 +6200,8 @@ var TopVideos = function (_Component) {
                                     _react2.default.createElement(
                                         'div',
                                         { className: 'section-icon' },
-                                        _react2.default.createElement('img', { src: '/assets/img/images/emoticons/love.svg' })
+                                        _react2.default.createElement('img', {
+                                            src: '/assets/img/images/emoticons/love.svg' })
                                     ),
                                     _react2.default.createElement(
                                         'p',
@@ -6019,7 +6219,8 @@ var TopVideos = function (_Component) {
                                     _react2.default.createElement(
                                         'div',
                                         { className: 'section-icon' },
-                                        _react2.default.createElement('img', { src: '/assets/img/images/emoticons/wow.svg' })
+                                        _react2.default.createElement('img', {
+                                            src: '/assets/img/images/emoticons/wow.svg' })
                                     ),
                                     _react2.default.createElement(
                                         'p',
@@ -6037,7 +6238,8 @@ var TopVideos = function (_Component) {
                                     _react2.default.createElement(
                                         'div',
                                         { className: 'section-icon' },
-                                        _react2.default.createElement('img', { src: '/assets/img/images/emoticons/haha.svg' })
+                                        _react2.default.createElement('img', {
+                                            src: '/assets/img/images/emoticons/haha.svg' })
                                     ),
                                     _react2.default.createElement(
                                         'p',
@@ -6055,7 +6257,8 @@ var TopVideos = function (_Component) {
                                     _react2.default.createElement(
                                         'div',
                                         { className: 'section-icon' },
-                                        _react2.default.createElement('img', { src: '/assets/img/images/emoticons/sad.svg' })
+                                        _react2.default.createElement('img', {
+                                            src: '/assets/img/images/emoticons/sad.svg' })
                                     ),
                                     _react2.default.createElement(
                                         'p',
@@ -6073,7 +6276,8 @@ var TopVideos = function (_Component) {
                                     _react2.default.createElement(
                                         'div',
                                         { className: 'section-icon' },
-                                        _react2.default.createElement('img', { src: '/assets/img/images/emoticons/angry.svg' })
+                                        _react2.default.createElement('img', {
+                                            src: '/assets/img/images/emoticons/angry.svg' })
                                     ),
                                     _react2.default.createElement(
                                         'p',
@@ -6088,13 +6292,15 @@ var TopVideos = function (_Component) {
                     ) : _react2.default.createElement('div', null),
                     this.state.currentVideo.comments && this.state.currentVideo.comments.length > 0 ? _react2.default.createElement(
                         _Modal2.default,
-                        { id: 'stats', show: this.state.commentModalIsOpen, onHide: this.closeModal, animation: false },
+                        { id: 'stats', show: this.state.commentModalIsOpen, onHide: this.closeModal,
+                            animation: false },
                         _react2.default.createElement(
                             _Modal2.default.Body,
                             null,
                             _react2.default.createElement(
                                 'h2',
-                                { className: 'daily-detail-title', style: { 'color': '#e8c552' } },
+                                { className: 'daily-detail-title',
+                                    style: { 'color': '#e8c552' } },
                                 this.state.currentVideo.title
                             ),
                             _react2.default.createElement(_reactFacebookPlayer2.default, {
