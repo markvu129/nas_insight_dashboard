@@ -118,6 +118,7 @@ class TopVideos extends Component {
                          onClick={() => this.setCurrentVideo(video.id)}></img>
                     <br/>
                     <p className="video-widget-title">{video.title}</p>
+                    <p className="">Last updated at: {new Date(video.updated_at).toISOString().slice(0,10)}</p>
                 </td>
                 <td data-column="Total views">
                     <p className="video-widget-metric">{video.data.filter(x => x.name === 'total_video_views')[0].values[0].value.toLocaleString()}</p>

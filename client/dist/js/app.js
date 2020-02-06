@@ -5689,6 +5689,12 @@ var TopVideos = function (_Component) {
                             'p',
                             { className: 'video-widget-title' },
                             video.title
+                        ),
+                        _react2.default.createElement(
+                            'p',
+                            { className: '' },
+                            'Last updated at: ',
+                            new Date(video.updated_at).toISOString().slice(0, 10)
                         )
                     ),
                     _react2.default.createElement(
