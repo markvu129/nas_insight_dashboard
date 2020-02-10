@@ -25,10 +25,13 @@ class Metric extends Component {
                 'all': 'All Pages'
             },
             activePage: 'nasDailyFB',
-            modalIsOpen: {}
+            modalIsOpen: {},
+            followerCounts: {},
+            totalFollowerCount: 0
         };
         this.fetchFbData = this.fetchFbData.bind(this);
         this.fetchIgData = this.fetchIgData.bind(this);
+        this.fetchFollowers = this.fetchFollowers.bind(this);
         this.openModal = this.openModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
     }
@@ -87,6 +90,24 @@ class Metric extends Component {
         })
     }
 
+    fetchFollowers(){
+        axios.get('https://nasinsightserver.herokuapp.com/api/followers/all').then(response => {
+            let data = response.data;
+            this.setState({
+                followerCounts: data,
+                totalFollowerCount: this.sumAllValuesInObject(data)
+            })
+        })
+    }
+
+    sumAllValuesInObject(values) {
+        let sum = 0;
+        for (let key of Object.keys(values)) {
+            sum += parseInt(values[key].replace(/[,]/g,''));
+        };
+        return sum;
+    }
+
 
     fetchIgData() {
         let uri = "https://nasinsightserver.herokuapp.com/api/info/overview/nasDailyIG/day/" + new Date().getFullYear() + '/page_impressions/2';
@@ -122,6 +143,7 @@ class Metric extends Component {
     componentWillMount() {
         this.fetchFbData();
         this.fetchIgData();
+        this.fetchFollowers();
     }
 
 
@@ -140,6 +162,10 @@ class Metric extends Component {
                             <div className="ms-social-media-followers">
                                 <div className="ms-social-grid">
                                     <i className="fa fa-facebook-f bg-facebook" onClick={this.openModal.bind(null, 'all')}></i>
+                                    {this.state.totalFollowerCount > 0 ?
+                                        <p className="ms-text-dark highlight-text">{this.state.totalFollowerCount.toLocaleString()}</p> :
+                                        <p></p>}
+                                    <span>Followers</span>
                                     {this.state.totalData ?
                                         <p className="ms-text-dark">{this.state.totalData['total_views'].toLocaleString()}</p> :
                                         <p></p>}
@@ -158,8 +184,11 @@ class Metric extends Component {
 
                             <div className="ms-social-media-followers">
                                 <div className="ms-social-grid">
-                                    <img src="https://svgshare.com/i/HBs.svg" alt="nasdaily-total"
-                                         border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFB')}/>
+                                    <i className="fa fa-facebook-f bg-facebook" onClick={this.openModal.bind(null, 'nasDailyFB')}></i>
+                                    {this.state.followerCounts ?
+                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyFB']}</p> :
+                                        <p></p>}
+                                    <span>Followers</span>
                                     {this.state.dailyData.nasDailyFB ?
                                         <p className="ms-text-dark">{this.state.dailyData.nasDailyFB.currentFbViews.toLocaleString()}</p> :
                                         <p></p>}
@@ -170,6 +199,10 @@ class Metric extends Component {
                                 <div className="ms-social-grid">
                                     <img src="https://i.ibb.co/gWMzpzk/thailand-flag-medium.png" alt="nasdaily-thailand"
                                          border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBTH')}/>
+                                    {this.state.followerCounts ?
+                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyTH']}</p> :
+                                        <p></p>}
+                                    <span>Followers</span>
                                     {this.state.dailyData.nasDailyFBTH ?
                                         <p className="ms-text-dark">{this.state.dailyData.nasDailyFBTH.currentFbViews.toLocaleString()}</p> :
                                         <p></p>}
@@ -183,6 +216,10 @@ class Metric extends Component {
                                 <div className="ms-social-grid">
                                     <img src="https://i.ibb.co/jykWfj4/vietnam-flag-icon-128.png" alt="nasdaily-vn"
                                          border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBVN')}/>
+                                    {this.state.followerCounts ?
+                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyVN']}</p> :
+                                        <p></p>}
+                                    <span>Followers</span>
                                     {this.state.dailyData.nasDailyFBVN ?
                                         <p className="ms-text-dark">{this.state.dailyData.nasDailyFBVN.currentFbViews.toLocaleString()}</p> :
                                         <p></p>}
@@ -193,6 +230,10 @@ class Metric extends Component {
                                 <div className="ms-social-grid">
                                     <img src="https://i.ibb.co/Qkx9qRw/philippines-flag-icon-64.png" alt="nasdaily-ph"
                                          border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBPH')}/>
+                                    {this.state.followerCounts ?
+                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyPH']}</p> :
+                                        <p></p>}
+                                    <span>Followers</span>
                                     {this.state.dailyData.nasDailyFBPH ?
                                         <p className="ms-text-dark">{this.state.dailyData.nasDailyFBPH.currentFbViews.toLocaleString()}</p> :
                                         <p></p>}
@@ -206,6 +247,10 @@ class Metric extends Component {
                                     <img src="https://i.ibb.co/7pvMdfj/spain-flag-icon-64.png" alt="nasdaily-esp"
                                          border="0"
                                          className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBSP')}/>
+                                    {this.state.followerCounts ?
+                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyFBSP']}</p> :
+                                        <p></p>}
+                                    <span>Followers</span>
                                     {this.state.dailyData.nasDailyFBSP ?
                                         <p className="ms-text-dark">{this.state.dailyData.nasDailyFBSP.currentFbViews.toLocaleString()}</p> :
                                         <p></p>}
@@ -216,6 +261,10 @@ class Metric extends Component {
                                 <div className="ms-social-grid">
                                     <img src="https://i.ibb.co/9h3848b/arabic.png" alt="nasdaily-arabic" border="0"
                                          className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBARB')}/>
+                                    {this.state.followerCounts ?
+                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyARB']}</p> :
+                                        <p></p>}
+                                    <span>Followers</span>
                                     {this.state.dailyData.nasDailyFBARB ?
                                         <p className="ms-text-dark">{this.state.dailyData.nasDailyFBARB.currentFbViews.toLocaleString()}</p> :
                                         <p></p>}
@@ -228,7 +277,11 @@ class Metric extends Component {
                             <div className="ms-social-media-followers">
                                 <div className="ms-social-grid">
                                     <img src="https://i.ibb.co/CnZbSDS/chinese-character.png" alt="nasdaily-chinese"
-                                         border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBCH')}/>
+                                         border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyCH')}/>
+                                    {this.state.followerCounts ?
+                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyCH']}</p> :
+                                        <p></p>}
+                                    <span>Followers</span>
                                     {this.state.dailyData.nasDailyFBCH ?
                                         <p className="ms-text-dark">{this.state.dailyData.nasDailyFBCH.currentFbViews.toLocaleString()}</p> :
                                         <p></p>}

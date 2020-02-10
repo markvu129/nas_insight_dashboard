@@ -24635,7 +24635,7 @@ exports = module.exports = __webpack_require__("FZ+f")(false);
 
 
 // module
-exports.push([module.i, ".flag-icon {\n    width: 64px !important;\n    height: 45px !important;\n    margin-bottom: 10px;\n    border-radius: 5px;\n    border: 1px transparent;\n}\n\n.section-icon i {\n    font-size: 2.5em !important;\n    color: black !important;\n}\n\n.fb_iframe_widget_fluid_desktop iframe {\n    min-width: 450px !important\n}\n\n", ""]);
+exports.push([module.i, ".flag-icon {\n    width: 64px !important;\n    height: 45px !important;\n    margin-bottom: 10px;\n    border-radius: 5px;\n    border: 1px transparent;\n}\n\n.section-icon i {\n    font-size: 2.5em !important;\n    color: black !important;\n}\n\n.fb_iframe_widget_fluid_desktop iframe {\n    min-width: 450px !important\n}\n\n.highlight-text {\n    color: #0089e9;\n}\n", ""]);
 
 // exports
 
@@ -34198,10 +34198,13 @@ var Metric = function (_Component) {
                 'all': 'All Pages'
             },
             activePage: 'nasDailyFB',
-            modalIsOpen: {}
+            modalIsOpen: {},
+            followerCounts: {},
+            totalFollowerCount: 0
         };
         _this.fetchFbData = _this.fetchFbData.bind(_this);
         _this.fetchIgData = _this.fetchIgData.bind(_this);
+        _this.fetchFollowers = _this.fetchFollowers.bind(_this);
         _this.openModal = _this.openModal.bind(_this);
         _this.closeModal = _this.closeModal.bind(_this);
         return _this;
@@ -34284,13 +34287,58 @@ var Metric = function (_Component) {
             });
         }
     }, {
+        key: 'fetchFollowers',
+        value: function fetchFollowers() {
+            var _this2 = this;
+
+            _axios2.default.get('https://nasinsightserver.herokuapp.com/api/followers/all').then(function (response) {
+                var data = response.data;
+                _this2.setState({
+                    followerCounts: data,
+                    totalFollowerCount: _this2.sumAllValuesInObject(data)
+                });
+            });
+        }
+    }, {
+        key: 'sumAllValuesInObject',
+        value: function sumAllValuesInObject(values) {
+            var sum = 0;
+            var _iteratorNormalCompletion = true;
+            var _didIteratorError = false;
+            var _iteratorError = undefined;
+
+            try {
+                for (var _iterator = Object.keys(values)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                    var key = _step.value;
+
+                    sum += parseInt(values[key].replace(/[,]/g, ''));
+                }
+            } catch (err) {
+                _didIteratorError = true;
+                _iteratorError = err;
+            } finally {
+                try {
+                    if (!_iteratorNormalCompletion && _iterator.return) {
+                        _iterator.return();
+                    }
+                } finally {
+                    if (_didIteratorError) {
+                        throw _iteratorError;
+                    }
+                }
+            }
+
+            ;
+            return sum;
+        }
+    }, {
         key: 'fetchIgData',
         value: function fetchIgData() {
-            var _this2 = this;
+            var _this3 = this;
 
             var uri = "https://nasinsightserver.herokuapp.com/api/info/overview/nasDailyIG/day/" + new Date().getFullYear() + '/page_impressions/2';
             _axios2.default.get(uri).then(function (response) {
-                _this2.setState({
+                _this3.setState({
                     currentIgReach: response.data[0].stats[0].stats.filter(function (x) {
                         return x.name === 'reach';
                     })[0].values,
@@ -34332,6 +34380,7 @@ var Metric = function (_Component) {
         value: function componentWillMount() {
             this.fetchFbData();
             this.fetchIgData();
+            this.fetchFollowers();
         }
     }, {
         key: 'render',
@@ -34374,6 +34423,16 @@ var Metric = function (_Component) {
                                     'div',
                                     { className: 'ms-social-grid' },
                                     _react2.default.createElement('i', { className: 'fa fa-facebook-f bg-facebook', onClick: this.openModal.bind(null, 'all') }),
+                                    this.state.totalFollowerCount > 0 ? _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark highlight-text' },
+                                        this.state.totalFollowerCount.toLocaleString()
+                                    ) : _react2.default.createElement('p', null),
+                                    _react2.default.createElement(
+                                        'span',
+                                        null,
+                                        'Followers'
+                                    ),
                                     this.state.totalData ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark' },
@@ -34427,8 +34486,17 @@ var Metric = function (_Component) {
                                 _react2.default.createElement(
                                     'div',
                                     { className: 'ms-social-grid' },
-                                    _react2.default.createElement('img', { src: 'https://svgshare.com/i/HBs.svg', alt: 'nasdaily-total',
-                                        border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFB') }),
+                                    _react2.default.createElement('i', { className: 'fa fa-facebook-f bg-facebook', onClick: this.openModal.bind(null, 'nasDailyFB') }),
+                                    this.state.followerCounts ? _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark highlight-text' },
+                                        this.state.followerCounts['nasDailyFB']
+                                    ) : _react2.default.createElement('p', null),
+                                    _react2.default.createElement(
+                                        'span',
+                                        null,
+                                        'Followers'
+                                    ),
                                     this.state.dailyData.nasDailyFB ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark' },
@@ -34455,6 +34523,16 @@ var Metric = function (_Component) {
                                     { className: 'ms-social-grid' },
                                     _react2.default.createElement('img', { src: 'https://i.ibb.co/gWMzpzk/thailand-flag-medium.png', alt: 'nasdaily-thailand',
                                         border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBTH') }),
+                                    this.state.followerCounts ? _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark highlight-text' },
+                                        this.state.followerCounts['nasDailyTH']
+                                    ) : _react2.default.createElement('p', null),
+                                    _react2.default.createElement(
+                                        'span',
+                                        null,
+                                        'Followers'
+                                    ),
                                     this.state.dailyData.nasDailyFBTH ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark' },
@@ -34485,6 +34563,16 @@ var Metric = function (_Component) {
                                     { className: 'ms-social-grid' },
                                     _react2.default.createElement('img', { src: 'https://i.ibb.co/jykWfj4/vietnam-flag-icon-128.png', alt: 'nasdaily-vn',
                                         border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBVN') }),
+                                    this.state.followerCounts ? _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark highlight-text' },
+                                        this.state.followerCounts['nasDailyVN']
+                                    ) : _react2.default.createElement('p', null),
+                                    _react2.default.createElement(
+                                        'span',
+                                        null,
+                                        'Followers'
+                                    ),
                                     this.state.dailyData.nasDailyFBVN ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark' },
@@ -34511,6 +34599,16 @@ var Metric = function (_Component) {
                                     { className: 'ms-social-grid' },
                                     _react2.default.createElement('img', { src: 'https://i.ibb.co/Qkx9qRw/philippines-flag-icon-64.png', alt: 'nasdaily-ph',
                                         border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBPH') }),
+                                    this.state.followerCounts ? _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark highlight-text' },
+                                        this.state.followerCounts['nasDailyPH']
+                                    ) : _react2.default.createElement('p', null),
+                                    _react2.default.createElement(
+                                        'span',
+                                        null,
+                                        'Followers'
+                                    ),
                                     this.state.dailyData.nasDailyFBPH ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark' },
@@ -34542,6 +34640,16 @@ var Metric = function (_Component) {
                                     _react2.default.createElement('img', { src: 'https://i.ibb.co/7pvMdfj/spain-flag-icon-64.png', alt: 'nasdaily-esp',
                                         border: '0',
                                         className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBSP') }),
+                                    this.state.followerCounts ? _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark highlight-text' },
+                                        this.state.followerCounts['nasDailyFBSP']
+                                    ) : _react2.default.createElement('p', null),
+                                    _react2.default.createElement(
+                                        'span',
+                                        null,
+                                        'Followers'
+                                    ),
                                     this.state.dailyData.nasDailyFBSP ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark' },
@@ -34568,6 +34676,16 @@ var Metric = function (_Component) {
                                     { className: 'ms-social-grid' },
                                     _react2.default.createElement('img', { src: 'https://i.ibb.co/9h3848b/arabic.png', alt: 'nasdaily-arabic', border: '0',
                                         className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBARB') }),
+                                    this.state.followerCounts ? _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark highlight-text' },
+                                        this.state.followerCounts['nasDailyARB']
+                                    ) : _react2.default.createElement('p', null),
+                                    _react2.default.createElement(
+                                        'span',
+                                        null,
+                                        'Followers'
+                                    ),
                                     this.state.dailyData.nasDailyFBARB ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark' },
@@ -34597,7 +34715,17 @@ var Metric = function (_Component) {
                                     'div',
                                     { className: 'ms-social-grid' },
                                     _react2.default.createElement('img', { src: 'https://i.ibb.co/CnZbSDS/chinese-character.png', alt: 'nasdaily-chinese',
-                                        border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBCH') }),
+                                        border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyCH') }),
+                                    this.state.followerCounts ? _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark highlight-text' },
+                                        this.state.followerCounts['nasDailyCH']
+                                    ) : _react2.default.createElement('p', null),
+                                    _react2.default.createElement(
+                                        'span',
+                                        null,
+                                        'Followers'
+                                    ),
                                     this.state.dailyData.nasDailyFBCH ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark' },
