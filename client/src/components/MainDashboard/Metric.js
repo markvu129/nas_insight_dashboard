@@ -170,8 +170,6 @@ class Metric extends Component {
                                         <p className="ms-text-dark">{this.state.totalData['total_views'].toLocaleString()}</p> :
                                         <p></p>}
                                     <span>Video views</span>
-                                    <p className="ms-text-dark">{this.state.totalData['total_engaged_users'].toLocaleString()}</p>
-                                    <span>Engaged users</span>
                                 </div>
                                 <div className="ms-social-grid">
                                     <i className="fa fa-instagram bg-instagram"></i>
@@ -193,8 +191,6 @@ class Metric extends Component {
                                         <p className="ms-text-dark">{this.state.dailyData.nasDailyFB.currentFbViews.toLocaleString()}</p> :
                                         <p></p>}
                                     <span>Video views</span>
-                                    <p className="ms-text-dark">{this.state.dailyData.nasDailyFB.currentFbEngagedUsers.toLocaleString()}</p>
-                                    <span>Engaged users</span>
                                 </div>
                                 <div className="ms-social-grid">
                                     <img src="https://i.ibb.co/gWMzpzk/thailand-flag-medium.png" alt="nasdaily-thailand"
@@ -207,8 +203,6 @@ class Metric extends Component {
                                         <p className="ms-text-dark">{this.state.dailyData.nasDailyFBTH.currentFbViews.toLocaleString()}</p> :
                                         <p></p>}
                                     <span>Video views</span>
-                                    <p className="ms-text-dark">{this.state.dailyData.nasDailyFBTH.currentFbEngagedUsers.toLocaleString()}</p>
-                                    <span>Engaged users</span>
                                 </div>
                             </div>
 
@@ -224,8 +218,6 @@ class Metric extends Component {
                                         <p className="ms-text-dark">{this.state.dailyData.nasDailyFBVN.currentFbViews.toLocaleString()}</p> :
                                         <p></p>}
                                     <span>Video views</span>
-                                    <p className="ms-text-dark">{this.state.dailyData.nasDailyFBVN.currentFbEngagedUsers.toLocaleString()}</p>
-                                    <span>Engaged users</span>
                                 </div>
                                 <div className="ms-social-grid">
                                     <img src="https://i.ibb.co/Qkx9qRw/philippines-flag-icon-64.png" alt="nasdaily-ph"
@@ -238,8 +230,6 @@ class Metric extends Component {
                                         <p className="ms-text-dark">{this.state.dailyData.nasDailyFBPH.currentFbViews.toLocaleString()}</p> :
                                         <p></p>}
                                     <span>Video views</span>
-                                    <p className="ms-text-dark">{this.state.dailyData.nasDailyFBPH.currentFbEngagedUsers.toLocaleString()}</p>
-                                    <span>Engaged users</span>
                                 </div>
                             </div>
                             <div className="ms-social-media-followers">
@@ -255,8 +245,6 @@ class Metric extends Component {
                                         <p className="ms-text-dark">{this.state.dailyData.nasDailyFBSP.currentFbViews.toLocaleString()}</p> :
                                         <p></p>}
                                     <span>Video views</span>
-                                    <p className="ms-text-dark">{this.state.dailyData.nasDailyFBSP.currentFbEngagedUsers.toLocaleString()}</p>
-                                    <span>Engaged users</span>
                                 </div>
                                 <div className="ms-social-grid">
                                     <img src="https://i.ibb.co/9h3848b/arabic.png" alt="nasdaily-arabic" border="0"
@@ -269,8 +257,6 @@ class Metric extends Component {
                                         <p className="ms-text-dark">{this.state.dailyData.nasDailyFBARB.currentFbViews.toLocaleString()}</p> :
                                         <p></p>}
                                     <span>Video views</span>
-                                    <p className="ms-text-dark">{this.state.dailyData.nasDailyFBARB.currentFbEngagedUsers.toLocaleString()}</p>
-                                    <span>Engaged users</span>
                                 </div>
                             </div>
 
@@ -286,8 +272,6 @@ class Metric extends Component {
                                         <p className="ms-text-dark">{this.state.dailyData.nasDailyFBCH.currentFbViews.toLocaleString()}</p> :
                                         <p></p>}
                                     <span>Video views</span>
-                                    <p className="ms-text-dark">{this.state.dailyData.nasDailyFBCH.currentFbEngagedUsers.toLocaleString()}</p>
-                                    <span>Engaged users</span>
                                 </div>
                                 <div className="ms-social-grid">
                                     <img src="https://i.ibb.co/WtqGPqr/indonesia-flag-medium.png" alt="nasdaily-bahasa"

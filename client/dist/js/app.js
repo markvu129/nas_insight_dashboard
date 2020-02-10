@@ -34442,16 +34442,6 @@ var Metric = function (_Component) {
                                         'span',
                                         null,
                                         'Video views'
-                                    ),
-                                    _react2.default.createElement(
-                                        'p',
-                                        { className: 'ms-text-dark' },
-                                        this.state.totalData['total_engaged_users'].toLocaleString()
-                                    ),
-                                    _react2.default.createElement(
-                                        'span',
-                                        null,
-                                        'Engaged users'
                                     )
                                 ),
                                 _react2.default.createElement(
@@ -34506,16 +34496,6 @@ var Metric = function (_Component) {
                                         'span',
                                         null,
                                         'Video views'
-                                    ),
-                                    _react2.default.createElement(
-                                        'p',
-                                        { className: 'ms-text-dark' },
-                                        this.state.dailyData.nasDailyFB.currentFbEngagedUsers.toLocaleString()
-                                    ),
-                                    _react2.default.createElement(
-                                        'span',
-                                        null,
-                                        'Engaged users'
                                     )
                                 ),
                                 _react2.default.createElement(
@@ -34542,16 +34522,6 @@ var Metric = function (_Component) {
                                         'span',
                                         null,
                                         'Video views'
-                                    ),
-                                    _react2.default.createElement(
-                                        'p',
-                                        { className: 'ms-text-dark' },
-                                        this.state.dailyData.nasDailyFBTH.currentFbEngagedUsers.toLocaleString()
-                                    ),
-                                    _react2.default.createElement(
-                                        'span',
-                                        null,
-                                        'Engaged users'
                                     )
                                 )
                             ),
@@ -34582,16 +34552,6 @@ var Metric = function (_Component) {
                                         'span',
                                         null,
                                         'Video views'
-                                    ),
-                                    _react2.default.createElement(
-                                        'p',
-                                        { className: 'ms-text-dark' },
-                                        this.state.dailyData.nasDailyFBVN.currentFbEngagedUsers.toLocaleString()
-                                    ),
-                                    _react2.default.createElement(
-                                        'span',
-                                        null,
-                                        'Engaged users'
                                     )
                                 ),
                                 _react2.default.createElement(
@@ -34618,16 +34578,6 @@ var Metric = function (_Component) {
                                         'span',
                                         null,
                                         'Video views'
-                                    ),
-                                    _react2.default.createElement(
-                                        'p',
-                                        { className: 'ms-text-dark' },
-                                        this.state.dailyData.nasDailyFBPH.currentFbEngagedUsers.toLocaleString()
-                                    ),
-                                    _react2.default.createElement(
-                                        'span',
-                                        null,
-                                        'Engaged users'
                                     )
                                 )
                             ),
@@ -34659,16 +34609,6 @@ var Metric = function (_Component) {
                                         'span',
                                         null,
                                         'Video views'
-                                    ),
-                                    _react2.default.createElement(
-                                        'p',
-                                        { className: 'ms-text-dark' },
-                                        this.state.dailyData.nasDailyFBSP.currentFbEngagedUsers.toLocaleString()
-                                    ),
-                                    _react2.default.createElement(
-                                        'span',
-                                        null,
-                                        'Engaged users'
                                     )
                                 ),
                                 _react2.default.createElement(
@@ -34695,16 +34635,6 @@ var Metric = function (_Component) {
                                         'span',
                                         null,
                                         'Video views'
-                                    ),
-                                    _react2.default.createElement(
-                                        'p',
-                                        { className: 'ms-text-dark' },
-                                        this.state.dailyData.nasDailyFBARB.currentFbEngagedUsers.toLocaleString()
-                                    ),
-                                    _react2.default.createElement(
-                                        'span',
-                                        null,
-                                        'Engaged users'
                                     )
                                 )
                             ),
@@ -34735,16 +34665,6 @@ var Metric = function (_Component) {
                                         'span',
                                         null,
                                         'Video views'
-                                    ),
-                                    _react2.default.createElement(
-                                        'p',
-                                        { className: 'ms-text-dark' },
-                                        this.state.dailyData.nasDailyFBCH.currentFbEngagedUsers.toLocaleString()
-                                    ),
-                                    _react2.default.createElement(
-                                        'span',
-                                        null,
-                                        'Engaged users'
                                     )
                                 ),
                                 _react2.default.createElement(
