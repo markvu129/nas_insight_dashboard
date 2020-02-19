@@ -5582,7 +5582,7 @@ var TopVideos = function (_Component) {
         value: function fetchVideos(value) {
             var _this2 = this;
 
-            var uri = "https://nasinsightserver.herokuapp.com/api/videos/" + value + "/latest";
+            var uri = "https://nasinsightserver.herokuapp.com/api/videos/all/" + value + "/5/1";
             _axios2.default.get(uri).then(function (response) {
                 _this2.setState({
                     recentVideos: response.data,
@@ -5673,146 +5673,150 @@ var TopVideos = function (_Component) {
         value: function renderVideos(videos) {
             var _this3 = this;
 
-            var listOfVideos = videos.map(function (video) {
-                return _react2.default.createElement(
-                    'tr',
-                    { key: video.id },
-                    _react2.default.createElement(
-                        'td',
-                        { 'data-column': 'Video' },
-                        _react2.default.createElement('img', { className: 'video-widget-img', src: video.picture,
-                            onClick: function onClick() {
-                                return _this3.setCurrentVideo(video.id);
-                            } }),
-                        _react2.default.createElement('br', null),
+            if (videos.length > 0) {
+                var listOfVideos = videos.map(function (video) {
+                    return _react2.default.createElement(
+                        'tr',
+                        { key: video.id },
                         _react2.default.createElement(
-                            'p',
-                            { className: 'video-widget-title' },
-                            video.title
-                        ),
-                        _react2.default.createElement(
-                            'p',
-                            { className: '' },
-                            'Last updated at: ',
-                            new Date(video.updated_at).toISOString().slice(0, 10)
-                        )
-                    ),
-                    _react2.default.createElement(
-                        'td',
-                        { 'data-column': 'Total views' },
-                        _react2.default.createElement(
-                            'p',
-                            { className: 'video-widget-metric' },
-                            video.data.filter(function (x) {
-                                return x.name === 'total_video_views';
-                            })[0].values[0].value.toLocaleString()
-                        ),
-                        _react2.default.createElement(
-                            'p',
-                            { className: 'video-widget-annotation' },
-                            'Views'
-                        ),
-                        _react2.default.createElement(
-                            'p',
-                            { className: 'comment-button', onClick: function onClick() {
-                                    return _this3.setCurrentViews(video.id);
-                                } },
-                            'See retention '
-                        )
-                    ),
-                    _react2.default.createElement(
-                        'td',
-                        { 'data-column': 'Total impressions' },
-                        _react2.default.createElement(
-                            'p',
-                            { className: 'video-widget-metric' },
-                            video.data.filter(function (x) {
-                                return x.name === 'total_video_impressions';
-                            })[0].values[0].value.toLocaleString()
-                        ),
-                        _react2.default.createElement(
-                            'p',
-                            { className: 'video-widget-annotation' },
-                            'Impressions'
-                        ),
-                        _react2.default.createElement(
-                            'p',
-                            { className: 'comment-button', onClick: function onClick() {
-                                    return _this3.setImpressionViews(video.id);
-                                } },
-                            'See reach '
-                        )
-                    ),
-                    _react2.default.createElement(
-                        'td',
-                        { 'data-column': 'Engagement' },
-                        video.data.filter(function (x) {
-                            return x.name === 'total_video_stories_by_action_type';
-                        })[0].values[0].value['share'] ? _react2.default.createElement(
-                            'div',
-                            { className: 'video-widget-reactions' },
+                            'td',
+                            { 'data-column': 'Video' },
+                            _react2.default.createElement('img', { className: 'video-widget-img', src: video.picture,
+                                onClick: function onClick() {
+                                    return _this3.setCurrentVideo(video.id);
+                                } }),
+                            _react2.default.createElement('br', null),
                             _react2.default.createElement(
                                 'p',
-                                { className: 'video-widget-metric' },
-                                video.data.filter(function (x) {
-                                    return x.name === 'total_video_stories_by_action_type';
-                                })[0].values[0].value['share'].toLocaleString()
+                                { className: 'video-widget-title' },
+                                video.title
                             ),
                             _react2.default.createElement(
                                 'p',
-                                { className: 'video-widget-annotation' },
-                                'Shares'
-                            )
-                        ) : _react2.default.createElement('div', null),
-                        _react2.default.createElement(
-                            'div',
-                            { className: 'video-widget-reactions' },
-                            _react2.default.createElement(
-                                'p',
-                                { className: 'video-widget-metric' },
-                                video.data.filter(function (x) {
-                                    return x.name === 'total_video_stories_by_action_type';
-                                })[0].values[0].value['like'].toLocaleString()
-                            ),
-                            _react2.default.createElement(
-                                'p',
-                                { className: 'video-widget-annotation' },
-                                'Likes'
+                                { className: '' },
+                                'Last updated at: ',
+                                video.updatedAt
                             )
                         ),
-                        video.data.filter(function (x) {
-                            return x.name === 'total_video_stories_by_action_type';
-                        })[0].values[0].value['comment'] ? _react2.default.createElement(
-                            'div',
-                            { className: 'video-widget-reactions' },
+                        _react2.default.createElement(
+                            'td',
+                            { 'data-column': 'Total views' },
                             _react2.default.createElement(
                                 'p',
                                 { className: 'video-widget-metric' },
-                                video.data.filter(function (x) {
-                                    return x.name === 'total_video_stories_by_action_type';
-                                })[0].values[0].value['comment'].toLocaleString()
+                                video.dailyStats.filter(function (x) {
+                                    return x.name === 'total_video_views';
+                                })[0].values[0].value.toLocaleString()
                             ),
                             _react2.default.createElement(
                                 'p',
                                 { className: 'video-widget-annotation' },
-                                'Comments'
+                                'Views'
                             ),
-                            video.comments.length > 0 ? _react2.default.createElement(
+                            _react2.default.createElement(
                                 'p',
                                 { className: 'comment-button', onClick: function onClick() {
-                                        return _this3.setCurrentComments(video.id);
+                                        return _this3.setCurrentViews(video.id);
                                     } },
-                                'See comments '
-                            ) : _react2.default.createElement('p', null)
-                        ) : _react2.default.createElement('div', null)
-                    )
+                                'See retention '
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'td',
+                            { 'data-column': 'Total impressions' },
+                            _react2.default.createElement(
+                                'p',
+                                { className: 'video-widget-metric' },
+                                video.dailyStats.filter(function (x) {
+                                    return x.name === 'total_video_impressions';
+                                })[0].values[0].value.toLocaleString()
+                            ),
+                            _react2.default.createElement(
+                                'p',
+                                { className: 'video-widget-annotation' },
+                                'Impressions'
+                            ),
+                            _react2.default.createElement(
+                                'p',
+                                { className: 'comment-button', onClick: function onClick() {
+                                        return _this3.setImpressionViews(video.id);
+                                    } },
+                                'See reach '
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'td',
+                            { 'data-column': 'Engagement' },
+                            video.dailyStats.filter(function (x) {
+                                return x.name === 'total_video_stories_by_action_type';
+                            })[0].values[0].value['share'] ? _react2.default.createElement(
+                                'div',
+                                { className: 'video-widget-reactions' },
+                                _react2.default.createElement(
+                                    'p',
+                                    { className: 'video-widget-metric' },
+                                    video.dailyStats.filter(function (x) {
+                                        return x.name === 'total_video_stories_by_action_type';
+                                    })[0].values[0].value['share'].toLocaleString()
+                                ),
+                                _react2.default.createElement(
+                                    'p',
+                                    { className: 'video-widget-annotation' },
+                                    'Shares'
+                                )
+                            ) : _react2.default.createElement('div', null),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'video-widget-reactions' },
+                                _react2.default.createElement(
+                                    'p',
+                                    { className: 'video-widget-metric' },
+                                    video.dailyStats.filter(function (x) {
+                                        return x.name === 'total_video_stories_by_action_type';
+                                    })[0].values[0].value['like'].toLocaleString()
+                                ),
+                                _react2.default.createElement(
+                                    'p',
+                                    { className: 'video-widget-annotation' },
+                                    'Likes'
+                                )
+                            ),
+                            video.dailyStats.filter(function (x) {
+                                return x.name === 'total_video_stories_by_action_type';
+                            })[0].values[0].value['comment'] ? _react2.default.createElement(
+                                'div',
+                                { className: 'video-widget-reactions' },
+                                _react2.default.createElement(
+                                    'p',
+                                    { className: 'video-widget-metric' },
+                                    video.dailyStats.filter(function (x) {
+                                        return x.name === 'total_video_stories_by_action_type';
+                                    })[0].values[0].value['comment'].toLocaleString()
+                                ),
+                                _react2.default.createElement(
+                                    'p',
+                                    { className: 'video-widget-annotation' },
+                                    'Comments'
+                                ),
+                                video.topComments.length > 0 ? _react2.default.createElement(
+                                    'p',
+                                    { className: 'comment-button', onClick: function onClick() {
+                                            return _this3.setCurrentComments(video.id);
+                                        } },
+                                    'See comments '
+                                ) : _react2.default.createElement('p', null)
+                            ) : _react2.default.createElement('div', null)
+                        )
+                    );
+                });
+                return _react2.default.createElement(
+                    'tbody',
+                    null,
+                    listOfVideos
                 );
-            });
-            return _react2.default.createElement(
-                'tbody',
-                null,
-                listOfVideos
-            );
+            } else {
+                return _react2.default.createElement('tbody', null);
+            }
         }
     }, {
         key: 'renderComments',
@@ -5861,18 +5865,18 @@ var TopVideos = function (_Component) {
                         borderWidth: 1,
                         hoverBackgroundColor: ['rgba(255,99,132,1)', '#298ae9', '#3b7464'],
                         hoverBorderColor: ['rgba(255,99,132,1)', '#298ae9', '#3b7464'],
-                        data: [this.state.currentVideo.data.filter(function (x) {
+                        data: [this.state.currentVideo.dailyStats.filter(function (x) {
                             return x.name === 'total_video_complete_views';
-                        })[0].values[0].value, this.state.currentVideo.data.filter(function (x) {
+                        })[0].values[0].value, this.state.currentVideo.dailyStats.filter(function (x) {
                             return x.name === 'total_video_30s_views';
-                        })[0].values[0].value, this.state.currentVideo.data.filter(function (x) {
+                        })[0].values[0].value, this.state.currentVideo.dailyStats.filter(function (x) {
                             return x.name === 'total_video_10s_views';
                         })[0].values[0].value]
                     }]
 
                 };
 
-                var viewByCountryData = this.state.currentVideo.data.filter(function (x) {
+                var viewByCountryData = this.state.currentVideo.dailyStats.filter(function (x) {
                     return x.name === 'total_video_view_time_by_country_id';
                 })[0].values[0].value;
                 var viewCountryData = Object.values(viewByCountryData).sort(function (a, b) {
@@ -5896,32 +5900,6 @@ var TopVideos = function (_Component) {
                     labels: viewCountryGraphLabels,
                     datasets: [{
                         data: topViewCountryData,
-                        backgroundColor: listOfPieColors,
-                        hoverBackgroundColor: listOfPieColors
-                    }]
-                };
-
-                var viewByCategoryData = this.state.currentVideo.data.filter(function (x) {
-                    return x.name === 'total_video_view_time_by_age_bucket_and_gender';
-                })[0].values[0].value;
-                var viewCategoryData = Object.values(viewByCategoryData).sort(function (a, b) {
-                    return b - a;
-                });
-                var viewCategoryLabels = Object.keys(viewByCategoryData).sort(function (a, b) {
-                    return viewByCategoryData[b] - viewByCategoryData[a];
-                });
-                var topViewCategoryData = viewCategoryData.slice(0, 3);
-                var otherViewCategoryData = viewCategoryData.slice(3, viewByCategoryData.length).reduce(function (a, b) {
-                    return a + b;
-                }, 0);
-                topViewCategoryData.push(otherViewCategoryData);
-                var viewCategoryGraphLabels = viewCategoryLabels.slice(0, 3);
-                viewCategoryGraphLabels.push('Others');
-
-                var viewByCategoryGraphData = {
-                    labels: viewCategoryGraphLabels,
-                    datasets: [{
-                        data: topViewCategoryData,
                         backgroundColor: listOfPieColors,
                         hoverBackgroundColor: listOfPieColors
                     }]
@@ -5972,7 +5950,7 @@ var TopVideos = function (_Component) {
                         null,
                         _react2.default.createElement(
                             'thead',
-                            null,
+                            { className: 'video-table-head' },
                             _react2.default.createElement(
                                 'tr',
                                 null,
@@ -5988,7 +5966,7 @@ var TopVideos = function (_Component) {
                                         'p',
                                         null,
                                         _react2.default.createElement(_reactSelect2.default, { className: 'select-video-source',
-                                            placeholder: this.state.source ? this.state.source : "Select source",
+                                            placeholder: this.state.source ? this.state.source : "Nas Daily",
                                             options: sourceOptions,
                                             onChange: function onChange(value) {
                                                 return _this4.onSelectMetrics(value);
@@ -6044,7 +6022,7 @@ var TopVideos = function (_Component) {
                                         _react2.default.createElement(
                                             'p',
                                             { className: 'ms-text-dark' },
-                                            this.state.currentVideo.data.filter(function (x) {
+                                            this.state.currentVideo.dailyStats.filter(function (x) {
                                                 return x.name === 'total_video_impressions_unique';
                                             })[0].values[0].value.toLocaleString()
                                         ),
@@ -6065,7 +6043,7 @@ var TopVideos = function (_Component) {
                                         _react2.default.createElement(
                                             'p',
                                             { className: 'ms-text-dark' },
-                                            this.state.currentVideo.data.filter(function (x) {
+                                            this.state.currentVideo.dailyStats.filter(function (x) {
                                                 return x.name === 'total_video_impressions_viral';
                                             })[0].values[0].value.toLocaleString()
                                         ),
@@ -6109,7 +6087,7 @@ var TopVideos = function (_Component) {
                                         _react2.default.createElement(
                                             'p',
                                             { className: 'ms-text-dark' },
-                                            Math.round(this.state.currentVideo.data.filter(function (x) {
+                                            Math.round(this.state.currentVideo.dailyStats.filter(function (x) {
                                                 return x.name === 'total_video_view_total_time';
                                             })[0].values[0].value / 60000).toLocaleString()
                                         ),
@@ -6130,7 +6108,7 @@ var TopVideos = function (_Component) {
                                         _react2.default.createElement(
                                             'p',
                                             { className: 'ms-text-dark' },
-                                            this.state.currentVideo.data.filter(function (x) {
+                                            this.state.currentVideo.dailyStats.filter(function (x) {
                                                 return x.name === 'total_video_avg_time_watched';
                                             })[0].values[0].value.toLocaleString()
                                         ),
@@ -6161,25 +6139,6 @@ var TopVideos = function (_Component) {
                                     'div',
                                     { className: 'ms-social-media-followers' },
                                     _react2.default.createElement(_reactChartjs.Pie, { data: viewByCountryGraphData, options: {
-                                            tooltips: {
-                                                callbacks: {
-                                                    label: function label(tooltipItem, data) {
-                                                        var dataset = data.datasets[tooltipItem.datasetIndex];
-                                                        return dataset.data[tooltipItem.index].toLocaleString();
-                                                    }
-                                                }
-                                            }
-                                        } })
-                                ),
-                                _react2.default.createElement(
-                                    'p',
-                                    null,
-                                    'Views by age and gender bucket'
-                                ),
-                                _react2.default.createElement(
-                                    'div',
-                                    { className: 'ms-social-media-followers' },
-                                    _react2.default.createElement(_reactChartjs.Pie, { data: viewByCategoryGraphData, options: {
                                             tooltips: {
                                                 callbacks: {
                                                     label: function label(tooltipItem, data) {
@@ -6230,7 +6189,7 @@ var TopVideos = function (_Component) {
                                         _react2.default.createElement(
                                             'p',
                                             { className: 'ms-text-dark' },
-                                            this.state.currentVideo.data.filter(function (x) {
+                                            this.state.currentVideo.dailyStats.filter(function (x) {
                                                 return x.name === 'total_video_views_unique';
                                             })[0].values[0].value.toLocaleString()
                                         ),
@@ -6251,7 +6210,7 @@ var TopVideos = function (_Component) {
                                         _react2.default.createElement(
                                             'p',
                                             { className: 'ms-text-dark' },
-                                            this.state.currentVideo.data.filter(function (x) {
+                                            this.state.currentVideo.dailyStats.filter(function (x) {
                                                 return x.name === 'total_video_views_sound_on';
                                             })[0].values[0].value.toLocaleString()
                                         ),
@@ -6280,7 +6239,7 @@ var TopVideos = function (_Component) {
                                         _react2.default.createElement(
                                             'p',
                                             { className: 'ms-text-dark' },
-                                            this.state.currentVideo.data.filter(function (x) {
+                                            this.state.currentVideo.dailyStats.filter(function (x) {
                                                 return x.name === 'total_video_views_unique';
                                             })[0].values[0].value.toLocaleString()
                                         ),
@@ -6303,7 +6262,7 @@ var TopVideos = function (_Component) {
                                         _react2.default.createElement(
                                             'p',
                                             { className: 'ms-text-dark' },
-                                            this.state.currentVideo.data.filter(function (x) {
+                                            this.state.currentVideo.dailyStats.filter(function (x) {
                                                 return x.name === 'total_video_impressions_unique';
                                             })[0].values[0].value.toLocaleString()
                                         ),
@@ -6318,7 +6277,7 @@ var TopVideos = function (_Component) {
                             _react2.default.createElement(
                                 'div',
                                 { className: 'ms-panel-body p-0 ms-panel-emotion-div' },
-                                this.state.currentVideo.data.filter(function (x) {
+                                this.state.currentVideo.dailyStats.filter(function (x) {
                                     return x.name === 'total_video_reactions_by_type_total';
                                 })[0].values[0].value['like'] ? _react2.default.createElement(
                                     'div',
@@ -6332,12 +6291,12 @@ var TopVideos = function (_Component) {
                                     _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark' },
-                                        this.state.currentVideo.data.filter(function (x) {
+                                        this.state.currentVideo.dailyStats.filter(function (x) {
                                             return x.name === 'total_video_reactions_by_type_total';
                                         })[0].values[0].value['like'].toLocaleString()
                                     )
                                 ) : _react2.default.createElement('div', null),
-                                this.state.currentVideo.data.filter(function (x) {
+                                this.state.currentVideo.dailyStats.filter(function (x) {
                                     return x.name === 'total_video_reactions_by_type_total';
                                 })[0].values[0].value['love'] ? _react2.default.createElement(
                                     'div',
@@ -6351,12 +6310,12 @@ var TopVideos = function (_Component) {
                                     _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark' },
-                                        this.state.currentVideo.data.filter(function (x) {
+                                        this.state.currentVideo.dailyStats.filter(function (x) {
                                             return x.name === 'total_video_reactions_by_type_total';
                                         })[0].values[0].value['love'].toLocaleString()
                                     )
                                 ) : _react2.default.createElement('div', null),
-                                this.state.currentVideo.data.filter(function (x) {
+                                this.state.currentVideo.dailyStats.filter(function (x) {
                                     return x.name === 'total_video_reactions_by_type_total';
                                 })[0].values[0].value['wow'] ? _react2.default.createElement(
                                     'div',
@@ -6370,12 +6329,12 @@ var TopVideos = function (_Component) {
                                     _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark' },
-                                        this.state.currentVideo.data.filter(function (x) {
+                                        this.state.currentVideo.dailyStats.filter(function (x) {
                                             return x.name === 'total_video_reactions_by_type_total';
                                         })[0].values[0].value['wow'].toLocaleString()
                                     )
                                 ) : _react2.default.createElement('div', null),
-                                this.state.currentVideo.data.filter(function (x) {
+                                this.state.currentVideo.dailyStats.filter(function (x) {
                                     return x.name === 'total_video_reactions_by_type_total';
                                 })[0].values[0].value['haha'] ? _react2.default.createElement(
                                     'div',
@@ -6389,12 +6348,12 @@ var TopVideos = function (_Component) {
                                     _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark' },
-                                        this.state.currentVideo.data.filter(function (x) {
+                                        this.state.currentVideo.dailyStats.filter(function (x) {
                                             return x.name === 'total_video_reactions_by_type_total';
                                         })[0].values[0].value['haha'].toLocaleString()
                                     )
                                 ) : _react2.default.createElement('div', null),
-                                this.state.currentVideo.data.filter(function (x) {
+                                this.state.currentVideo.dailyStats.filter(function (x) {
                                     return x.name === 'total_video_reactions_by_type_total';
                                 })[0].values[0].value['sorry'] ? _react2.default.createElement(
                                     'div',
@@ -6408,12 +6367,12 @@ var TopVideos = function (_Component) {
                                     _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark' },
-                                        this.state.currentVideo.data.filter(function (x) {
+                                        this.state.currentVideo.dailyStats.filter(function (x) {
                                             return x.name === 'total_video_reactions_by_type_total';
                                         })[0].values[0].value['sorry'].toLocaleString()
                                     )
                                 ) : _react2.default.createElement('div', null),
-                                this.state.currentVideo.data.filter(function (x) {
+                                this.state.currentVideo.dailyStats.filter(function (x) {
                                     return x.name === 'total_video_reactions_by_type_total';
                                 })[0].values[0].value['anger'] ? _react2.default.createElement(
                                     'div',
@@ -6427,7 +6386,7 @@ var TopVideos = function (_Component) {
                                     _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark' },
-                                        this.state.currentVideo.data.filter(function (x) {
+                                        this.state.currentVideo.dailyStats.filter(function (x) {
                                             return x.name === 'total_video_reactions_by_type_total';
                                         })[0].values[0].value['anger'].toLocaleString()
                                     )
@@ -6435,7 +6394,7 @@ var TopVideos = function (_Component) {
                             )
                         )
                     ) : _react2.default.createElement('div', null),
-                    this.state.currentVideo.comments && this.state.currentVideo.comments.length > 0 ? _react2.default.createElement(
+                    this.state.currentVideo.topComments && this.state.currentVideo.topComments.length > 0 ? _react2.default.createElement(
                         _Modal2.default,
                         { id: 'stats', show: this.state.commentModalIsOpen, onHide: this.closeModal,
                             animation: false },
@@ -6465,7 +6424,7 @@ var TopVideos = function (_Component) {
                             _react2.default.createElement(
                                 'div',
                                 null,
-                                this.renderComments(this.state.currentVideo.comments.slice(0, 10))
+                                this.renderComments(this.state.currentVideo.topComments.slice(0, 10))
                             )
                         )
                     ) : _react2.default.createElement('div', null)
@@ -24635,7 +24594,7 @@ exports = module.exports = __webpack_require__("FZ+f")(false);
 
 
 // module
-exports.push([module.i, ".flag-icon {\n    width: 64px !important;\n    height: 45px !important;\n    margin-bottom: 10px;\n    border-radius: 5px;\n    border: 1px transparent;\n}\n\n.section-icon i {\n    font-size: 2.5em !important;\n    color: black !important;\n}\n\n.fb_iframe_widget_fluid_desktop iframe {\n    min-width: 450px !important\n}\n\n.highlight-text {\n    color: #0089e9;\n}\n", ""]);
+exports.push([module.i, ".flag-icon {\n    width: 80px !important;\n    height: 80px !important;\n    border: 1px transparent;\n}\n\n.source-name {\n    color: #2c2c2c !important;\n    font-size: 1em !important;\n    font-style: italic;\n}\n\n.section-icon i {\n    font-size: 2.5em !important;\n    color: black !important;\n}\n\n.fb_iframe_widget_fluid_desktop iframe {\n    min-width: 450px !important\n}\n\n.highlight-text {\n    color: #0089e9;\n}\n", ""]);
 
 // exports
 
@@ -34189,12 +34148,12 @@ var Metric = function (_Component) {
             pages: ['nasDailyFB', 'nasDailyFBVN', 'nasDailyFBPH', 'nasDailyFBSP', 'nasDailyFBTH', 'nasDailyFBARB', 'nasDailyFBCH'],
             title: {
                 'nasDailyFB': 'Nas Daily',
-                'nasDailyFBVN': 'NasDaily Vietnam',
+                'nasDailyFBVN': 'NasDaily Vietnamese',
                 'nasDailyFBARB': 'NasDaily Arabic',
-                'nasDailyFBTH': 'NasDaily Thailand',
-                'nasDailyFBPH': 'NasDaily Philipines',
+                'nasDailyFBTH': 'NasDaily Thai',
+                'nasDailyFBPH': 'NasDaily Tagalog',
                 'nasDailyFBCH': 'NasDaily Chinese',
-                'nasDailyFBSP': 'NasDaily Espanol',
+                'nasDailyFBSP': 'NasDaily Spanish',
                 'all': 'All Pages'
             },
             activePage: 'nasDailyFB',
@@ -34215,18 +34174,17 @@ var Metric = function (_Component) {
         value: function fetchFbData() {
             var fbData = {};
             var fetches = [];
-            var totalData = {
-                'total_impressions': 0,
-                'total_reach': 0,
-                'total_views': 0,
-                'total_views_unique': 0,
-                'total_view_time': 0,
-                'total_engaged_users': 0,
-                'total_complete_views': 0,
-                'updatedAt': ""
-            };
+            var totalData = {};
 
             var that = this;
+            var total_views = 0;
+            var total_reach = 0;
+            var total_views_unique = 0;
+            var total_view_time = 0;
+            var total_engaged_users = 0;
+            var total_complete_views = 0;
+            var total_impressions = 0;
+            var updated_at = void 0;
             this.state.pages.forEach(function (page) {
                 var uri = "https://nasinsightserver.herokuapp.com/api/info/overview/" + page + "/day/" + new Date().getFullYear() + "/page_impressions/2";
                 fetches.push(_axios2.default.get(uri).then(function (response) {
@@ -34237,27 +34195,24 @@ var Metric = function (_Component) {
                     })[0].values[0].value;
 
                     // Calculate total data
-                    totalData['updatedAt'] = response.data[0].updatedAt;
-                    totalData['total_views'] = totalData['total_views'] + view;
-                    totalData['total_impressions'] = totalData['total_impressions'] + response.data[0].stats[0].stats.filter(function (x) {
+                    updated_at = response.data[0].updatedAt;
+                    total_views = total_views + view;
+                    total_impressions = total_impressions + response.data[0].stats[0].stats.filter(function (x) {
                         return x.name === 'page_impressions';
                     })[0].values[0].value;
-                    totalData['total_reach'] = totalData['total_impressions_unique'] + response.data[0].stats[0].stats.filter(function (x) {
+                    total_reach = total_reach + response.data[0].stats[0].stats.filter(function (x) {
                         return x.name === 'page_impressions_unique';
                     })[0].values[0].value;
-                    totalData['total_views'] = totalData['total_views'] + response.data[0].stats[0].stats.filter(function (x) {
-                        return x.name === 'page_video_views';
-                    })[0].values[0].value;
-                    totalData['total_views_unique'] = totalData['total_views_unique'] + response.data[0].stats[0].stats.filter(function (x) {
+                    total_views_unique = total_views_unique + response.data[0].stats[0].stats.filter(function (x) {
                         return x.name === 'page_video_views_unique';
                     })[0].values[0].value;
-                    totalData['total_view_time'] = totalData['total_view_time'] + Math.round(response.data[0].stats[0].stats.filter(function (x) {
+                    total_view_time = total_view_time + Math.round(response.data[0].stats[0].stats.filter(function (x) {
                         return x.name === 'page_video_view_time';
                     })[0].values[0].value / 60000);
-                    totalData['total_engaged_users'] = totalData['total_engaged_users'] + response.data[0].stats[0].stats.filter(function (x) {
+                    total_engaged_users = total_engaged_users + response.data[0].stats[0].stats.filter(function (x) {
                         return x.name === 'page_engaged_users';
                     })[0].values[0].value;
-                    totalData['total_complete_views'] = totalData['total_complete_views'] + response.data[0].stats[0].stats.filter(function (x) {
+                    total_complete_views = total_complete_views + response.data[0].stats[0].stats.filter(function (x) {
                         return x.name === 'page_video_complete_views_30s';
                     })[0].values[0].value;
 
@@ -34280,6 +34235,14 @@ var Metric = function (_Component) {
 
             // Wait for all fetches to finish
             Promise.all(fetches).then(function () {
+                totalData.total_views = total_views;
+                totalData.total_impressions = total_impressions;
+                totalData.total_reach = total_reach;
+                totalData.total_views_unique = total_views_unique;
+                totalData.total_view_time = total_view_time;
+                totalData.total_engaged_users = total_engaged_users;
+                totalData.total_complete_views = total_complete_views;
+                totalData.updatedAt = updated_at;
                 that.setState({
                     dailyData: fbData,
                     totalData: totalData
@@ -34292,44 +34255,11 @@ var Metric = function (_Component) {
             var _this2 = this;
 
             _axios2.default.get('https://nasinsightserver.herokuapp.com/api/followers/all').then(function (response) {
-                var data = response.data;
+                var data = response.data[0];
                 _this2.setState({
-                    followerCounts: data,
-                    totalFollowerCount: _this2.sumAllValuesInObject(data)
+                    followerCounts: data
                 });
             });
-        }
-    }, {
-        key: 'sumAllValuesInObject',
-        value: function sumAllValuesInObject(values) {
-            var sum = 0;
-            var _iteratorNormalCompletion = true;
-            var _didIteratorError = false;
-            var _iteratorError = undefined;
-
-            try {
-                for (var _iterator = Object.keys(values)[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                    var key = _step.value;
-
-                    sum += parseInt(values[key].replace(/[,]/g, ''));
-                }
-            } catch (err) {
-                _didIteratorError = true;
-                _iteratorError = err;
-            } finally {
-                try {
-                    if (!_iteratorNormalCompletion && _iterator.return) {
-                        _iterator.return();
-                    }
-                } finally {
-                    if (_didIteratorError) {
-                        throw _iteratorError;
-                    }
-                }
-            }
-
-            ;
-            return sum;
         }
     }, {
         key: 'fetchIgData',
@@ -34423,10 +34353,10 @@ var Metric = function (_Component) {
                                     'div',
                                     { className: 'ms-social-grid' },
                                     _react2.default.createElement('i', { className: 'fa fa-facebook-f bg-facebook', onClick: this.openModal.bind(null, 'all') }),
-                                    this.state.totalFollowerCount > 0 ? _react2.default.createElement(
+                                    this.state.followerCounts ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark highlight-text' },
-                                        this.state.totalFollowerCount.toLocaleString()
+                                        this.state.followerCounts['all']
                                     ) : _react2.default.createElement('p', null),
                                     _react2.default.createElement(
                                         'span',
@@ -34476,7 +34406,12 @@ var Metric = function (_Component) {
                                 _react2.default.createElement(
                                     'div',
                                     { className: 'ms-social-grid' },
-                                    _react2.default.createElement('i', { className: 'fa fa-facebook-f bg-facebook', onClick: this.openModal.bind(null, 'nasDailyFB') }),
+                                    _react2.default.createElement(
+                                        'p',
+                                        { className: 'source-name' },
+                                        'Main'
+                                    ),
+                                    _react2.default.createElement('img', { className: 'flag-icon', src: '/assets/img/images/nasdaily_logo.png', onClick: this.openModal.bind(null, 'nasDailyFB') }),
                                     this.state.followerCounts ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark highlight-text' },
@@ -34501,12 +34436,17 @@ var Metric = function (_Component) {
                                 _react2.default.createElement(
                                     'div',
                                     { className: 'ms-social-grid' },
-                                    _react2.default.createElement('img', { src: 'https://i.ibb.co/gWMzpzk/thailand-flag-medium.png', alt: 'nasdaily-thailand',
+                                    _react2.default.createElement(
+                                        'p',
+                                        { className: 'source-name' },
+                                        'Thai'
+                                    ),
+                                    _react2.default.createElement('img', { src: '/assets/img/images/nasdaily_logo.png', alt: 'nasdaily-thailand',
                                         border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBTH') }),
                                     this.state.followerCounts ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark highlight-text' },
-                                        this.state.followerCounts['nasDailyTH']
+                                        this.state.followerCounts['nasDailyFBTH']
                                     ) : _react2.default.createElement('p', null),
                                     _react2.default.createElement(
                                         'span',
@@ -34531,12 +34471,17 @@ var Metric = function (_Component) {
                                 _react2.default.createElement(
                                     'div',
                                     { className: 'ms-social-grid' },
-                                    _react2.default.createElement('img', { src: 'https://i.ibb.co/jykWfj4/vietnam-flag-icon-128.png', alt: 'nasdaily-vn',
+                                    _react2.default.createElement(
+                                        'p',
+                                        { className: 'source-name' },
+                                        'Vietnamese'
+                                    ),
+                                    _react2.default.createElement('img', { src: '/assets/img/images/nasdaily_logo.png', alt: 'nasdaily-vn',
                                         border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBVN') }),
                                     this.state.followerCounts ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark highlight-text' },
-                                        this.state.followerCounts['nasDailyVN']
+                                        this.state.followerCounts['nasDailyFBVN']
                                     ) : _react2.default.createElement('p', null),
                                     _react2.default.createElement(
                                         'span',
@@ -34557,12 +34502,17 @@ var Metric = function (_Component) {
                                 _react2.default.createElement(
                                     'div',
                                     { className: 'ms-social-grid' },
-                                    _react2.default.createElement('img', { src: 'https://i.ibb.co/Qkx9qRw/philippines-flag-icon-64.png', alt: 'nasdaily-ph',
+                                    _react2.default.createElement(
+                                        'p',
+                                        { className: 'source-name' },
+                                        'Tagalog'
+                                    ),
+                                    _react2.default.createElement('img', { src: '/assets/img/images/nasdaily_logo.png', alt: 'nasdaily-ph',
                                         border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBPH') }),
                                     this.state.followerCounts ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark highlight-text' },
-                                        this.state.followerCounts['nasDailyPH']
+                                        this.state.followerCounts['nasDailyFBPH']
                                     ) : _react2.default.createElement('p', null),
                                     _react2.default.createElement(
                                         'span',
@@ -34587,7 +34537,12 @@ var Metric = function (_Component) {
                                 _react2.default.createElement(
                                     'div',
                                     { className: 'ms-social-grid' },
-                                    _react2.default.createElement('img', { src: 'https://i.ibb.co/7pvMdfj/spain-flag-icon-64.png', alt: 'nasdaily-esp',
+                                    _react2.default.createElement(
+                                        'p',
+                                        { className: 'source-name' },
+                                        'Spanish'
+                                    ),
+                                    _react2.default.createElement('img', { src: '/assets/img/images/nasdaily_logo.png', alt: 'nasdaily-esp',
                                         border: '0',
                                         className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBSP') }),
                                     this.state.followerCounts ? _react2.default.createElement(
@@ -34614,12 +34569,17 @@ var Metric = function (_Component) {
                                 _react2.default.createElement(
                                     'div',
                                     { className: 'ms-social-grid' },
-                                    _react2.default.createElement('img', { src: 'https://i.ibb.co/9h3848b/arabic.png', alt: 'nasdaily-arabic', border: '0',
+                                    _react2.default.createElement(
+                                        'p',
+                                        { className: 'source-name' },
+                                        'Arabic'
+                                    ),
+                                    _react2.default.createElement('img', { src: '/assets/img/images/nasdaily_logo.png', alt: 'nasdaily-arabic', border: '0',
                                         className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBARB') }),
                                     this.state.followerCounts ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark highlight-text' },
-                                        this.state.followerCounts['nasDailyARB']
+                                        this.state.followerCounts['nasDailyFBARB']
                                     ) : _react2.default.createElement('p', null),
                                     _react2.default.createElement(
                                         'span',
@@ -34644,12 +34604,17 @@ var Metric = function (_Component) {
                                 _react2.default.createElement(
                                     'div',
                                     { className: 'ms-social-grid' },
-                                    _react2.default.createElement('img', { src: 'https://i.ibb.co/CnZbSDS/chinese-character.png', alt: 'nasdaily-chinese',
-                                        border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyCH') }),
+                                    _react2.default.createElement(
+                                        'p',
+                                        { className: 'source-name' },
+                                        'Chinese'
+                                    ),
+                                    _react2.default.createElement('img', { src: '/assets/img/images/nasdaily_logo.png', alt: 'nasdaily-chinese',
+                                        border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBCH') }),
                                     this.state.followerCounts ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark highlight-text' },
-                                        this.state.followerCounts['nasDailyCH']
+                                        this.state.followerCounts['nasDailyFBCH']
                                     ) : _react2.default.createElement('p', null),
                                     _react2.default.createElement(
                                         'span',
@@ -34670,7 +34635,12 @@ var Metric = function (_Component) {
                                 _react2.default.createElement(
                                     'div',
                                     { className: 'ms-social-grid' },
-                                    _react2.default.createElement('img', { src: 'https://i.ibb.co/WtqGPqr/indonesia-flag-medium.png', alt: 'nasdaily-bahasa',
+                                    _react2.default.createElement(
+                                        'p',
+                                        { className: 'source-name' },
+                                        'Portuguese'
+                                    ),
+                                    _react2.default.createElement('img', { src: '/assets/img/images/nasdaily_logo.png', alt: 'nasdaily-bahasa',
                                         border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBTH') }),
                                     _react2.default.createElement(
                                         'p',
@@ -35686,7 +35656,7 @@ exports = module.exports = __webpack_require__("FZ+f")(false);
 
 
 // module
-exports.push([module.i, "table {\n    width: 100%;\n    border-collapse: collapse;\n    margin:50px auto;\n    font-family: 'Roboto', 'sans-serif'\n}\n\n/* Zebra striping */\ntr {\n    background: white\n}\n\ntr:nth-of-type(odd) {\n    background: #eee;\n}\n\nth {\n    background: #F9CA47;\n    color: white;\n    font-weight: bold;\n}\n\ntd, th {\n    padding: 10px;\n    border: 1px solid #ccc;\n    text-align: left;\n    font-size: 18px;\n}\n\n/*\nMax width before this PARTICULAR table gets nasty\nThis query will take effect for any screen smaller than 760px\nand also iPads specifically.\n*/\n@media\nonly screen and (max-width: 760px),\n(min-device-width: 768px) and (max-device-width: 1024px)  {\n\n    .select-video-source-mobile {\n        display: block !important;\n        width: 100%;\n        margin-top: 20px;\n        margin-bottom: 20px;\n    }\n\n    .select-video-source {\n        display: none;\n    }\n\n    table {\n        width: 100%;\n    }\n\n    /* Force table to not be like tables anymore */\n    table, thead, tbody, th, td, tr {\n        display: block;\n    }\n\n    /* Hide table headers (but not display: none;, for accessibility) */\n    thead tr {\n        position: absolute;\n        top: -9999px;\n        left: -9999px;\n    }\n\n    tr { border: 1px solid #ccc; }\n\n    td {\n        /* Behave  like a \"row\" */\n        border: none;\n        border-bottom: 1px solid #eee;\n        position: relative;\n        padding-left: 50%;\n        min-height: 150px;\n    }\n\n    td:before {\n        /* Now like a table header */\n        position: absolute;\n        /* Top/left values mimic padding */\n        top: 6px;\n        left: 6px;\n        width: 45%;\n        padding-right: 10px;\n        white-space: nowrap;\n        /* Label the data */\n        content: attr(data-column);\n\n        color: #000;\n        font-weight: bold;\n    }\n\n    .video-widget-metric {\n        margin-bottom: 0;\n        font-size: 1.1rem !important;\n        font-weight: 700;\n        color: #34334a\n    }\n\n    .video-widget-reactions {\n        margin-right: 5px;\n        font-size: 1.0rem !important;\n    }\n\n}\n\n.video-widget-img {\n    width: 200px;\n    max-width: 200px !important;\n    height: 100px;\n    border-radius: 5px;\n}\n\n.video-widget-img:hover {\n    transform: scale(1.1);\n    opacity: 0.7;\n    cursor: pointer\n}\n\n.video-widget-title {\n    color: #878793;\n    font-size: 14px;\n    margin-top: 20px\n}\n\n.video-widget-metric {\n    margin-bottom: 0;\n    font-size: 1.3rem;\n    font-weight: 700;\n    color: #34334a\n}\n\n.video-widget-annotation {\n    color: #878793;\n    font-size: 14px;\n}\n\n.video-widget-reactions {\n    width: 30%;\n    display: inline-block;\n    float: left;\n}\n\n.select-video-source {\n    display: inline-block;\n    width: 70%;\n    font-size: 14px\n}\n.video-column-title {\n    width: 20%;\n    float:left;\n    font-size: 18px;\n    color: white;\n}\n\n.video-column {\n    padding-top: 20px\n}\n\n.select-video-source-mobile {\n    display: none;\n}\n\n.comment-button {\n    color: #0089e9;\n    text-decoration: underline\n}\n\n.comment-button:hover {\n    opacity: 0.5;\n    cursor: pointer;\n}\n\n.comment-div {\n    margin-bottom: 20px;\n}\n\n.comment-title {\n    color: #0089e9;\n    text-decoration: underline;\n    margin-top: 20px;\n    margin-bottom: 20px\n}\n\n.comment-icon {\n    margin-right: 10px\n}\n\n.comment-msg {\n    margin-bottom: 5px;\n    font-size: 1.1em;\n    font-weight: 700;\n    color: #34334a\n}\n\n.comment-time {\n    color: #878793;\n    font-size: 12px;\n}", ""]);
+exports.push([module.i, "table {\n    width: 100%;\n    border-collapse: collapse;\n    margin:50px auto;\n    font-family: 'Roboto', 'sans-serif'\n}\n\n/* Zebra striping */\ntr {\n    background: white\n}\n\ntr:nth-of-type(odd) {\n    background: #eee;\n}\n\n.video-table-head th {\n    color: black !important;\n}\n\nth {\n    background: #F9CA47;\n    color: white;\n    font-weight: bold;\n}\n\ntd, th {\n    padding: 10px;\n    border: 1px solid #ccc;\n    text-align: left;\n    font-size: 18px;\n}\n\n\n/*\nMax width before this PARTICULAR table gets nasty\nThis query will take effect for any screen smaller than 760px\nand also iPads specifically.\n*/\n@media\nonly screen and (max-width: 760px),\n(min-device-width: 768px) and (max-device-width: 1024px)  {\n\n    .select-video-source-mobile {\n        display: block !important;\n        width: 100%;\n        margin-top: 20px;\n        margin-bottom: 20px;\n    }\n\n    .select-video-source {\n        display: none;\n    }\n\n    table {\n        width: 100%;\n    }\n\n    /* Force table to not be like tables anymore */\n    table, thead, tbody, th, td, tr {\n        display: block;\n    }\n\n    /* Hide table headers (but not display: none;, for accessibility) */\n    thead tr {\n        position: absolute;\n        top: -9999px;\n        left: -9999px;\n    }\n\n    tr { border: 1px solid #ccc; }\n\n    td {\n        /* Behave  like a \"row\" */\n        border: none;\n        border-bottom: 1px solid #eee;\n        position: relative;\n        padding-left: 50%;\n        min-height: 150px;\n    }\n\n    td:before {\n        /* Now like a table header */\n        position: absolute;\n        /* Top/left values mimic padding */\n        top: 6px;\n        left: 6px;\n        width: 45%;\n        padding-right: 10px;\n        white-space: nowrap;\n        /* Label the data */\n        content: attr(data-column);\n\n        color: #000;\n        font-weight: bold;\n    }\n\n    .video-widget-metric {\n        margin-bottom: 0;\n        font-size: 1.1rem !important;\n        font-weight: 700;\n        color: #34334a\n    }\n\n    .video-widget-reactions {\n        margin-right: 5px;\n        font-size: 1.0rem !important;\n    }\n\n}\n\n.video-widget-img {\n    width: 200px;\n    max-width: 200px !important;\n    height: 100px;\n    border-radius: 5px;\n}\n\n.video-widget-img:hover {\n    transform: scale(1.1);\n    opacity: 0.7;\n    cursor: pointer\n}\n\n.video-widget-title {\n    color: #878793;\n    font-size: 14px;\n    margin-top: 20px\n}\n\n.video-widget-metric {\n    margin-bottom: 0;\n    font-size: 1.3rem;\n    font-weight: 700;\n    color: #34334a\n}\n\n.video-widget-annotation {\n    color: #878793;\n    font-size: 14px;\n}\n\n.video-widget-reactions {\n    width: 30%;\n    display: inline-block;\n    float: left;\n}\n\n.select-video-source {\n    display: inline-block;\n    width: 70%;\n    font-size: 14px\n}\n.video-column-title {\n    width: 20%;\n    float:left;\n    font-size: 18px;\n    color: black;\n}\n\n.video-column {\n    padding-top: 20px\n}\n\n.select-video-source-mobile {\n    display: none;\n}\n\n.comment-button {\n    color: #0089e9;\n    text-decoration: underline\n}\n\n.comment-button:hover {\n    opacity: 0.5;\n    cursor: pointer;\n}\n\n.comment-div {\n    margin-bottom: 20px;\n}\n\n.comment-title {\n    color: #0089e9;\n    text-decoration: underline;\n    margin-top: 20px;\n    margin-bottom: 20px\n}\n\n.comment-icon {\n    margin-right: 10px\n}\n\n.comment-msg {\n    margin-bottom: 5px;\n    font-size: 1.1em;\n    font-weight: 700;\n    color: #34334a\n}\n\n.comment-time {\n    color: #878793;\n    font-size: 12px;\n}\n", ""]);
 
 // exports
 

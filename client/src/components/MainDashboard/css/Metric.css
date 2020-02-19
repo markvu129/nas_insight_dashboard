@@ -1,9 +1,13 @@
 .flag-icon {
-    width: 64px !important;
-    height: 45px !important;
-    margin-bottom: 10px;
-    border-radius: 5px;
+    width: 80px !important;
+    height: 80px !important;
     border: 1px transparent;
+}
+
+.source-name {
+    color: #2c2c2c !important;
+    font-size: 1em !important;
+    font-style: italic;
 }
 
 .section-icon i {

@@ -16,12 +16,12 @@ class Metric extends Component {
             pages: ['nasDailyFB', 'nasDailyFBVN', 'nasDailyFBPH', 'nasDailyFBSP', 'nasDailyFBTH', 'nasDailyFBARB', 'nasDailyFBCH'],
             title: {
                 'nasDailyFB': 'Nas Daily',
-                'nasDailyFBVN': 'NasDaily Vietnam',
+                'nasDailyFBVN': 'NasDaily Vietnamese',
                 'nasDailyFBARB': 'NasDaily Arabic',
-                'nasDailyFBTH': 'NasDaily Thailand',
-                'nasDailyFBPH': 'NasDaily Philipines',
+                'nasDailyFBTH': 'NasDaily Thai',
+                'nasDailyFBPH': 'NasDaily Tagalog',
                 'nasDailyFBCH': 'NasDaily Chinese',
-                'nasDailyFBSP': 'NasDaily Espanol',
+                'nasDailyFBSP': 'NasDaily Spanish',
                 'all': 'All Pages'
             },
             activePage: 'nasDailyFB',
@@ -40,17 +40,17 @@ class Metric extends Component {
         let fbData = {};
         let fetches = [];
         let totalData = {
-            'total_impressions': 0,
-            'total_reach': 0,
-            'total_views': 0,
-            'total_views_unique': 0,
-            'total_view_time': 0,
-            'total_engaged_users': 0,
-            'total_complete_views': 0,
-            'updatedAt': ""
         };
 
         const that = this;
+        let total_views = 0;
+        let total_reach = 0;
+        let total_views_unique = 0;
+        let total_view_time = 0;
+        let total_engaged_users = 0;
+        let total_complete_views = 0;
+        let total_impressions = 0;
+        let updated_at;
         this.state.pages.forEach(page => {
             let uri = "https://nasinsightserver.herokuapp.com/api/info/overview/" + page + "/day/" + new Date().getFullYear() + "/page_impressions/2";
             fetches.push(axios.get(uri)
@@ -60,15 +60,14 @@ class Metric extends Component {
                     let view = response.data[0].stats[0].stats.filter(x => x.name === 'page_video_views')[0].values[0].value;
 
                     // Calculate total data
-                    totalData['updatedAt'] =  response.data[0].updatedAt;
-                    totalData['total_views'] = totalData['total_views'] + view;
-                    totalData['total_impressions'] =   totalData['total_impressions'] + response.data[0].stats[0].stats.filter(x => x.name === 'page_impressions')[0].values[0].value;
-                    totalData['total_reach'] =   totalData['total_impressions_unique'] + response.data[0].stats[0].stats.filter(x => x.name === 'page_impressions_unique')[0].values[0].value;
-                    totalData['total_views'] =   totalData['total_views'] + response.data[0].stats[0].stats.filter(x => x.name === 'page_video_views')[0].values[0].value;
-                    totalData['total_views_unique'] = totalData['total_views_unique'] + response.data[0].stats[0].stats.filter(x => x.name === 'page_video_views_unique')[0].values[0].value;
-                    totalData['total_view_time'] = totalData['total_view_time'] + Math.round((response.data[0].stats[0].stats.filter(x => x.name === 'page_video_view_time')[0].values[0].value)/60000);
-                    totalData['total_engaged_users'] = totalData['total_engaged_users'] + response.data[0].stats[0].stats.filter(x => x.name === 'page_engaged_users')[0].values[0].value;
-                    totalData['total_complete_views'] = totalData['total_complete_views'] + response.data[0].stats[0].stats.filter(x => x.name === 'page_video_complete_views_30s')[0].values[0].value;
+                    updated_at = response.data[0].updatedAt;
+                    total_views = total_views + view;
+                    total_impressions = total_impressions + response.data[0].stats[0].stats.filter(x => x.name === 'page_impressions')[0].values[0].value;
+                    total_reach = total_reach + response.data[0].stats[0].stats.filter(x => x.name === 'page_impressions_unique')[0].values[0].value;
+                    total_views_unique = total_views_unique + response.data[0].stats[0].stats.filter(x => x.name === 'page_video_views_unique')[0].values[0].value;
+                    total_view_time = total_view_time + Math.round((response.data[0].stats[0].stats.filter(x => x.name === 'page_video_view_time')[0].values[0].value)/60000);
+                    total_engaged_users = total_engaged_users + response.data[0].stats[0].stats.filter(x => x.name === 'page_engaged_users')[0].values[0].value;
+                    total_complete_views = total_complete_views + response.data[0].stats[0].stats.filter(x => x.name === 'page_video_complete_views_30s')[0].values[0].value;
 
                     // Calculate current data for each site
                     data['currentFbViews'] = view;
@@ -83,6 +82,14 @@ class Metric extends Component {
 
         // Wait for all fetches to finish
         Promise.all(fetches).then(function () {
+            totalData.total_views = total_views;
+            totalData.total_impressions = total_impressions;
+            totalData.total_reach = total_reach;
+            totalData.total_views_unique = total_views_unique;
+            totalData.total_view_time = total_view_time;
+            totalData.total_engaged_users = total_engaged_users;
+            totalData.total_complete_views = total_complete_views;
+            totalData.updatedAt = updated_at;
             that.setState({
                 dailyData: fbData,
                 totalData: totalData
@@ -92,22 +99,12 @@ class Metric extends Component {
 
     fetchFollowers(){
         axios.get('https://nasinsightserver.herokuapp.com/api/followers/all').then(response => {
-            let data = response.data;
+            let data = response.data[0];
             this.setState({
                 followerCounts: data,
-                totalFollowerCount: this.sumAllValuesInObject(data)
             })
         })
     }
-
-    sumAllValuesInObject(values) {
-        let sum = 0;
-        for (let key of Object.keys(values)) {
-            sum += parseInt(values[key].replace(/[,]/g,''));
-        };
-        return sum;
-    }
-
 
     fetchIgData() {
         let uri = "https://nasinsightserver.herokuapp.com/api/info/overview/nasDailyIG/day/" + new Date().getFullYear() + '/page_impressions/2';
@@ -162,8 +159,8 @@ class Metric extends Component {
                             <div className="ms-social-media-followers">
                                 <div className="ms-social-grid">
                                     <i className="fa fa-facebook-f bg-facebook" onClick={this.openModal.bind(null, 'all')}></i>
-                                    {this.state.totalFollowerCount > 0 ?
-                                        <p className="ms-text-dark highlight-text">{this.state.totalFollowerCount.toLocaleString()}</p> :
+                                    {this.state.followerCounts ?
+                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['all']}</p> :
                                         <p></p>}
                                     <span>Followers</span>
                                     {this.state.totalData ?
@@ -182,7 +179,8 @@ class Metric extends Component {
 
                             <div className="ms-social-media-followers">
                                 <div className="ms-social-grid">
-                                    <i className="fa fa-facebook-f bg-facebook" onClick={this.openModal.bind(null, 'nasDailyFB')}></i>
+                                    <p className="source-name">Main</p>
+                                    <img className="flag-icon" src="/assets/img/images/nasdaily_logo.png" onClick={this.openModal.bind(null, 'nasDailyFB')}></img>
                                     {this.state.followerCounts ?
                                         <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyFB']}</p> :
                                         <p></p>}
@@ -193,10 +191,11 @@ class Metric extends Component {
                                     <span>Video views</span>
                                 </div>
                                 <div className="ms-social-grid">
-                                    <img src="https://i.ibb.co/gWMzpzk/thailand-flag-medium.png" alt="nasdaily-thailand"
+                                    <p className="source-name">Thai</p>
+                                    <img src="/assets/img/images/nasdaily_logo.png" alt="nasdaily-thailand"
                                          border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBTH')}/>
                                     {this.state.followerCounts ?
-                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyTH']}</p> :
+                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyFBTH']}</p> :
                                         <p></p>}
                                     <span>Followers</span>
                                     {this.state.dailyData.nasDailyFBTH ?
@@ -208,10 +207,11 @@ class Metric extends Component {
 
                             <div className="ms-social-media-followers">
                                 <div className="ms-social-grid">
-                                    <img src="https://i.ibb.co/jykWfj4/vietnam-flag-icon-128.png" alt="nasdaily-vn"
+                                    <p className="source-name">Vietnamese</p>
+                                    <img src="/assets/img/images/nasdaily_logo.png" alt="nasdaily-vn"
                                          border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBVN')}/>
                                     {this.state.followerCounts ?
-                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyVN']}</p> :
+                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyFBVN']}</p> :
                                         <p></p>}
                                     <span>Followers</span>
                                     {this.state.dailyData.nasDailyFBVN ?
@@ -220,10 +220,11 @@ class Metric extends Component {
                                     <span>Video views</span>
                                 </div>
                                 <div className="ms-social-grid">
-                                    <img src="https://i.ibb.co/Qkx9qRw/philippines-flag-icon-64.png" alt="nasdaily-ph"
+                                    <p className="source-name">Tagalog</p>
+                                    <img src="/assets/img/images/nasdaily_logo.png" alt="nasdaily-ph"
                                          border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBPH')}/>
                                     {this.state.followerCounts ?
-                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyPH']}</p> :
+                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyFBPH']}</p> :
                                         <p></p>}
                                     <span>Followers</span>
                                     {this.state.dailyData.nasDailyFBPH ?
@@ -234,7 +235,8 @@ class Metric extends Component {
                             </div>
                             <div className="ms-social-media-followers">
                                 <div className="ms-social-grid">
-                                    <img src="https://i.ibb.co/7pvMdfj/spain-flag-icon-64.png" alt="nasdaily-esp"
+                                    <p className="source-name">Spanish</p>
+                                    <img src="/assets/img/images/nasdaily_logo.png" alt="nasdaily-esp"
                                          border="0"
                                          className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBSP')}/>
                                     {this.state.followerCounts ?
@@ -247,10 +249,11 @@ class Metric extends Component {
                                     <span>Video views</span>
                                 </div>
                                 <div className="ms-social-grid">
-                                    <img src="https://i.ibb.co/9h3848b/arabic.png" alt="nasdaily-arabic" border="0"
+                                    <p className="source-name">Arabic</p>
+                                    <img src="/assets/img/images/nasdaily_logo.png" alt="nasdaily-arabic" border="0"
                                          className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBARB')}/>
                                     {this.state.followerCounts ?
-                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyARB']}</p> :
+                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyFBARB']}</p> :
                                         <p></p>}
                                     <span>Followers</span>
                                     {this.state.dailyData.nasDailyFBARB ?
@@ -262,10 +265,11 @@ class Metric extends Component {
 
                             <div className="ms-social-media-followers">
                                 <div className="ms-social-grid">
-                                    <img src="https://i.ibb.co/CnZbSDS/chinese-character.png" alt="nasdaily-chinese"
-                                         border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyCH')}/>
+                                    <p className="source-name">Chinese</p>
+                                    <img src="/assets/img/images/nasdaily_logo.png" alt="nasdaily-chinese"
+                                         border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBCH')}/>
                                     {this.state.followerCounts ?
-                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyCH']}</p> :
+                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyFBCH']}</p> :
                                         <p></p>}
                                     <span>Followers</span>
                                     {this.state.dailyData.nasDailyFBCH ?
@@ -274,7 +278,8 @@ class Metric extends Component {
                                     <span>Video views</span>
                                 </div>
                                 <div className="ms-social-grid">
-                                    <img src="https://i.ibb.co/WtqGPqr/indonesia-flag-medium.png" alt="nasdaily-bahasa"
+                                    <p className="source-name">Portuguese</p>
+                                    <img src="/assets/img/images/nasdaily_logo.png" alt="nasdaily-bahasa"
                                          border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBTH')}/>
                                     <p className="ms-text-dark">Coming soon</p>
                                 </div>

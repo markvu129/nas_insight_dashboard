@@ -14,6 +14,10 @@ tr:nth-of-type(odd) {
     background: #eee;
 }
 
+.video-table-head th {
+    color: black !important;
+}
+
 th {
     background: #F9CA47;
     color: white;
@@ -26,6 +30,7 @@ td, th {
     text-align: left;
     font-size: 18px;
 }
+
 
 /*
 Max width before this PARTICULAR table gets nasty
@@ -150,7 +155,7 @@ only screen and (max-width: 760px),
     width: 20%;
     float:left;
     font-size: 18px;
-    color: white;
+    color: black;
 }
 
 .video-column {
