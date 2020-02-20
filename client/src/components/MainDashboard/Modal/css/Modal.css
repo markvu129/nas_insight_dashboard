@@ -1,0 +1,60 @@
+.error-msg {
+    color: #bd2130;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.ui-input {
+    display: block;
+    height: 50px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    width: 100%;
+    padding: 3px 3px
+}
+
+.ui-input-desc {
+    display: block;
+    height: 50px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    padding: 3px 3px;
+    width: 100%
+}
+
+.ui-button-squared {
+    padding: 5px 5px;
+    background: #F9CA47;
+    border: 1px solid transparent;
+    margin-top: 10px;
+    float: right
+}
+
+.search-video {
+    clear: right;
+    margin-top: 40px;
+}
+
+.video-search-img {
+    height: 250px;
+    width: 100%
+}
+
+.fa-search-icon {
+    color: black;
+   font-size: 16px;
+    margin-left: 5px;
+    margin-top: 10px;
+    display: inline-block;
+    float: right;
+}
+
+.fa-search-icon:hover {
+    opacity: 0.7;
+    cursor: pointer;
+    scale: 1.1
+}
+
+

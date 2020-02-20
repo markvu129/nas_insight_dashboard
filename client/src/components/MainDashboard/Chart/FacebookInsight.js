@@ -279,47 +279,35 @@ class FacebookInsight extends Component {
 
         let metricMap = {
             'page_video_views': 'Page Total Video Views',
-            "page_video_views_paid": "Page Video Views Paid",
-            "page_video_views_organic": "Page Video Views Organic",
             "page_video_views_unique": "Page Video Views Unique",
             "page_video_repeat_views": "Page Video Repeat Views",
             "page_video_complete_views_30s": "Page Video Complete View 30s",
-            "page_video_views_10s": "Page Video Views 10s",
             "page_video_view_time": "Page Video View Time",
             'page_impressions': 'Page Impressions',
-            'page_impressions_paid': 'Page Impressions Paid',
-            'page_impressions_organic': 'Page Impressions Organic',
+            'page_impressions_unique': 'Reach',
             "page_impressions_viral": "Page Impressions Viral",
             "page_views_total": "Page Views Total",
-            "page_views_logged_in_unique": "Page Views Logged In Unique"
         };
 
-        let metricOptions = [{"label": "page_impressions", "value": "page_impressions"},
-            {"label": "page_impressions_paid", "value": "page_impressions_paid"},
-            {"label": "page_impressions_organic", "value": "page_impressions_organic"},
-            {"label": "page_impressions_viral", "value": "page_impressions_viral"},
-            {"label": "page_views_logged_in_unique", "value": "page_views_logged_in_unique"},
-            {"label": "page_views_total", "value": "page_views_total"},
-            {"label": "page_video_views", "value": "page_video_views"},
-            {"label": "page_video_views_paid", "value": "page_video_views_paid"},
-            {"label": "page_video_views_organic", "value": "page_video_views_organic"},
-            {"label": "page_video_views_unique", "value": "page_video_views_unique"},
-            {"label": "page_video_repeat_views", "value": "page_video_repeat_views"},
-            {"label": "page_video_complete_views_30s", "value": "page_video_complete_views_30s"},
-            {"label": "page_video_views_10s", "value": "page_video_views_10s"},
-            {"label": "page_video_view_time", "value": "page_video_view_time"},
-
+        let metricOptions = [{"label": "page impressions", "value": "page_impressions"},
+            {"label": "page impressions viral", "value": "page_impressions_viral"},
+            {"label": "reach", "value": "page_impressions_unique"},
+            {"label": "total page views", "value": "page_views_total"},
+            {"label": "page video views", "value": "page_video_views"},
+            {"label": "page video views unique", "value": "page_video_views_unique"},
+            {"label": "page video repeat views", "value": "page_video_repeat_views"},
+            {"label": "page video 30s complete views", "value": "page_video_complete_views_30s"}
         ];
 
         let igMetricMap = {
             'reach': 'Reach',
             'impressions': 'Impressions',
             'profile_views': 'Profile Views'
-        }
+        };
 
         let igMetricOptions = [{"label": "reach", "value": "reach"},
             {"label": "impressions", "value": "impressions"},
-            {"label": "profile_views", "value": "profile_views"}
+            {"label": "profile views", "value": "profile_views"}
         ]
 
         if (this.state.monthlyGraphData['nasDailyFB']['data'] && this.state.monthlyGraphData['nasDailyFB']['data'].length > 0 && this.state.monthlyIgGraphData.length > 0) {

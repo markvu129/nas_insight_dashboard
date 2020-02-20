@@ -7,6 +7,7 @@ import FacebookPlayer from "react-facebook-player";
 import './css/Metric.css';
 import './css/VideoDetail.css';
 import {Bar, Pie} from "react-chartjs-2";
+import VideoSearchModal from "./Modal/VideoSearchModal";
 
 class TopVideos extends Component {
 
@@ -19,7 +20,8 @@ class TopVideos extends Component {
             modalIsOpen: false,
             commentModalIsOpen: false,
             viewModalIsOpen: false,
-            impressionModalIsOpen: false
+            impressionModalIsOpen: false,
+            searchVideoModalOpen: false
         };
         this.fetchVideos = this.fetchVideos.bind(this);
         this.renderVideos = this.renderVideos.bind(this);
@@ -29,7 +31,9 @@ class TopVideos extends Component {
         this.onPlayerReady = this.onPlayerReady.bind(this);
         this.setCurrentComments = this.setCurrentComments.bind(this);
         this.setCurrentViews = this.setCurrentViews.bind(this);
-        this.setImpressionViews = this.setImpressionViews.bind(this)
+        this.setImpressionViews = this.setImpressionViews.bind(this);
+        this.openSearchVideo = this.openSearchVideo.bind(this);
+        this.closeSearchVideo = this.closeSearchVideo.bind(this);
     }
 
     fetchVideos(value) {
@@ -54,6 +58,7 @@ class TopVideos extends Component {
             || this.state.commentModalIsOpen !== nextState.commentModalIsOpen
             || this.state.viewModalIsOpen !== nextState.viewModalIsOpen
             || this.state.impressionModalIsOpen !== nextState.impressionModalIsOpen
+            ||this.state.searchVideoModalOpen !== nextState.searchVideoModalOpen
     }
 
     onSelectMetrics(value) {
@@ -107,6 +112,18 @@ class TopVideos extends Component {
     onPlayerReady(_id, player) {
         player.unmute();
         player.play();
+    }
+
+    openSearchVideo() {
+        this.setState({
+            searchVideoModalOpen: true
+        })
+    }
+
+    closeSearchVideo() {
+        this.setState({
+            searchVideoModalOpen: false
+        })
     }
 
 
@@ -181,12 +198,12 @@ class TopVideos extends Component {
         if (this.state.recentVideos.length > 0) {
 
             let sourceOptions = [{"label": "NasDaily", "value": "nasDailyFB"},
-                {"label": "NasDaily VN", "value": "nasDailyFBVN"},
-                {"label": "NasDaily SP", "value": "nasDailyFBSP"},
-                {"label": "NasDaily CN", "value": "nasDailyFBCH"},
-                {"label": "NasDaily PH", "value": "nasDailyFBPH"},
-                {"label": "NasDaily ARB", "value": "nasDailyFBARB"},
-                {"label": "NasDaily TH", "value": "nasDailyFBTH"}
+                {"label": "NasDaily Vietnamese", "value": "nasDailyFBVN"},
+                {"label": "NasDaily Spanish", "value": "nasDailyFBSP"},
+                {"label": "NasDaily Chinese", "value": "nasDailyFBCH"},
+                {"label": "NasDaily Tagalog", "value": "nasDailyFBPH"},
+                {"label": "NasDaily Arabic", "value": "nasDailyFBARB"},
+                {"label": "NasDaily Thai", "value": "nasDailyFBTH"}
             ];
 
             const plugins = [{
@@ -289,6 +306,7 @@ class TopVideos extends Component {
                                             placeholder={this.state.source ? this.state.source : "Nas Daily"}
                                             options={sourceOptions}
                                             onChange={(value) => this.onSelectMetrics(value)}/>
+                                    <i className="fa fa-search fa-search-icon" onClick={this.openSearchVideo}></i>
                                 </p>
                             </th>
                             <th>Total views</th>
@@ -409,7 +427,7 @@ class TopVideos extends Component {
                                         <div className="ms-social-media-followers">
                                             <div className="ms-social-grid">
                                                 <div className="section-icon"><i className="fa fa-history"></i></div>
-                                                <p className="ms-text-dark">{this.state.currentVideo.dailyStats.filter(x => x.name === 'total_video_views_unique')[0].values[0].value.toLocaleString()}</p>
+                                                <p className="ms-text-dark">{this.state.currentVideo.dailyStats.filter(x => x.name === 'total_video_complete_views')[0].values[0].value.toLocaleString()}</p>
                                                 <span>Video view complete <br/>(95% length)</span>
                                             </div>
                                             <div className="ms-social-grid">
@@ -502,6 +520,10 @@ class TopVideos extends Component {
                             </Modal>
                         ) : (<div></div>)
                     }
+                    {
+                        this.state.searchVideoModalOpen ? (<VideoSearchModal modalIsOpen={this.state.searchVideoModalOpen} closeModal={this.closeSearchVideo}/>) : (<div></div>)
+                    }
+
                 </div>
             );
         } else {

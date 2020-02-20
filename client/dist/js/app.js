@@ -5540,6 +5540,10 @@ __webpack_require__("lvOW");
 
 var _reactChartjs = __webpack_require__("ChjH");
 
+var _VideoSearchModal = __webpack_require__("NxgM");
+
+var _VideoSearchModal2 = _interopRequireDefault(_VideoSearchModal);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -5563,7 +5567,8 @@ var TopVideos = function (_Component) {
             modalIsOpen: false,
             commentModalIsOpen: false,
             viewModalIsOpen: false,
-            impressionModalIsOpen: false
+            impressionModalIsOpen: false,
+            searchVideoModalOpen: false
         };
         _this.fetchVideos = _this.fetchVideos.bind(_this);
         _this.renderVideos = _this.renderVideos.bind(_this);
@@ -5574,6 +5579,8 @@ var TopVideos = function (_Component) {
         _this.setCurrentComments = _this.setCurrentComments.bind(_this);
         _this.setCurrentViews = _this.setCurrentViews.bind(_this);
         _this.setImpressionViews = _this.setImpressionViews.bind(_this);
+        _this.openSearchVideo = _this.openSearchVideo.bind(_this);
+        _this.closeSearchVideo = _this.closeSearchVideo.bind(_this);
         return _this;
     }
 
@@ -5598,7 +5605,7 @@ var TopVideos = function (_Component) {
     }, {
         key: 'shouldComponentUpdate',
         value: function shouldComponentUpdate(nextProps, nextState, nextContent) {
-            return this.state.recentVideos !== nextState.recentVideos || this.state.currentVideo !== nextState.currentVideo || this.state.modalIsOpen !== nextState.modalIsOpen || this.state.commentModalIsOpen !== nextState.commentModalIsOpen || this.state.viewModalIsOpen !== nextState.viewModalIsOpen || this.state.impressionModalIsOpen !== nextState.impressionModalIsOpen;
+            return this.state.recentVideos !== nextState.recentVideos || this.state.currentVideo !== nextState.currentVideo || this.state.modalIsOpen !== nextState.modalIsOpen || this.state.commentModalIsOpen !== nextState.commentModalIsOpen || this.state.viewModalIsOpen !== nextState.viewModalIsOpen || this.state.impressionModalIsOpen !== nextState.impressionModalIsOpen || this.state.searchVideoModalOpen !== nextState.searchVideoModalOpen;
         }
     }, {
         key: 'onSelectMetrics',
@@ -5667,6 +5674,20 @@ var TopVideos = function (_Component) {
         value: function onPlayerReady(_id, player) {
             player.unmute();
             player.play();
+        }
+    }, {
+        key: 'openSearchVideo',
+        value: function openSearchVideo() {
+            this.setState({
+                searchVideoModalOpen: true
+            });
+        }
+    }, {
+        key: 'closeSearchVideo',
+        value: function closeSearchVideo() {
+            this.setState({
+                searchVideoModalOpen: false
+            });
         }
     }, {
         key: 'renderVideos',
@@ -5848,7 +5869,7 @@ var TopVideos = function (_Component) {
 
             if (this.state.recentVideos.length > 0) {
 
-                var sourceOptions = [{ "label": "NasDaily", "value": "nasDailyFB" }, { "label": "NasDaily VN", "value": "nasDailyFBVN" }, { "label": "NasDaily SP", "value": "nasDailyFBSP" }, { "label": "NasDaily CN", "value": "nasDailyFBCH" }, { "label": "NasDaily PH", "value": "nasDailyFBPH" }, { "label": "NasDaily ARB", "value": "nasDailyFBARB" }, { "label": "NasDaily TH", "value": "nasDailyFBTH" }];
+                var sourceOptions = [{ "label": "NasDaily", "value": "nasDailyFB" }, { "label": "NasDaily Vietnamese", "value": "nasDailyFBVN" }, { "label": "NasDaily Spanish", "value": "nasDailyFBSP" }, { "label": "NasDaily Chinese", "value": "nasDailyFBCH" }, { "label": "NasDaily Tagalog", "value": "nasDailyFBPH" }, { "label": "NasDaily Arabic", "value": "nasDailyFBARB" }, { "label": "NasDaily Thai", "value": "nasDailyFBTH" }];
 
                 var plugins = [{
                     afterDraw: function afterDraw(chartInstance, easing) {
@@ -5970,7 +5991,8 @@ var TopVideos = function (_Component) {
                                             options: sourceOptions,
                                             onChange: function onChange(value) {
                                                 return _this4.onSelectMetrics(value);
-                                            } })
+                                            } }),
+                                        _react2.default.createElement('i', { className: 'fa fa-search fa-search-icon', onClick: this.openSearchVideo })
                                     )
                                 ),
                                 _react2.default.createElement(
@@ -6240,7 +6262,7 @@ var TopVideos = function (_Component) {
                                             'p',
                                             { className: 'ms-text-dark' },
                                             this.state.currentVideo.dailyStats.filter(function (x) {
-                                                return x.name === 'total_video_views_unique';
+                                                return x.name === 'total_video_complete_views';
                                             })[0].values[0].value.toLocaleString()
                                         ),
                                         _react2.default.createElement(
@@ -6427,7 +6449,8 @@ var TopVideos = function (_Component) {
                                 this.renderComments(this.state.currentVideo.topComments.slice(0, 10))
                             )
                         )
-                    ) : _react2.default.createElement('div', null)
+                    ) : _react2.default.createElement('div', null),
+                    this.state.searchVideoModalOpen ? _react2.default.createElement(_VideoSearchModal2.default, { modalIsOpen: this.state.searchVideoModalOpen, closeModal: this.closeSearchVideo }) : _react2.default.createElement('div', null)
                 );
             } else {
                 return _react2.default.createElement('div', null);
@@ -18302,6 +18325,361 @@ module.exports = stackDelete;
 
 /***/ }),
 
+/***/ "NxgM":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__("GiK3");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Modal = __webpack_require__("GMga");
+
+var _Modal2 = _interopRequireDefault(_Modal);
+
+var _axios = __webpack_require__("mtWM");
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _reactFacebookPlayer = __webpack_require__("ry0+");
+
+var _reactFacebookPlayer2 = _interopRequireDefault(_reactFacebookPlayer);
+
+var _reactSelect = __webpack_require__("sOAP");
+
+var _reactSelect2 = _interopRequireDefault(_reactSelect);
+
+__webpack_require__("kucj");
+
+var _Loading = __webpack_require__("a1MK");
+
+var _Loading2 = _interopRequireDefault(_Loading);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var VideoSearchModal = function (_Component) {
+    _inherits(VideoSearchModal, _Component);
+
+    function VideoSearchModal(props) {
+        _classCallCheck(this, VideoSearchModal);
+
+        var _this = _possibleConstructorReturn(this, (VideoSearchModal.__proto__ || Object.getPrototypeOf(VideoSearchModal)).call(this, props));
+
+        _this.state = {
+            currentVideo: false,
+            modalIsOpen: _this.props.modalIsOpen,
+            isFormSending: false,
+            source: '',
+            error: false,
+            currentStats: false,
+            isLoading: false
+        };
+        _this.fetchVideo = _this.fetchVideo.bind(_this);
+        _this.closeModal = _this.closeModal.bind(_this);
+        _this.renderVideo = _this.renderVideo.bind(_this);
+        _this.onSelectSource = _this.onSelectSource.bind(_this);
+        _this.renderForm = _this.renderForm.bind(_this);
+        return _this;
+    }
+
+    _createClass(VideoSearchModal, [{
+        key: 'fetchVideo',
+        value: function fetchVideo(event) {
+            var _this2 = this;
+
+            event.preventDefault();
+            var _event$target = event.target,
+                title = _event$target.title,
+                id = _event$target.id,
+                description = _event$target.description;
+
+            var postData = {};
+            if (title.value && title.value !== '') {
+                postData['title'] = title.value;
+            } else if (id.value && id.value !== '') {
+                postData['video_id'] = id.value;
+            } else if (description.value && description.value !== '') {
+                postData['description'] = description.value;
+            }
+
+            if (this.state.source === '') {
+                this.setState({
+                    error: 'Please fill video source and either id, description or video title'
+                });
+            } else if (!title.value && !id.value && !description.value || title.value === '' && id.value === '' && description.value === '') {
+                this.setState({
+                    error: 'Please fill video source and either id, description or video title'
+                });
+            } else {
+                this.setState({
+                    isLoading: true
+                });
+                _axios2.default.post('https://nasinsightserver.herokuapp.com/api/video/' + this.state.source + '/1', postData).then(function (v) {
+                    if (v.data.length > 0) {
+                        _this2.setState({
+                            currentVideo: v.data[0],
+                            isLoading: false,
+                            error: false
+                        });
+                        _axios2.default.get('https://nasinsightserver.herokuapp.com/api/videos/video_insights/' + _this2.state.source + '/' + v.data[0].id).then(function (r) {
+                            _this2.setState({
+                                currentStats: r.data
+                            });
+                        });
+                    } else {
+                        _this2.setState({
+                            currentVideo: [],
+                            currentStats: false,
+                            isLoading: false,
+                            error: false
+                        });
+                    }
+                });
+            }
+        }
+    }, {
+        key: 'renderVideo',
+        value: function renderVideo() {
+            return _react2.default.createElement(
+                'div',
+                null,
+                this.state.currentVideo && this.state.currentStats ? _react2.default.createElement(
+                    'div',
+                    { className: 'search-video' },
+                    _react2.default.createElement(
+                        'h2',
+                        { className: 'daily-detail-title',
+                            style: { 'color': '#0089e9' } },
+                        this.state.currentVideo.title
+                    ),
+                    _react2.default.createElement('img', { src: this.state.currentVideo.picture, className: 'video-search-img' }),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'ms-panel-body p-0' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'ms-social-media-followers' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'ms-social-grid' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'section-icon' },
+                                    _react2.default.createElement('i', { className: 'fa fa-tv' })
+                                ),
+                                _react2.default.createElement(
+                                    'p',
+                                    { className: 'ms-text-dark' },
+                                    this.state.currentStats.stats.filter(function (x) {
+                                        return x.name === 'total_video_views';
+                                    })[0].values[0].value.toLocaleString()
+                                ),
+                                _react2.default.createElement(
+                                    'span',
+                                    null,
+                                    'Total Views '
+                                )
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'ms-social-grid' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'section-icon' },
+                                    _react2.default.createElement('i', { className: 'fa fa-volume-up' })
+                                ),
+                                _react2.default.createElement(
+                                    'p',
+                                    { className: 'ms-text-dark' },
+                                    this.state.currentStats.stats.filter(function (x) {
+                                        return x.name === 'total_video_views_unique';
+                                    })[0].values[0].value.toLocaleString()
+                                ),
+                                _react2.default.createElement(
+                                    'span',
+                                    null,
+                                    'Total views unique'
+                                )
+                            )
+                        )
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'ms-panel-body p-0' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'ms-social-media-followers' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'ms-social-grid' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'section-icon' },
+                                    _react2.default.createElement('i', { className: 'fa fa-history' })
+                                ),
+                                _react2.default.createElement(
+                                    'p',
+                                    { className: 'ms-text-dark' },
+                                    this.state.currentStats.stats.filter(function (x) {
+                                        return x.name === 'total_video_complete_views';
+                                    })[0].values[0].value.toLocaleString()
+                                ),
+                                _react2.default.createElement(
+                                    'span',
+                                    null,
+                                    'Video view complete ',
+                                    _react2.default.createElement('br', null),
+                                    '(95% length)'
+                                )
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'ms-social-grid' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'section-icon' },
+                                    _react2.default.createElement('i', { className: 'fa fa-user' })
+                                ),
+                                _react2.default.createElement(
+                                    'p',
+                                    { className: 'ms-text-dark' },
+                                    this.state.currentStats.stats.filter(function (x) {
+                                        return x.name === 'total_video_impressions_unique';
+                                    })[0].values[0].value.toLocaleString()
+                                ),
+                                _react2.default.createElement(
+                                    'span',
+                                    null,
+                                    'Impressions unique'
+                                )
+                            )
+                        )
+                    )
+                ) : _react2.default.createElement('div', { className: 'error-msg' }),
+                this.state.currentVideo.length === 0 ? _react2.default.createElement(
+                    'div',
+                    { className: 'error-msg' },
+                    'No video found'
+                ) : _react2.default.createElement('div', null),
+                this.state.isLoading ? _react2.default.createElement(_Loading2.default, null) : _react2.default.createElement('div', null),
+                this.state.error ? _react2.default.createElement(
+                    'p',
+                    { className: 'error-msg' },
+                    this.state.error
+                ) : _react2.default.createElement('p', null)
+            );
+        }
+    }, {
+        key: 'closeModal',
+        value: function closeModal() {
+            this.setState({
+                modalIsOpen: false
+            });
+        }
+    }, {
+        key: 'componentDidMount',
+        value: function componentDidMount() {}
+    }, {
+        key: 'shouldComponentUpdate',
+        value: function shouldComponentUpdate(nextProps, nextState, nextContent) {
+            return this.props.modalIsOpen !== nextProps.modalIsOpen || this.state.currentVideo !== nextState.currentVideo || this.state.currentStats !== nextState.currentStats || this.state.errors !== nextState.errors || this.state.loading !== nextState.loading || this.state.error !== nextState.error;
+        }
+    }, {
+        key: 'renderForm',
+        value: function renderForm() {
+            var inputs = ['Title', 'ID', 'Description'];
+
+            return _react2.default.createElement(
+                'form',
+                { className: 'ui-form p-positions-form', onSubmit: this.fetchVideo },
+                inputs.map(function (input) {
+                    switch (input) {
+                        case 'Title':
+                            return _react2.default.createElement('input', { type: 'text', placeholder: 'Title', key: input,
+                                name: 'title', className: 'ui-input' });
+                        case 'ID':
+                            return _react2.default.createElement('input', { type: 'text', placeholder: 'Id', key: input, name: 'id',
+                                className: 'ui-input' });
+                        case 'Description':
+                            return _react2.default.createElement('input', { type: 'text', placeholder: 'Description', key: input, name: 'description',
+                                className: 'ui-input-desc' });
+
+                        default:
+                            return _react2.default.createElement('input', { type: 'text', placeholder: input, key: input, name: input.toLowerCase(),
+                                className: 'ui-input' });
+                    }
+                }),
+                _react2.default.createElement(
+                    'button',
+                    { type: 'submit', className: 'ui-button-squared' },
+                    'Search'
+                )
+            );
+        }
+    }, {
+        key: 'onSelectSource',
+        value: function onSelectSource(value) {
+            this.setState({
+                source: value.value
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this3 = this;
+
+            var sourceOptions = [{ "label": "NasDaily", "value": "nasDailyFB" }, { "label": "NasDaily Vietnamese", "value": "nasDailyFBVN" }, { "label": "NasDaily Spanish", "value": "nasDailyFBSP" }, { "label": "NasDaily Chinese", "value": "nasDailyFBCH" }, { "label": "NasDaily Tagalog", "value": "nasDailyFBPH" }, { "label": "NasDaily Arabic", "value": "nasDailyFBARB" }, { "label": "NasDaily Thai", "value": "nasDailyFBTH" }];
+
+            return _react2.default.createElement(
+                _Modal2.default,
+                { show: this.props.modalIsOpen, onHide: this.props.closeModal, animation: false },
+                _react2.default.createElement(
+                    _Modal2.default.Body,
+                    null,
+                    _react2.default.createElement(
+                        'p',
+                        null,
+                        'Please select video source and one of search params'
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        null,
+                        _react2.default.createElement(_reactSelect2.default, { className: '',
+                            placeholder: this.state.source ? this.state.source : "Select video source",
+                            options: sourceOptions,
+                            onChange: function onChange(value) {
+                                return _this3.onSelectSource(value);
+                            } })
+                    ),
+                    this.renderForm(),
+                    _react2.default.createElement('br', null),
+                    this.renderVideo()
+                )
+            );
+        }
+    }]);
+
+    return VideoSearchModal;
+}(_react.Component);
+
+exports.default = VideoSearchModal;
+
+/***/ }),
+
 /***/ "Nzt2":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -25573,22 +25951,17 @@ var FacebookInsight = function (_Component) {
 
             var metricMap = {
                 'page_video_views': 'Page Total Video Views',
-                "page_video_views_paid": "Page Video Views Paid",
-                "page_video_views_organic": "Page Video Views Organic",
                 "page_video_views_unique": "Page Video Views Unique",
                 "page_video_repeat_views": "Page Video Repeat Views",
                 "page_video_complete_views_30s": "Page Video Complete View 30s",
-                "page_video_views_10s": "Page Video Views 10s",
                 "page_video_view_time": "Page Video View Time",
                 'page_impressions': 'Page Impressions',
-                'page_impressions_paid': 'Page Impressions Paid',
-                'page_impressions_organic': 'Page Impressions Organic',
+                'page_impressions_unique': 'Reach',
                 "page_impressions_viral": "Page Impressions Viral",
-                "page_views_total": "Page Views Total",
-                "page_views_logged_in_unique": "Page Views Logged In Unique"
+                "page_views_total": "Page Views Total"
             };
 
-            var metricOptions = [{ "label": "page_impressions", "value": "page_impressions" }, { "label": "page_impressions_paid", "value": "page_impressions_paid" }, { "label": "page_impressions_organic", "value": "page_impressions_organic" }, { "label": "page_impressions_viral", "value": "page_impressions_viral" }, { "label": "page_views_logged_in_unique", "value": "page_views_logged_in_unique" }, { "label": "page_views_total", "value": "page_views_total" }, { "label": "page_video_views", "value": "page_video_views" }, { "label": "page_video_views_paid", "value": "page_video_views_paid" }, { "label": "page_video_views_organic", "value": "page_video_views_organic" }, { "label": "page_video_views_unique", "value": "page_video_views_unique" }, { "label": "page_video_repeat_views", "value": "page_video_repeat_views" }, { "label": "page_video_complete_views_30s", "value": "page_video_complete_views_30s" }, { "label": "page_video_views_10s", "value": "page_video_views_10s" }, { "label": "page_video_view_time", "value": "page_video_view_time" }];
+            var metricOptions = [{ "label": "page impressions", "value": "page_impressions" }, { "label": "page impressions viral", "value": "page_impressions_viral" }, { "label": "reach", "value": "page_impressions_unique" }, { "label": "total page views", "value": "page_views_total" }, { "label": "page video views", "value": "page_video_views" }, { "label": "page video views unique", "value": "page_video_views_unique" }, { "label": "page video repeat views", "value": "page_video_repeat_views" }, { "label": "page video 30s complete views", "value": "page_video_complete_views_30s" }];
 
             var igMetricMap = {
                 'reach': 'Reach',
@@ -25596,7 +25969,7 @@ var FacebookInsight = function (_Component) {
                 'profile_views': 'Profile Views'
             };
 
-            var igMetricOptions = [{ "label": "reach", "value": "reach" }, { "label": "impressions", "value": "impressions" }, { "label": "profile_views", "value": "profile_views" }];
+            var igMetricOptions = [{ "label": "reach", "value": "reach" }, { "label": "impressions", "value": "impressions" }, { "label": "profile views", "value": "profile_views" }];
 
             if (this.state.monthlyGraphData['nasDailyFB']['data'] && this.state.monthlyGraphData['nasDailyFB']['data'].length > 0 && this.state.monthlyIgGraphData.length > 0) {
                 return _react2.default.createElement(
@@ -55705,6 +56078,57 @@ module.exports = keys;
 
 /***/ }),
 
+/***/ "kucj":
+/***/ (function(module, exports, __webpack_require__) {
+
+
+var content = __webpack_require__("z7ME");
+
+if(typeof content === 'string') content = [[module.i, content, '']];
+
+var transform;
+var insertInto;
+
+
+
+var options = {"hmr":true}
+
+options.transform = transform
+options.insertInto = undefined;
+
+var update = __webpack_require__("MTIv")(content, options);
+
+if(content.locals) module.exports = content.locals;
+
+if(false) {
+	module.hot.accept("!!../../../../../../node_modules/css-loader/index.js!./Modal.css", function() {
+		var newContent = require("!!../../../../../../node_modules/css-loader/index.js!./Modal.css");
+
+		if(typeof newContent === 'string') newContent = [[module.id, newContent, '']];
+
+		var locals = (function(a, b) {
+			var key, idx = 0;
+
+			for(key in a) {
+				if(!b || a[key] !== b[key]) return false;
+				idx++;
+			}
+
+			for(key in b) idx--;
+
+			return idx === 0;
+		}(content.locals, newContent.locals));
+
+		if(!locals) throw new Error('Aborting CSS HMR due to changed css-modules locals.');
+
+		update(newContent);
+	});
+
+	module.hot.dispose(function() { update(); });
+}
+
+/***/ }),
+
 /***/ "l9Lx":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -69821,6 +70245,21 @@ function baseIsTypedArray(value) {
 }
 
 module.exports = baseIsTypedArray;
+
+
+/***/ }),
+
+/***/ "z7ME":
+/***/ (function(module, exports, __webpack_require__) {
+
+exports = module.exports = __webpack_require__("FZ+f")(false);
+// imports
+
+
+// module
+exports.push([module.i, ".error-msg {\n    color: #bd2130;\n    margin-top: 10px;\n    margin-bottom: 10px;\n}\n\n.ui-input {\n    display: block;\n    height: 50px;\n    margin-top: 10px;\n    margin-bottom: 10px;\n    border-radius: 3px;\n    width: 100%;\n    padding: 3px 3px\n}\n\n.ui-input-desc {\n    display: block;\n    height: 50px;\n    margin-top: 10px;\n    margin-bottom: 10px;\n    border-radius: 3px;\n    padding: 3px 3px;\n    width: 100%\n}\n\n.ui-button-squared {\n    padding: 5px 5px;\n    background: #F9CA47;\n    border: 1px solid transparent;\n    margin-top: 10px;\n    float: right\n}\n\n.search-video {\n    clear: right;\n    margin-top: 40px;\n}\n\n.video-search-img {\n    height: 250px;\n    width: 100%\n}\n\n.fa-search-icon {\n    color: black;\n   font-size: 16px;\n    margin-left: 5px;\n    margin-top: 10px;\n    display: inline-block;\n    float: right;\n}\n\n.fa-search-icon:hover {\n    opacity: 0.7;\n    cursor: pointer;\n    scale: 1.1\n}\n\n\n", ""]);
+
+// exports
 
 
 /***/ }),
