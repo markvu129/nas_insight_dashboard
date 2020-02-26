@@ -37,4 +37,14 @@
     margin-right: 10px
 }
 
+.demographic-title {
+    width: 20% !important;
+}
+
+.select-demographic-time {
+    width: 20% !important;
+    margin-right: 80px
+}
+
+
 

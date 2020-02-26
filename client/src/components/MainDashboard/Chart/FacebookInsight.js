@@ -9,6 +9,7 @@ import Modal from 'react-bootstrap/Modal';
 import DatePicker from "react-datepicker";
 import '../css/Filter.css';
 import "react-datepicker/dist/react-datepicker.css";
+import DemographicChart from "./DemographicChart";
 
 class FacebookInsight extends Component {
 
@@ -214,7 +215,6 @@ class FacebookInsight extends Component {
             monthlyIgGraphLabels: currentMonthlyGraphLabels,
             currentMonthIgData: currentMonthlyGraphData[0],
             prevMonthIgData: currentMonthlyGraphData[1]
-
         })
     }
 
@@ -380,7 +380,10 @@ class FacebookInsight extends Component {
                                             /> : <div></div>
                                         }
                                     </div>
+                                    <br/>
+
                                 </li>
+                                <DemographicChart/>
                             </ul>
                         </div>
                     </div>

@@ -25654,6 +25654,10 @@ __webpack_require__("pYYa");
 
 __webpack_require__("V/K8");
 
+var _DemographicChart = __webpack_require__("vDRk");
+
+var _DemographicChart2 = _interopRequireDefault(_DemographicChart);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -25883,7 +25887,6 @@ var FacebookInsight = function (_Component) {
                 monthlyIgGraphLabels: currentMonthlyGraphLabels,
                 currentMonthIgData: currentMonthlyGraphData[0],
                 prevMonthIgData: currentMonthlyGraphData[1]
-
             });
         }
     }, {
@@ -26115,8 +26118,10 @@ var FacebookInsight = function (_Component) {
                                         this.state.monthlyIgGraphData ? _react2.default.createElement(_InstagramChart2.default, { data: this.state.monthlyIgGraphData,
                                             labels: this.state.monthlyIgGraphLabels
                                         }) : _react2.default.createElement("div", null)
-                                    )
-                                )
+                                    ),
+                                    _react2.default.createElement("br", null)
+                                ),
+                                _react2.default.createElement(_DemographicChart2.default, null)
                             )
                         )
                     ),
@@ -38598,7 +38603,7 @@ exports = module.exports = __webpack_require__("FZ+f")(false);
 
 
 // module
-exports.push([module.i, ".ms-facebook-engagements p{\n    font-size: 14px;\n}\n\n.select-container {\n    width: 50%;\n    display: inline-block;\n    clear: right;\n}\n\n.select-metric {\n    width: 50%;\n    float: left;\n}\n\n.search-btn {\n    padding: 10px 10px;\n    background: #F9CA47;\n    margin-top: 20px;\n    float: right;\n    border: 1px solid transparent;\n    border-radius: 5px;\n}\n\n.clear-btn {\n    margin-right: 10px\n}\n\n.apply-btn {\n    display: inline-block\n}\n\n.filter-desc {\n    margin-bottom: 40px;\n    font-weight: bold;\n    font-size: 1.1em;\n    margin-right: 10px\n}\n\n\n", ""]);
+exports.push([module.i, ".ms-facebook-engagements p{\n    font-size: 14px;\n}\n\n.select-container {\n    width: 50%;\n    display: inline-block;\n    clear: right;\n}\n\n.select-metric {\n    width: 50%;\n    float: left;\n}\n\n.search-btn {\n    padding: 10px 10px;\n    background: #F9CA47;\n    margin-top: 20px;\n    float: right;\n    border: 1px solid transparent;\n    border-radius: 5px;\n}\n\n.clear-btn {\n    margin-right: 10px\n}\n\n.apply-btn {\n    display: inline-block\n}\n\n.filter-desc {\n    margin-bottom: 40px;\n    font-weight: bold;\n    font-size: 1.1em;\n    margin-right: 10px\n}\n\n.demographic-title {\n    width: 20% !important;\n}\n\n.select-demographic-time {\n    width: 20% !important;\n    margin-right: 80px\n}\n\n\n\n", ""]);
 
 // exports
 
@@ -68502,6 +68507,284 @@ var baseEach = createBaseEach(baseForOwn);
 
 module.exports = baseEach;
 
+
+/***/ }),
+
+/***/ "vDRk":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__("GiK3");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _reactChartjs = __webpack_require__("ChjH");
+
+var _axios = __webpack_require__("mtWM");
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _reactSelect = __webpack_require__("sOAP");
+
+var _reactSelect2 = _interopRequireDefault(_reactSelect);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var DemographicChart = function (_Component) {
+    _inherits(DemographicChart, _Component);
+
+    function DemographicChart(props) {
+        _classCallCheck(this, DemographicChart);
+
+        var _this = _possibleConstructorReturn(this, (DemographicChart.__proto__ || Object.getPrototypeOf(DemographicChart)).call(this, props));
+
+        _this.state = {
+            currentDemographicData: false,
+            currentCountryData: false,
+            demographicData: false,
+            demographicCountryData: false,
+            ageGenderSourceList: {
+                'nasDailyFB': 'age_gender_stats_nasDailyFB',
+                'nasDailyFBVN': 'age_gender_stats_nasDailyFBVN',
+                'nasDailyFBTH': 'age_gender_stats_nasDailyFBTH',
+                'nasDailyFBPH': 'age_gender_stats_nasDailyFBPH',
+                'nasDailyFBARB': 'age_gender_stats_nasDailyFBARB',
+                'nasDailyFBSP': 'age_gender_stats_nasDailyFBSP',
+                'nasDailyFBCH': 'age_gender_stats_nasDailyFBCH'
+            },
+            countrySourceList: {
+                'nasDailyFB': 'country_stats_nasDailyFB',
+                'nasDailyFBVN': 'country_stats_nasDailyFBVN',
+                'nasDailyFBTH': 'country_stats_nasDailyFBTH',
+                'nasDailyFBPH': 'country_stats_nasDailyFBPH',
+                'nasDailyFBARB': 'country_stats_nasDailyFBARB',
+                'nasDailyFBSP': 'country_stats_nasDailyFBSP',
+                'nasDailyFBCH': 'country_stats_nasDailyFBCH'
+            },
+            currentAgeGenderSource: 'nasDailyFB',
+            currentCountrySource: 'nasDailyFB',
+            month: 'January',
+            year: '2020',
+            period: 'This month'
+        };
+        _this.selectAgeGenderSource = _this.selectAgeGenderSource.bind(_this);
+        _this.selectCountrySource = _this.selectCountrySource.bind(_this);
+        _this.loadDemographicData = _this.loadDemographicData.bind(_this);
+        return _this;
+    }
+
+    _createClass(DemographicChart, [{
+        key: "loadDemographicData",
+        value: function loadDemographicData(month, year) {
+            var _this2 = this;
+
+            _axios2.default.get('https://nasinsightserver.herokuapp.com/api/videos/demographics/' + month + '/' + year + '/1').then(function (r) {
+                _this2.setState({
+                    demographicData: r.data,
+                    currentDemographicData: JSON.parse(r.data[0][_this2.state.ageGenderSourceList[_this2.state.currentAgeGenderSource]]),
+                    currentCountryData: r.data[0][_this2.state.countrySourceList[_this2.state.currentCountrySource]][0]
+                });
+            });
+        }
+    }, {
+        key: "selectAgeGenderSource",
+        value: function selectAgeGenderSource(value) {
+            var source = value.value;
+            this.setState({
+                currentAgeGenderSource: source,
+                currentDemographicData: JSON.parse(this.state.demographicData[0][this.state.ageGenderSourceList[source]])
+            });
+        }
+    }, {
+        key: "selectCountrySource",
+        value: function selectCountrySource(value) {
+            var source = value.value;
+            console.log(this.state.demographicData[0][this.state.countrySourceList[source]]);
+            this.setState({
+                currentCountrySource: source,
+                currentCountryData: this.state.demographicData[0][this.state.countrySourceList[source]][0]
+            });
+        }
+    }, {
+        key: "componentDidMount",
+        value: function componentDidMount() {
+            this.loadDemographicData(this.state.month, this.state.year);
+        }
+    }, {
+        key: "shouldComponentUpdate",
+        value: function shouldComponentUpdate(nextProps, nextState, nextContent) {
+            return this.state.demographicData != nextState.demographicData || this.state.currentDemographicData != nextState.currentDemographicData || this.state.currentCountryData != nextState.currentCountryData;
+        }
+    }, {
+        key: "render",
+        value: function render() {
+            var _this3 = this;
+
+            if (this.state.currentDemographicData) {
+
+                var monthNames = ["January", "February", "March", "April", "May", "Jun", "July", "August", "September", "October", "November", "December"];
+
+                var demographicSourceOption = [{ "label": "Nas Daily", "value": "nasDailyFB" }, { "label": "Nas Daily Vietnamese", "value": "nasDailyFBVN" }, { "label": "Nas Daily Thai", "value": "nasDailyFBTH" }, { "label": "Nas Daily Arabic", "value": "nasDailyFBARB" }, { "label": "Nas Daily Spanish", "value": "nasDailyFBSP" }, { "label": "Nas Daily Chinese", "value": "nasDailyFBCH" }, { "label": "Nas Daily Tagalog", "value": "nasDailyFBPH" }];
+
+                var timeOptions = [{ "label": "This month", "value": monthNames[new Date().getMonth()] }];
+
+                var graphOptions = {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        xAxes: [{
+                            gridLines: {
+                                color: '#ffffff',
+                                borderDash: [1, 3]
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                callback: function callback(label, index, labels) {
+                                    return label.toLocaleString();
+                                }
+                            }
+
+                        }]
+                    },
+                    legend: {
+                        display: true
+                    },
+                    tooltips: {
+                        callbacks: {
+                            label: function label(tooltipItem, data) {
+                                return tooltipItem.yLabel.toLocaleString();
+                            }
+                        }
+                    }
+                };
+
+                var plugins = [{
+                    afterDraw: function afterDraw(chartInstance, easing) {
+                        var ctx = chartInstance.chart.ctx;
+                    }
+                }];
+
+                var colorList = ['#C46210', '#2E5894', '#9C2542', '#BF4F51', '#A57164', '#58427C', '#4A646C', '#85754E', '#319177', '#0A7E8C', '#9C7C38', '#8D4E85', '#8FD400', '#D98695', '#757575', '#0081AB', '#A17A74', '#6D9BC3', '#CD607E', '#AD6F69', '#5FA778'];
+
+                var labels = Object.keys(this.state.currentDemographicData);
+                var dataSets = [{
+                    label: 'View Time (Minutes) By Age-Gender',
+                    backgroundColor: colorList,
+                    borderColor: colorList,
+                    borderWidth: 1,
+                    hoverBackgroundColor: colorList,
+                    hoverBorderColor: colorList,
+                    data: Object.values(this.state.currentDemographicData)
+                }];
+
+                var graphData = {
+                    labels: labels,
+                    datasets: dataSets
+                };
+
+                var countryDataSets = [{
+                    label: 'View Time (Minutes) By Top Countries',
+                    backgroundColor: colorList,
+                    borderColor: colorList,
+                    borderWidth: 1,
+                    hoverBackgroundColor: colorList,
+                    hoverBorderColor: colorList,
+                    data: Object.values(this.state.currentCountryData)
+                }];
+
+                var countryGraphData = {
+                    labels: Object.keys(this.state.currentCountryData),
+                    datasets: countryDataSets
+                };
+
+                return _react2.default.createElement(
+                    "li",
+                    { className: "ms-list-item" },
+                    _react2.default.createElement(
+                        "div",
+                        null,
+                        _react2.default.createElement(
+                            "h2",
+                            { className: "select-metric demographic-title" },
+                            "Demographic"
+                        ),
+                        _react2.default.createElement(_reactSelect2.default, { className: "select-container select-demographic-time",
+                            placeholder: this.state.period ? this.state.period : "Select time",
+                            options: timeOptions }),
+                        _react2.default.createElement(_reactSelect2.default, { className: "select-container",
+                            placeholder: this.state.currentCountrySource ? this.state.currentCountrySource : "Select demographic source",
+                            options: demographicSourceOption,
+                            onChange: function onChange(value) {
+                                return _this3.selectAgeGenderSource(value);
+                            } })
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "chart" },
+                        _react2.default.createElement(_reactChartjs.Bar, { data: graphData,
+                            width: 100,
+                            height: 300,
+                            options: graphOptions,
+                            plugins: plugins
+
+                        })
+                    ),
+                    _react2.default.createElement("br", null),
+                    _react2.default.createElement(
+                        "div",
+                        null,
+                        _react2.default.createElement(
+                            "h2",
+                            { className: "select-metric demographic-title" },
+                            "Demographic"
+                        ),
+                        _react2.default.createElement(_reactSelect2.default, { className: "select-container select-demographic-time",
+                            placeholder: this.state.period ? this.state.period : "Select time",
+                            options: timeOptions }),
+                        _react2.default.createElement(_reactSelect2.default, { className: "select-container",
+                            placeholder: this.state.currentAgeGenderSource ? this.state.currentAgeGenderSource : "Select demographic source",
+                            options: demographicSourceOption,
+                            onChange: function onChange(value) {
+                                return _this3.selectCountrySource(value);
+                            } })
+                    ),
+                    _react2.default.createElement(
+                        "div",
+                        { className: "chart" },
+                        _react2.default.createElement(_reactChartjs.Bar, { data: countryGraphData,
+                            width: 100,
+                            height: 300,
+                            options: graphOptions,
+                            plugins: plugins
+
+                        })
+                    )
+                );
+            } else {
+                return _react2.default.createElement("div", null);
+            }
+        }
+    }]);
+
+    return DemographicChart;
+}(_react.Component);
+
+exports.default = DemographicChart;
 
 /***/ }),
 
