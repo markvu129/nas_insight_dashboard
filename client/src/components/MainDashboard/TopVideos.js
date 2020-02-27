@@ -238,7 +238,6 @@ class TopVideos extends Component {
             let topViewCountryData = viewCountryData.slice(0, 3);
             let otherViewCountryData = viewCountryData.slice(3, viewByCountryData.length).reduce((a, b) => a + b, 0);
             topViewCountryData.push(otherViewCountryData);
-            ;
             let viewCountryGraphLabels = viewCountryLabels.slice(0, 3);
             viewCountryGraphLabels.push('Others');
 
@@ -329,13 +328,17 @@ class TopVideos extends Component {
                                                 <div className="ms-social-grid">
                                                     <div className="section-icon"><i className="fa fa-tv"></i></div>
                                                     <p className="ms-text-dark">{this.state.currentVideo.dailyStats.filter(x => x.name === 'total_video_impressions_unique')[0].values[0].value.toLocaleString()}</p>
-                                                    <span>Total Impressions unique</span>
+                                                    <span>Reach</span>
 
                                                 </div>
                                                 <div className="ms-social-grid">
                                                     <div className="section-icon"><i className="fa fa-users"></i></div>
-                                                    <p className="ms-text-dark">{this.state.currentVideo.dailyStats.filter(x => x.name === 'total_video_impressions_viral')[0].values[0].value.toLocaleString()}</p>
-                                                    <span>Total Impressions viral</span>
+                                                    <p className="ms-text-dark">{
+                                                        this.state.currentVideo.dailyStats.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value.share +
+                                                        this.state.currentVideo.dailyStats.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value.comment +
+                                                        this.state.currentVideo.dailyStats.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value.like
+                                                    }</p>
+                                                    <span>Engagement</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -433,7 +436,7 @@ class TopVideos extends Component {
                                             <div className="ms-social-grid">
                                                 <div className="section-icon"><i className="fa fa-user"></i></div>
                                                 <p className="ms-text-dark">{this.state.currentVideo.dailyStats.filter(x => x.name === 'total_video_impressions_unique')[0].values[0].value.toLocaleString()}</p>
-                                                <span>Impressions unique</span>
+                                                <span>Reach</span>
                                             </div>
                                         </div>
                                     </div>

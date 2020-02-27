@@ -32,6 +32,33 @@
     float: right
 }
 
+.video-search-modal {
+    max-width: 80% !important;
+}
+
+.fifty-width {
+    width: 50%;
+    display: inline-block;
+}
+
+.left {
+    float: left
+}
+
+.click-for-more {
+    text-decoration: underline;
+    color: #0089e9
+}
+
+.remove {
+    text-decoration: underline;
+    color: #0089e9
+}
+
+.pagination-div {
+    margin-top: 20px;
+}
+
 .search-video {
     clear: right;
     margin-top: 40px;

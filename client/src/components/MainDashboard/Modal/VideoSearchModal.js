@@ -1,29 +1,43 @@
 import React, {Component} from 'react';
 import Modal from 'react-bootstrap/Modal';
 import axios from 'axios';
-import FacebookPlayer from "react-facebook-player";
 import Select from "react-select";
 import "./css/Modal.css";
 import Loading from "../../Common/Loading";
+import $ from 'jquery';
+import Collapsible from "react-collapsible";
+import Pagination from "react-js-pagination";
+import DatePicker from "react-datepicker";
 
 class VideoSearchModal extends Component {
 
     constructor(props) {
         super(props);
         this.state = {
-            currentVideo: false,
+            currentVideos: false,
+            allVideos: false,
             modalIsOpen: this.props.modalIsOpen,
             isFormSending: false,
             source: '',
             error: false,
             currentStats: false,
-            isLoading: false
-        }
+            isLoading: false,
+            currentPage: 1,
+            startDate: new Date(),
+            endDate: new Date(),
+            customDate: false,
+            startDateFormatted: new Date().toISOString().slice(0, 10),
+            endDateFormatted: new Date().toISOString().slice(0, 10)
+        };
         this.fetchVideo = this.fetchVideo.bind(this);
         this.closeModal = this.closeModal.bind(this);
         this.renderVideo = this.renderVideo.bind(this);
         this.onSelectSource = this.onSelectSource.bind(this);
         this.renderForm = this.renderForm.bind(this);
+        this.handlePageChange = this._handlePageChange.bind(this);
+        this.handleStartDateChange = this.handleStartDateChange.bind(this);
+        this.handleEndDateChange = this.handleEndDateChange.bind(this);
+        this.changeDateMode = this.changeDateMode.bind(this);
     }
 
     fetchVideo(event) {
@@ -38,40 +52,63 @@ class VideoSearchModal extends Component {
             postData['description'] = description.value;
         }
 
+        if (this.state.customDate && this.state.startDateFormatted) {
+            postData['since'] = this.state.startDateFormatted
+        }
+
+        if (this.state.customDate && this.state.endDateFormatted) {
+            postData['until'] = this.state.endDateFormatted
+        }
+
         if (this.state.source === '') {
             this.setState({
                 error: 'Please fill video source and either id, description or video title'
             })
-        }
-        else if ((!title.value && !id.value && !description.value) || (title.value === '' && id.value === '' && description.value === '')) {
+        } else if ((!title.value && !id.value && !description.value && !this.state.customDate) || (title.value === '' && id.value === '' && description.value === '' && !this.state.customDate)) {
             this.setState({
                 error: 'Please fill video source and either id, description or video title'
             })
-        }
-
-        else {
+        } else {
             this.setState({
                 isLoading: true
             });
-            axios.post('https://nasinsightserver.herokuapp.com/api/video/' + this.state.source + '/1', postData).then((v) => {
+
+            axios.post('https://nasinsightserver.herokuapp.com/api/video/' + this.state.source + '/50', postData).then(async (v) => {
                 if (v.data.length > 0) {
                     this.setState({
-                        currentVideo: v.data[0],
                         isLoading: false,
-                        error: false
+                        error: false,
+                        noOfPages: Math.ceil(v.data.length / 5),
+                        currentPage: 1
                     });
-                    axios.get('https://nasinsightserver.herokuapp.com/api/videos/video_insights/' + this.state.source + '/' + v.data[0].id).then((r) => {
-                        this.setState({
-                            currentStats: r.data
-                        })
-                    })
-                }
-                else {
+
+                    let fetches = [];
+                    let currentVideos = [];
+                    let allVideos = [];
+
+                    for (const video of v.data) {
+                        fetches.push(axios.get('https://nasinsightserver.herokuapp.com/api/videos/video_insights/' + this.state.source + '/' + video.id).then((r) => {
+                            if (currentVideos.length < 5) {
+                                currentVideos.push({video: video, stats: r.data})
+                            }
+                            allVideos.push({video: video, stats: r.data})
+                        }))
+                    }
+
+                    await Promise.all(fetches).then(function () {
+                    }).catch((e) => {
+                        console.log(e)
+                    });
                     this.setState({
-                        currentVideo: [],
-                        currentStats: false,
+                        currentVideos: currentVideos,
+                        allVideos: allVideos
+                    })
+                } else {
+                    this.setState({
+                        currentVideos: [],
                         isLoading: false,
-                        error: false
+                        error: false,
+                        noOfPages: false
                     });
                 }
             })
@@ -79,56 +116,75 @@ class VideoSearchModal extends Component {
     }
 
     renderVideo() {
-        return (
-            <div>
-                {this.state.currentVideo && this.state.currentStats ? (
-                    <div className="search-video">
-                        <h2 className="daily-detail-title"
-                            style={{'color': '#0089e9'}}>{this.state.currentVideo.title}</h2>
-                        <img src={this.state.currentVideo.picture} className="video-search-img"/>
-                        <div className="ms-panel-body p-0">
-                            <div className="ms-social-media-followers">
-                                <div className="ms-social-grid">
-                                    <div className="section-icon"><i className="fa fa-tv"></i></div>
-                                    <p className="ms-text-dark">{this.state.currentStats.stats.filter(x => x.name === 'total_video_views')[0].values[0].value.toLocaleString()}</p>
-                                    <span>Total Views </span>
+        const currentVideos = this.state.currentVideos;
+        let videoList;
+        if (currentVideos.length > 0) {
+            videoList = currentVideos.map((video) =>
+            {
+                if (video.stats.stats.length > 0) {
+                    return <div className="search-video">
+                        <Collapsible trigger={video.video.title} key={video.video.title}>
+                            <div className="answer">
+                                <div className='fifty-width left'>
+                                    <p>Published on: {new Date(video.video.created_time).toISOString().slice(0, 10)}</p>
+                                    <img src={video.video.picture} className="video-search-img"/>
+                                </div>
+                                <div className='fifty-width'>
+                                    <div className="ms-panel-body p-0">
+                                        <div className="ms-social-media-followers">
+                                            <div className="ms-social-grid">
+                                                <div className="section-icon"><i className="fa fa-tv"></i></div>
+                                                <p className="ms-text-dark">{video.stats.stats.filter(x => x.name === 'total_video_views')[0].values[0].value.toLocaleString()}</p>
+                                                <span>Total Views</span>
 
-                                </div>
-                                <div className="ms-social-grid">
-                                    <div className="section-icon"><i className="fa fa-volume-up"></i></div>
-                                    <p className="ms-text-dark">{this.state.currentStats.stats.filter(x => x.name === 'total_video_views_unique')[0].values[0].value.toLocaleString()}</p>
-                                    <span>Total views unique</span>
+                                            </div>
+                                            <div className="ms-social-grid">
+                                                <div className="section-icon"><i className="fa fa-volume-up"></i></div>
+                                                <p className="ms-text-dark">{video.stats.stats.filter(x => x.name === 'total_video_views_unique')[0].values[0].value.toLocaleString()}</p>
+                                                <span>Unique views</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="ms-panel-body p-0">
+                                        <div className="ms-social-media-followers">
+                                            <div className="ms-social-grid">
+                                                <div className="section-icon"><i className="fa fa-history"></i></div>
+                                                <p className="ms-text-dark">{video.stats.stats.filter(x => x.name === 'total_video_complete_views')[0].values[0].value.toLocaleString()}</p>
+                                                <span>Complete views<br/>(95% length)</span>
+                                            </div>
+                                            <div className="ms-social-grid">
+                                                <div className="section-icon"><i className="fa fa-user"></i></div>
+                                                <p className="ms-text-dark">{video.stats.stats.filter(x => x.name ===
+                                                    'total_video_impressions_unique')[0].values[0].value.toLocaleString()}</p>
+                                                <span>Reach</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div className="ms-panel-body p-0">
-                            <div className="ms-social-media-followers">
-                                <div className="ms-social-grid">
-                                    <div className="section-icon"><i className="fa fa-history"></i></div>
-                                    <p className="ms-text-dark">{this.state.currentStats.stats.filter(x => x.name === 'total_video_complete_views')[0].values[0].value.toLocaleString()}</p>
-                                    <span>Video view complete <br/>(95% length)</span>
-                                </div>
-                                <div className="ms-social-grid">
-                                    <div className="section-icon"><i className="fa fa-user"></i></div>
-                                    <p className="ms-text-dark">{this.state.currentStats.stats.filter(x => x.name === 'total_video_impressions_unique')[0].values[0].value.toLocaleString()}</p>
-                                    <span>Impressions unique</span>
-                                </div>
-                            </div>
-                        </div>
+                        </Collapsible>
+                        <p className="click-for-more">Click to see stats</p>
                     </div>
-                ) : (
-                    <div className="error-msg"></div>
-                )}
-                {this.state.currentVideo.length === 0 ?
-                    <div className="error-msg">No video found</div> : (<div></div>)}
-                {this.state.isLoading ? (
-                    <Loading/>
-                ) : (<div></div>)}
-                {this.state.error ? (
-                    <p className="error-msg">{this.state.error}</p>
-                ) : (<p></p>)}
-            </div>
-        )
+                }
+                else {return <div></div>}
+            }
+
+            )
+
+        }
+
+        if (currentVideos && currentVideos.length > 0) {
+            return videoList
+        } else if (currentVideos.length === 0) {
+            return <div className="error-msg">No video found</div>
+        }
+
+        if (this.state.isLoading) {
+            return <Loading/>
+        }
+        if (this.state.error) {
+            return <p className="error-msg">{this.state.error}</p>
+        }
     }
 
     closeModal() {
@@ -138,14 +194,38 @@ class VideoSearchModal extends Component {
     }
 
     componentDidMount() {
-
+        $(".modal-dialog").addClass("video-search-modal");
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContent) {
         return this.props.modalIsOpen !== nextProps.modalIsOpen
-            || this.state.currentVideo !== nextState.currentVideo || this.state.currentStats !== nextState.currentStats || this.state.errors !== nextState.errors
+            || this.state.currentVideos !== nextState.currentVideos
+            || this.state.currentPage !== nextState.currentPage
             || this.state.loading !== nextState.loading
             || this.state.error !== nextState.error
+            || this.state.startDate !== nextState.startDate
+            || this.state.endDate !== nextState.endDate
+            || this.state.customDate !== nextState.customDate
+    }
+
+    handleStartDateChange(date) {
+        this.setState({
+            startDate: date,
+            startDateFormatted: new Date(date).toISOString().slice(0, 10)
+        });
+    };
+
+    handleEndDateChange(date) {
+        this.setState({
+            endDate: date,
+            endDateFormatted: new Date(date).toISOString().slice(0, 10)
+        })
+    };
+
+    changeDateMode() {
+        this.setState({
+            customDate: !this.state.customDate
+        })
     }
 
     renderForm() {
@@ -170,6 +250,26 @@ class VideoSearchModal extends Component {
                                           className="ui-input"/>;
                     }
                 })}
+
+                {this.state.customDate?
+                    (<div className="date-picker">
+                        <div className="start-date">
+                            <span className="filter-desc">From</span>
+                            <DatePicker
+                                selected={this.state.startDate}
+                                onChange={this.handleStartDateChange}
+                            />
+                        </div>
+                        <div className="end-date">
+                            <span className="filter-desc">To</span>
+                            <DatePicker
+                                selected={this.state.endDate}
+                                onChange={this.handleEndDateChange}
+                            />
+                        </div>
+                    <p onClick={this.changeDateMode} className="remove">Remove date</p>
+                    </div>) : (<p onClick={this.changeDateMode}>Choose date</p>)
+                            }
                 <button type="submit" className="ui-button-squared">
                     Search
                 </button>
@@ -177,10 +277,19 @@ class VideoSearchModal extends Component {
         )
     }
 
+
     onSelectSource(value) {
         this.setState({
             source: value.value
         });
+    }
+
+    _handlePageChange(pageNumber) {
+        let allVideos = this.state.allVideos;
+        this.setState({
+            currentPage: pageNumber,
+            currentVideos: allVideos.slice((pageNumber-1)*5, pageNumber*5)
+        })
     }
 
     render() {
@@ -195,20 +304,38 @@ class VideoSearchModal extends Component {
         ];
 
         return (
-            <Modal show={this.props.modalIsOpen} onHide={this.props.closeModal} animation={false}>
-                <Modal.Body>
-                    <p>Please select video source and one of search params</p>
-                    <div>
-                        <Select className=""
-                                placeholder={this.state.source ? this.state.source : "Select video source"}
-                                options={sourceOptions}
-                                onChange={(value) => this.onSelectSource(value)}/>
-                    </div>
-                    {this.renderForm()}
-                    <br/>
-                    {this.renderVideo()}
-                </Modal.Body>
-            </Modal>
+            <div>
+                <Modal show={this.props.modalIsOpen} onHide={this.props.closeModal} animation={false}>
+                    <Modal.Body>
+                        <p>Please select video source and one of search params</p>
+                        <div>
+                            <Select className=""
+                                    placeholder={this.state.source ? this.state.source : "Select video source"}
+                                    options={sourceOptions}
+                                    onChange={(value) => this.onSelectSource(value)}/>
+                        </div>
+                        {this.renderForm()}
+                        <br/>
+                        {this.renderVideo()}
+
+                        {
+                            this.state.allVideos && this.state.allVideos.length > 0 ? (
+                                <div className="pagination-div">
+                                    <Pagination itemClass="page-item"
+                                                linkClass="page-link"
+                                        activePage={this.state.currentPage}
+                                        itemsCountPerPage={5}
+                                        totalItemsCount={this.state.allVideos.length}
+                                        pageRangeDisplayed={2}
+                                        onChange={this.handlePageChange}
+                                    />
+                                </div>
+                            ) : (<div/>)
+                        }
+
+                    </Modal.Body>
+                </Modal>
+            </div>
         )
     }
 }
