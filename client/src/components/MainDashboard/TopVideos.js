@@ -410,6 +410,8 @@ class TopVideos extends Component {
                                         videoId={this.state.currentVideo.id}
                                         id={`video-id-${this.state.currentVideo.id}`}
                                         onReady={this.onPlayerReady}
+                                        autoplay={false}
+                                        allowfullscreen
                                     />
                                     <div className="ms-panel-body p-0">
                                         <div className="ms-social-media-followers">

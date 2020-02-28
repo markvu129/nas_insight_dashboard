@@ -12,6 +12,7 @@ import DemographicVideoChart from "./DemographicVideoChart";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
+import FacebookPlayer from "react-facebook-player";
 
 class VideoSearchModal extends Component {
 
@@ -157,14 +158,21 @@ class VideoSearchModal extends Component {
                         }
                     ];
 
-                    const averageViewTime = (video.stats.stats.filter(x => x.name === 'total_video_view_total_time')[0].values[0].value)/(video.stats.stats.filter(x => x.name === 'total_video_views')[0].values[0].value)
-
                     return <div className="search-video">
                         <Collapsible trigger={video.video.title} key={video.video.title} className="video-dropdown">
                             <div className="answer">
                                 <div className='fifty-width left'>
                                     <p>Published on: {new Date(video.video.created_time).toISOString().slice(0, 10)} - Video ID: {video.video.id}</p>
-                                    <img src={video.video.picture} className="video-search-img"/>
+                                    <FacebookPlayer
+                                        width={600}
+                                        height={400}
+                                        appId={880756785680649}
+                                        videoId={video.video.id}
+                                        id={`video-id-${video.video.id}`}
+                                        onReady={this.onPlayerReady}
+                                        autoplay={false}
+                                        allowfullscreen
+                                    />
                                     <br/>
                                     <br/>
                                     <div className="ms-panel-body p-0">
@@ -186,9 +194,8 @@ class VideoSearchModal extends Component {
                                         <div className="ms-social-media-followers">
                                             <div className="ms-social-grid">
                                                 <div className="section-icon"><i className="fa fa-tv"></i></div>
-                                                <p className="ms-text-dark">{Math.round(averageViewTime/60000)}</p>
-                                                <span>Average time watched (minutes)</span>
-
+                                                <p className="ms-text-dark">{Math.round(video.stats.stats.filter(x => x.name === 'total_video_avg_time_watched')[0].values[0].value/1000).toLocaleString()}</p>
+                                                <span>Average time watched (secs)</span>
                                             </div>
                                         </div>
                                     </div>
@@ -259,6 +266,10 @@ class VideoSearchModal extends Component {
         if (this.state.error) {
             return <p className="error-msg">{this.state.error}</p>
         }
+    }
+
+    onPlayerReady(_id, player) {
+        player.mute();
     }
 
     closeModal() {

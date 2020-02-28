@@ -16887,7 +16887,9 @@ var TopVideos = function (_Component) {
                                 appId: 880756785680649,
                                 videoId: this.state.currentVideo.id,
                                 id: 'video-id-' + this.state.currentVideo.id,
-                                onReady: this.onPlayerReady
+                                onReady: this.onPlayerReady,
+                                autoplay: false,
+                                allowfullscreen: true
                             }),
                             _react2.default.createElement(
                                 'div',
@@ -29410,6 +29412,10 @@ __webpack_require__("Yyf6");
 
 __webpack_require__("Dlsl");
 
+var _reactFacebookPlayer = __webpack_require__("ry0+");
+
+var _reactFacebookPlayer2 = _interopRequireDefault(_reactFacebookPlayer);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -29568,6 +29574,8 @@ var VideoSearchModal = function (_Component) {
     }, {
         key: 'renderVideo',
         value: function renderVideo() {
+            var _this3 = this;
+
             var currentVideos = this.state.currentVideos;
             var settings = {
                 dots: true,
@@ -29600,12 +29608,6 @@ var VideoSearchModal = function (_Component) {
                             period: "ms"
                         }];
 
-                        var averageViewTime = video.stats.stats.filter(function (x) {
-                            return x.name === 'total_video_view_total_time';
-                        })[0].values[0].value / video.stats.stats.filter(function (x) {
-                            return x.name === 'total_video_views';
-                        })[0].values[0].value;
-
                         return _react2.default.createElement(
                             'div',
                             { className: 'search-video' },
@@ -29626,7 +29628,16 @@ var VideoSearchModal = function (_Component) {
                                             ' - Video ID: ',
                                             video.video.id
                                         ),
-                                        _react2.default.createElement('img', { src: video.video.picture, className: 'video-search-img' }),
+                                        _react2.default.createElement(_reactFacebookPlayer2.default, {
+                                            width: 600,
+                                            height: 400,
+                                            appId: 880756785680649,
+                                            videoId: video.video.id,
+                                            id: 'video-id-' + video.video.id,
+                                            onReady: _this3.onPlayerReady,
+                                            autoplay: false,
+                                            allowfullscreen: true
+                                        }),
                                         _react2.default.createElement('br', null),
                                         _react2.default.createElement('br', null),
                                         _react2.default.createElement(
@@ -29696,12 +29707,14 @@ var VideoSearchModal = function (_Component) {
                                                     _react2.default.createElement(
                                                         'p',
                                                         { className: 'ms-text-dark' },
-                                                        Math.round(averageViewTime / 60000)
+                                                        Math.round(video.stats.stats.filter(function (x) {
+                                                            return x.name === 'total_video_avg_time_watched';
+                                                        })[0].values[0].value / 1000).toLocaleString()
                                                     ),
                                                     _react2.default.createElement(
                                                         'span',
                                                         null,
-                                                        'Average time watched (minutes)'
+                                                        'Average time watched (secs)'
                                                     )
                                                 )
                                             )
@@ -29862,6 +29875,11 @@ var VideoSearchModal = function (_Component) {
             }
         }
     }, {
+        key: 'onPlayerReady',
+        value: function onPlayerReady(_id, player) {
+            player.mute();
+        }
+    }, {
         key: 'closeModal',
         value: function closeModal() {
             this.setState({
@@ -29994,7 +30012,7 @@ var VideoSearchModal = function (_Component) {
     }, {
         key: 'render',
         value: function render() {
-            var _this3 = this;
+            var _this4 = this;
 
             var sourceOptions = [{ "label": "NasDaily", "value": "nasDailyFB" }, { "label": "NasDaily Vietnamese", "value": "nasDailyFBVN" }, { "label": "NasDaily Spanish", "value": "nasDailyFBSP" }, { "label": "NasDaily Chinese", "value": "nasDailyFBCH" }, { "label": "NasDaily Tagalog", "value": "nasDailyFBPH" }, { "label": "NasDaily Arabic", "value": "nasDailyFBARB" }, { "label": "NasDaily Thai", "value": "nasDailyFBTH" }];
 
@@ -30019,7 +30037,7 @@ var VideoSearchModal = function (_Component) {
                                 placeholder: this.state.source ? this.state.source : "Select video source",
                                 options: sourceOptions,
                                 onChange: function onChange(value) {
-                                    return _this3.onSelectSource(value);
+                                    return _this4.onSelectSource(value);
                                 } })
                         ),
                         this.renderForm(),
