@@ -29102,7 +29102,8 @@ var VideoSearchModal = function (_Component) {
             var _event$target = event.target,
                 title = _event$target.title,
                 id = _event$target.id,
-                description = _event$target.description;
+                description = _event$target.description,
+                week = _event$target.week;
 
             var postData = {};
             if (title.value && title.value !== '') {
@@ -29111,6 +29112,8 @@ var VideoSearchModal = function (_Component) {
                 postData['video_id'] = id.value;
             } else if (description.value && description.value !== '') {
                 postData['description'] = description.value;
+            } else if (week.value && week.value !== '') {
+                postData['week'] = week.value;
             }
 
             if (this.state.customDate && this.state.startDateFormatted) {
@@ -29123,11 +29126,11 @@ var VideoSearchModal = function (_Component) {
 
             if (this.state.source === '') {
                 this.setState({
-                    error: 'Please fill video source and either id, description or video title'
+                    error: 'Please fill video source and either id, description, week or video title'
                 });
-            } else if (!title.value && !id.value && !description.value && !this.state.customDate || title.value === '' && id.value === '' && description.value === '' && !this.state.customDate) {
+            } else if (!title.value && !id.value && !description.value && !week.value && !this.state.customDate || title.value === '' && id.value === '' && !week.value && description.value === '' && !this.state.customDate) {
                 this.setState({
-                    error: 'Please fill video source and either id, description or video title'
+                    error: 'Please fill video source and either id, description, week or video title'
                 });
             } else {
                 this.setState({
@@ -29214,7 +29217,7 @@ var VideoSearchModal = function (_Component) {
                             { className: 'search-video' },
                             _react2.default.createElement(
                                 _reactCollapsible2.default,
-                                { trigger: video.video.title, key: video.video.title },
+                                { trigger: video.video.title, key: video.video.title, className: 'video-dropdown' },
                                 _react2.default.createElement(
                                     'div',
                                     { className: 'answer' },
@@ -29225,7 +29228,9 @@ var VideoSearchModal = function (_Component) {
                                             'p',
                                             null,
                                             'Published on: ',
-                                            new Date(video.video.created_time).toISOString().slice(0, 10)
+                                            new Date(video.video.created_time).toISOString().slice(0, 10),
+                                            ' - Video ID: ',
+                                            video.video.id
                                         ),
                                         _react2.default.createElement('img', { src: video.video.picture, className: 'video-search-img' })
                                     ),
@@ -29413,7 +29418,7 @@ var VideoSearchModal = function (_Component) {
     }, {
         key: 'renderForm',
         value: function renderForm() {
-            var inputs = ['Title', 'ID', 'Description'];
+            var inputs = ['Title', 'ID', 'Description', 'Week'];
 
             return _react2.default.createElement(
                 'form',
@@ -29428,6 +29433,9 @@ var VideoSearchModal = function (_Component) {
                                 className: 'ui-input' });
                         case 'Description':
                             return _react2.default.createElement('input', { type: 'text', placeholder: 'Description', key: input, name: 'description',
+                                className: 'ui-input-desc' });
+                        case 'Week':
+                            return _react2.default.createElement('input', { type: 'text', placeholder: 'Week', key: input, name: 'week',
                                 className: 'ui-input-desc' });
 
                         default:
@@ -29471,7 +29479,7 @@ var VideoSearchModal = function (_Component) {
                     )
                 ) : _react2.default.createElement(
                     'p',
-                    { onClick: this.changeDateMode },
+                    { onClick: this.changeDateMode, className: 'remove' },
                     'Choose date'
                 ),
                 _react2.default.createElement(
@@ -29712,7 +29720,7 @@ exports = module.exports = __webpack_require__("FZ+f")(false);
 
 
 // module
-exports.push([module.i, ".error-msg {\n  color: #bd2130;\n  margin-top: 10px;\n  margin-bottom: 10px; }\n\n.ui-input {\n  display: block;\n  height: 50px;\n  margin-top: 10px;\n  margin-bottom: 10px;\n  border-radius: 3px;\n  width: 100%;\n  padding: 3px 3px; }\n\n.ui-input-desc {\n  display: block;\n  height: 50px;\n  margin-top: 10px;\n  margin-bottom: 10px;\n  border-radius: 3px;\n  padding: 3px 3px;\n  width: 100%; }\n\n.ui-button-squared {\n  padding: 5px 5px;\n  background: #F9CA47;\n  border: 1px solid transparent;\n  margin-top: 10px;\n  float: right; }\n\n.video-search-modal {\n  max-width: 80% !important; }\n\n.fifty-width {\n  width: 50%;\n  display: inline-block; }\n\n.left {\n  float: left; }\n\n.click-for-more {\n  text-decoration: underline;\n  color: #0089e9; }\n\n.remove {\n  text-decoration: underline;\n  color: #0089e9; }\n\n.pagination-div {\n  margin-top: 20px; }\n\n.search-video {\n  clear: right;\n  margin-top: 40px; }\n\n.video-search-img {\n  height: 250px;\n  width: 100%; }\n\n.fa-search-icon {\n  color: black;\n  font-size: 16px;\n  margin-left: 5px;\n  margin-top: 10px;\n  display: inline-block;\n  float: right; }\n\n.fa-search-icon:hover {\n  opacity: 0.7;\n  cursor: pointer;\n  scale: 1.1; }\n", ""]);
+exports.push([module.i, ".error-msg {\n  color: #bd2130;\n  margin-top: 10px;\n  margin-bottom: 10px; }\n\n.ui-input {\n  display: block;\n  height: 50px;\n  margin-top: 10px;\n  margin-bottom: 10px;\n  border-radius: 3px;\n  width: 100%;\n  padding: 3px 3px; }\n\n.ui-input-desc {\n  display: block;\n  height: 50px;\n  margin-top: 10px;\n  margin-bottom: 10px;\n  border-radius: 3px;\n  padding: 3px 3px;\n  width: 100%; }\n\n.ui-button-squared {\n  padding: 5px 5px;\n  background: #F9CA47;\n  border: 1px solid transparent;\n  margin-top: 10px;\n  float: right; }\n\n.video-search-modal {\n  max-width: 80% !important; }\n\n.fifty-width {\n  width: 50%;\n  display: inline-block; }\n\n.left {\n  float: left; }\n\n.click-for-more {\n  text-decoration: underline;\n  color: #0089e9;\n  margin-top: 5px; }\n\n.click-for-more:hover {\n  cursor: pointer; }\n\n.remove {\n  text-decoration: underline;\n  color: #0089e9; }\n\n.remove:hover {\n  cursor: pointer; }\n\n.video-dropdown:hover {\n  cursor: pointer; }\n\n.pagination-div {\n  margin-top: 20px; }\n\n.search-video {\n  clear: right;\n  margin-top: 40px; }\n\n.video-search-img {\n  height: 250px;\n  width: 100%; }\n\n.fa-search-icon {\n  color: black;\n  font-size: 16px;\n  margin-left: 5px;\n  margin-top: 10px;\n  display: inline-block;\n  float: right; }\n\n.fa-search-icon:hover {\n  opacity: 0.7;\n  cursor: pointer;\n  scale: 1.1; }\n", ""]);
 
 // exports
 

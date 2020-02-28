@@ -42,7 +42,7 @@ class VideoSearchModal extends Component {
 
     fetchVideo(event) {
         event.preventDefault();
-        const {title, id, description} = event.target;
+        const {title, id, description, week} = event.target;
         let postData = {};
         if (title.value && title.value !== '') {
             postData['title'] = title.value;
@@ -50,6 +50,9 @@ class VideoSearchModal extends Component {
             postData['video_id'] = id.value;
         } else if (description.value && description.value !== '') {
             postData['description'] = description.value;
+        }
+        else if (week.value && week.value !== '') {
+            postData['week'] = week.value;
         }
 
         if (this.state.customDate && this.state.startDateFormatted) {
@@ -62,11 +65,11 @@ class VideoSearchModal extends Component {
 
         if (this.state.source === '') {
             this.setState({
-                error: 'Please fill video source and either id, description or video title'
+                error: 'Please fill video source and either id, description, week or video title'
             })
-        } else if ((!title.value && !id.value && !description.value && !this.state.customDate) || (title.value === '' && id.value === '' && description.value === '' && !this.state.customDate)) {
+        } else if ((!title.value && !id.value && !description.value && !week.value && !this.state.customDate) || (title.value === '' && id.value === '' && !week.value && description.value === '' && !this.state.customDate)) {
             this.setState({
-                error: 'Please fill video source and either id, description or video title'
+                error: 'Please fill video source and either id, description, week or video title'
             })
         } else {
             this.setState({
@@ -123,10 +126,10 @@ class VideoSearchModal extends Component {
             {
                 if (video.stats.stats.length > 0) {
                     return <div className="search-video">
-                        <Collapsible trigger={video.video.title} key={video.video.title}>
+                        <Collapsible trigger={video.video.title} key={video.video.title} className="video-dropdown">
                             <div className="answer">
                                 <div className='fifty-width left'>
-                                    <p>Published on: {new Date(video.video.created_time).toISOString().slice(0, 10)}</p>
+                                    <p>Published on: {new Date(video.video.created_time).toISOString().slice(0, 10)} - Video ID: {video.video.id}</p>
                                     <img src={video.video.picture} className="video-search-img"/>
                                 </div>
                                 <div className='fifty-width'>
@@ -229,7 +232,7 @@ class VideoSearchModal extends Component {
     }
 
     renderForm() {
-        const inputs = ['Title', 'ID', 'Description'];
+        const inputs = ['Title', 'ID', 'Description', 'Week'];
 
         return (
             <form className="ui-form p-positions-form" onSubmit={this.fetchVideo}>
@@ -243,6 +246,9 @@ class VideoSearchModal extends Component {
                                           className="ui-input"/>;
                         case 'Description':
                             return <input type="text" placeholder="Description" key={input} name="description"
+                                          className="ui-input-desc"/>;
+                        case 'Week':
+                            return <input type="text" placeholder="Week" key={input} name="week"
                                           className="ui-input-desc"/>;
 
                         default:
@@ -268,7 +274,7 @@ class VideoSearchModal extends Component {
                             />
                         </div>
                     <p onClick={this.changeDateMode} className="remove">Remove date</p>
-                    </div>) : (<p onClick={this.changeDateMode}>Choose date</p>)
+                    </div>) : (<p onClick={this.changeDateMode} className="remove" >Choose date</p>)
                             }
                 <button type="submit" className="ui-button-squared">
                     Search

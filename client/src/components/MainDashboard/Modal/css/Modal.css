@@ -47,12 +47,25 @@
 
 .click-for-more {
     text-decoration: underline;
-    color: #0089e9
+    color: #0089e9;
+    margin-top: 5px
+}
+
+.click-for-more:hover {
+    cursor: pointer;
 }
 
 .remove {
     text-decoration: underline;
     color: #0089e9
+}
+
+.remove:hover {
+    cursor: pointer;
+}
+
+.video-dropdown:hover {
+    cursor: pointer;
 }
 
 .pagination-div {
