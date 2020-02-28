@@ -184,7 +184,7 @@ class VideoSearchModal extends Component {
 
                                             </div>
                                             <div className="ms-social-grid">
-                                                <div className="section-icon"><i className="fa fa-volume-up"></i></div>
+                                                <div className="section-icon"><i className="fa fa-tv"></i></div>
                                                 <p className="ms-text-dark">{video.stats.stats.filter(x => x.name === 'total_video_complete_views')[0].values[0].value.toLocaleString()}</p>
                                                 <span>Complete views (95% length)</span>
                                             </div>
@@ -210,7 +210,7 @@ class VideoSearchModal extends Component {
 
                                             </div>
                                             <div className="ms-social-grid">
-                                                <div className="section-icon"><i className="fa fa-volume-up"></i></div>
+                                                <div className="section-icon"><i className="fa fa-tv"></i></div>
                                                 <p className="ms-text-dark">{video.stats.stats.filter(x => x.name === 'total_video_views_unique')[0].values[0].value.toLocaleString()}</p>
                                                 <span>Unique views</span>
                                             </div>
@@ -219,7 +219,7 @@ class VideoSearchModal extends Component {
                                     <div className="ms-panel-body p-0">
                                         <div className="ms-social-media-followers">
                                             <div className="ms-social-grid">
-                                                <div className="section-icon"><i className="fa fa-history"></i></div>
+                                                <div className="section-icon"><i className="fa fa-thumbs-up"></i></div>
                                                 <p className="ms-text-dark">{(video.stats.stats.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value.share +
                                                 video.stats.stats.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value.like +
                                                 video.stats.stats.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value.comment).toLocaleString()

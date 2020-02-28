@@ -29673,7 +29673,7 @@ var VideoSearchModal = function (_Component) {
                                                     _react2.default.createElement(
                                                         'div',
                                                         { className: 'section-icon' },
-                                                        _react2.default.createElement('i', { className: 'fa fa-volume-up' })
+                                                        _react2.default.createElement('i', { className: 'fa fa-tv' })
                                                     ),
                                                     _react2.default.createElement(
                                                         'p',
@@ -29756,7 +29756,7 @@ var VideoSearchModal = function (_Component) {
                                                     _react2.default.createElement(
                                                         'div',
                                                         { className: 'section-icon' },
-                                                        _react2.default.createElement('i', { className: 'fa fa-volume-up' })
+                                                        _react2.default.createElement('i', { className: 'fa fa-tv' })
                                                     ),
                                                     _react2.default.createElement(
                                                         'p',
@@ -29785,7 +29785,7 @@ var VideoSearchModal = function (_Component) {
                                                     _react2.default.createElement(
                                                         'div',
                                                         { className: 'section-icon' },
-                                                        _react2.default.createElement('i', { className: 'fa fa-history' })
+                                                        _react2.default.createElement('i', { className: 'fa fa-thumbs-up' })
                                                     ),
                                                     _react2.default.createElement(
                                                         'p',
