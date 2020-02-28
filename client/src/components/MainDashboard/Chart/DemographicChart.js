@@ -144,7 +144,7 @@ class DemographicChart extends Component {
                 '#9C7C38', '#8D4E85', '#8FD400', '#D98695', '#757575', '#0081AB',
                 '#A17A74', '#6D9BC3', '#CD607E', '#AD6F69', '#5FA778'];
 
-           const labels = Object.keys(this.state.currentDemographicData);
+            const labels = Object.keys(this.state.currentDemographicData);
             const dataSets = [{
                 label: 'View Time (Minutes) By Age-Gender',
                 backgroundColor: colorList,

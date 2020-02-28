@@ -97,4 +97,23 @@
     scale: 1.1
 }
 
+.slick-dots li button {
+    color: #0089e9 !important;
+    background: #0089e9 !important;
+}
+
+.slick-dots li {
+    height: 30px !important;
+    margin-top: 10px !important
+}
+
+.slick-dots .slick-active button {
+    color:  #F9CA47 !important;
+    background:  #F9CA47 !important;
+}
+
+
+.slick-prev:before {
+    color: #0089e9 !important;
+}
 

@@ -8,6 +8,10 @@ import $ from 'jquery';
 import Collapsible from "react-collapsible";
 import Pagination from "react-js-pagination";
 import DatePicker from "react-datepicker";
+import DemographicVideoChart from "./DemographicVideoChart";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
 
 class VideoSearchModal extends Component {
 
@@ -120,17 +124,62 @@ class VideoSearchModal extends Component {
 
     renderVideo() {
         const currentVideos = this.state.currentVideos;
+        const settings = {
+            dots: true,
+            infinite: true,
+            speed: 500,
+            slidesToShow: 1,
+            slidesToScroll: 1
+        };
         let videoList;
         if (currentVideos.length > 0) {
             videoList = currentVideos.map((video) =>
             {
                 if (video.stats.stats.length > 0) {
+                    const demographicStats = [
+                        {
+                            label: "View time By City (Mins)",
+                            data: video.stats.stats.filter(x => x.name ===
+                                'total_video_view_time_by_region_id')[0].values[0].value,
+                            period: "ms"
+                        },
+                        {
+                            label: "View time By Country (Mins)",
+                            data: video.stats.stats.filter(x => x.name ===
+                                'total_video_view_time_by_country_id')[0].values[0].value,
+                            period: "minutes"
+                        },
+                        {
+                            label: "View time By Gender-Age (Mins)",
+                            data: video.stats.stats.filter(x => x.name ===
+                                'total_video_view_time_by_age_bucket_and_gender')[0].values[0].value,
+                            period: "ms"
+                        }
+                    ];
+
                     return <div className="search-video">
                         <Collapsible trigger={video.video.title} key={video.video.title} className="video-dropdown">
                             <div className="answer">
                                 <div className='fifty-width left'>
                                     <p>Published on: {new Date(video.video.created_time).toISOString().slice(0, 10)} - Video ID: {video.video.id}</p>
                                     <img src={video.video.picture} className="video-search-img"/>
+                                    <br/>
+                                    <br/>
+                                    <div className="ms-panel-body p-0">
+                                        <div className="ms-social-media-followers">
+                                            <div className="ms-social-grid">
+                                                <div className="section-icon"><i className="fa fa-tv"></i></div>
+                                                <p className="ms-text-dark">{video.stats.stats.filter(x => x.name === 'total_video_30s_views')[0].values[0].value.toLocaleString()}</p>
+                                                <span>30 secs Views</span>
+
+                                            </div>
+                                            <div className="ms-social-grid">
+                                                <div className="section-icon"><i className="fa fa-volume-up"></i></div>
+                                                <p className="ms-text-dark">{video.stats.stats.filter(x => x.name === 'total_video_complete_views')[0].values[0].value.toLocaleString()}</p>
+                                                <span>Complete views (95% length)</span>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div className='fifty-width'>
                                     <div className="ms-panel-body p-0">
@@ -152,8 +201,11 @@ class VideoSearchModal extends Component {
                                         <div className="ms-social-media-followers">
                                             <div className="ms-social-grid">
                                                 <div className="section-icon"><i className="fa fa-history"></i></div>
-                                                <p className="ms-text-dark">{video.stats.stats.filter(x => x.name === 'total_video_complete_views')[0].values[0].value.toLocaleString()}</p>
-                                                <span>Complete views<br/>(95% length)</span>
+                                                <p className="ms-text-dark">{(video.stats.stats.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value.share +
+                                                video.stats.stats.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value.like +
+                                                video.stats.stats.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value.comment).toLocaleString()
+                                                }</p>
+                                                <span>Engagement (Likes, shares, comments)</span>
                                             </div>
                                             <div className="ms-social-grid">
                                                 <div className="section-icon"><i className="fa fa-user"></i></div>
@@ -162,6 +214,13 @@ class VideoSearchModal extends Component {
                                                 <span>Reach</span>
                                             </div>
                                         </div>
+                                    </div>
+                                    <div className="ms-panel-body p-0">
+                                        <Slider {...settings}>
+                                            {demographicStats.map((stat, index) => (
+                                                <DemographicVideoChart data={stat.data} label={stat.label} period={stat.period}/>
+                                            ))}
+                                        </Slider>
                                     </div>
                                 </div>
                             </div>
