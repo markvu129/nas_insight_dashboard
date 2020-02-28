@@ -157,6 +157,8 @@ class VideoSearchModal extends Component {
                         }
                     ];
 
+                    const averageViewTime = (video.stats.stats.filter(x => x.name === 'total_video_view_total_time')[0].values[0].value)/(video.stats.stats.filter(x => x.name === 'total_video_views')[0].values[0].value)
+
                     return <div className="search-video">
                         <Collapsible trigger={video.video.title} key={video.video.title} className="video-dropdown">
                             <div className="answer">
@@ -177,6 +179,16 @@ class VideoSearchModal extends Component {
                                                 <div className="section-icon"><i className="fa fa-volume-up"></i></div>
                                                 <p className="ms-text-dark">{video.stats.stats.filter(x => x.name === 'total_video_complete_views')[0].values[0].value.toLocaleString()}</p>
                                                 <span>Complete views (95% length)</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className="ms-panel-body p-0">
+                                        <div className="ms-social-media-followers">
+                                            <div className="ms-social-grid">
+                                                <div className="section-icon"><i className="fa fa-tv"></i></div>
+                                                <p className="ms-text-dark">{Math.round(averageViewTime/60000)}</p>
+                                                <span>Average time watched (minutes)</span>
+
                                             </div>
                                         </div>
                                     </div>

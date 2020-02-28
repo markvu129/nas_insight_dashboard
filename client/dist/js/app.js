@@ -29600,6 +29600,12 @@ var VideoSearchModal = function (_Component) {
                             period: "ms"
                         }];
 
+                        var averageViewTime = video.stats.stats.filter(function (x) {
+                            return x.name === 'total_video_view_total_time';
+                        })[0].values[0].value / video.stats.stats.filter(function (x) {
+                            return x.name === 'total_video_views';
+                        })[0].values[0].value;
+
                         return _react2.default.createElement(
                             'div',
                             { className: 'search-video' },
@@ -29669,6 +29675,33 @@ var VideoSearchModal = function (_Component) {
                                                         'span',
                                                         null,
                                                         'Complete views (95% length)'
+                                                    )
+                                                )
+                                            )
+                                        ),
+                                        _react2.default.createElement(
+                                            'div',
+                                            { className: 'ms-panel-body p-0' },
+                                            _react2.default.createElement(
+                                                'div',
+                                                { className: 'ms-social-media-followers' },
+                                                _react2.default.createElement(
+                                                    'div',
+                                                    { className: 'ms-social-grid' },
+                                                    _react2.default.createElement(
+                                                        'div',
+                                                        { className: 'section-icon' },
+                                                        _react2.default.createElement('i', { className: 'fa fa-tv' })
+                                                    ),
+                                                    _react2.default.createElement(
+                                                        'p',
+                                                        { className: 'ms-text-dark' },
+                                                        Math.round(averageViewTime / 60000)
+                                                    ),
+                                                    _react2.default.createElement(
+                                                        'span',
+                                                        null,
+                                                        'Average time watched (minutes)'
                                                     )
                                                 )
                                             )
