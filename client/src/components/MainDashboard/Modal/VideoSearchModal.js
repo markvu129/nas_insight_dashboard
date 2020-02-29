@@ -47,7 +47,7 @@ class VideoSearchModal extends Component {
 
     fetchVideo(event) {
         event.preventDefault();
-        const {title, id, description, week} = event.target;
+        const {title, id, description, day, week} = event.target;
         let postData = {};
         if (title.value && title.value !== '') {
             postData['title'] = title.value;
@@ -58,6 +58,9 @@ class VideoSearchModal extends Component {
         }
         else if (week.value && week.value !== '') {
             postData['week'] = week.value;
+        }
+        else if (day.value && day.value !== '') {
+            postData['day'] = day.value;
         }
 
         if (this.state.customDate && this.state.startDateFormatted) {
@@ -70,11 +73,11 @@ class VideoSearchModal extends Component {
 
         if (this.state.source === '') {
             this.setState({
-                error: 'Please fill video source and either id, description, week or video title'
+                error: 'Please fill video source and either id, description, day, week or video title'
             })
-        } else if ((!title.value && !id.value && !description.value && !week.value && !this.state.customDate) || (title.value === '' && id.value === '' && !week.value && description.value === '' && !this.state.customDate)) {
+        } else if ((!title.value && !id.value && !description.value && !week.value && !day.value && !this.state.customDate) || (title.value === '' && id.value === '' && !day.value && !week.value && description.value === '' && !this.state.customDate)) {
             this.setState({
-                error: 'Please fill video source and either id, description, week or video title'
+                error: 'Please fill video source and either id, description, day,  week or video title'
             })
         } else {
             this.setState({
@@ -314,7 +317,7 @@ class VideoSearchModal extends Component {
     }
 
     renderForm() {
-        const inputs = ['Title', 'ID', 'Description', 'Week'];
+        const inputs = ['Title', 'ID', 'Description', 'Day', 'Week'];
 
         return (
             <form className="ui-form p-positions-form" onSubmit={this.fetchVideo}>
@@ -332,7 +335,9 @@ class VideoSearchModal extends Component {
                         case 'Week':
                             return <input type="text" placeholder="Week" key={input} name="week"
                                           className="ui-input-desc"/>;
-
+                        case 'Day':
+                            return <input type="text" placeholder="Day (For videos before Day 1000)" key={input} name="day"
+                                          className="ui-input-desc"/>;
                         default:
                             return <input type="text" placeholder={input} key={input} name={input.toLowerCase()}
                                           className="ui-input"/>;

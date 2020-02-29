@@ -44,12 +44,11 @@ class Metric extends Component {
 
         const that = this;
         let total_views = 0;
-        let total_reach = 0;
         let total_views_unique = 0;
         let total_view_time = 0;
         let total_engaged_users = 0;
-        let total_complete_views = 0;
         let total_impressions = 0;
+        let total_reach = 0;
         let updated_at;
         this.state.pages.forEach(page => {
             let uri = "https://nasinsightserver.herokuapp.com/api/info/overview/" + page + "/day/" + new Date().getFullYear() + "/page_impressions/2";
@@ -67,7 +66,6 @@ class Metric extends Component {
                     total_views_unique = total_views_unique + response.data[0].stats[0].stats.filter(x => x.name === 'page_video_views_unique')[0].values[0].value;
                     total_view_time = total_view_time + Math.round((response.data[0].stats[0].stats.filter(x => x.name === 'page_video_view_time')[0].values[0].value)/60000);
                     total_engaged_users = total_engaged_users + response.data[0].stats[0].stats.filter(x => x.name === 'page_engaged_users')[0].values[0].value;
-                    total_complete_views = total_complete_views + response.data[0].stats[0].stats.filter(x => x.name === 'page_video_complete_views_30s')[0].values[0].value;
 
                     // Calculate current data for each site
                     data['currentFbViews'] = view;
@@ -88,7 +86,6 @@ class Metric extends Component {
             totalData.total_views_unique = total_views_unique;
             totalData.total_view_time = total_view_time;
             totalData.total_engaged_users = total_engaged_users;
-            totalData.total_complete_views = total_complete_views;
             totalData.updatedAt = updated_at;
             that.setState({
                 dailyData: fbData,

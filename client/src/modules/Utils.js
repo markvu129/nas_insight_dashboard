@@ -24,6 +24,12 @@ class Utils {
     return data;
   }
 
+  static subtractCertainDay(dateString, counter) {
+    let date = new Date(dateString);
+    date = date.setDate(date.getDate() - counter);
+    return new Date(date).toISOString().slice(0, 10);
+  };
+
 }
 
 export default Utils;
