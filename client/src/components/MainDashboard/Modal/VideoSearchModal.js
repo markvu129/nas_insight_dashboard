@@ -20,21 +20,22 @@ class VideoSearchModal extends Component {
         super(props);
         this.state = {
             currentVideos: false,
-            allVideos: false,
             modalIsOpen: this.props.modalIsOpen,
             isFormSending: false,
             source: '',
             error: false,
             currentStats: false,
-            isLoading: false,
+            loading: false,
             currentPage: 1,
             startDate: new Date(),
             endDate: new Date(),
             customDate: false,
             startDateFormatted: new Date().toISOString().slice(0, 10),
-            endDateFormatted: new Date().toISOString().slice(0, 10)
+            endDateFormatted: new Date().toISOString().slice(0, 10),
+            filters: {}
         };
         this.fetchVideo = this.fetchVideo.bind(this);
+        this.getVideo = this.getVideo.bind(this);
         this.closeModal = this.closeModal.bind(this);
         this.renderVideo = this.renderVideo.bind(this);
         this.onSelectSource = this.onSelectSource.bind(this);
@@ -55,11 +56,9 @@ class VideoSearchModal extends Component {
             postData['video_id'] = id.value;
         } else if (description.value && description.value !== '') {
             postData['description'] = description.value;
-        }
-        else if (week.value && week.value !== '') {
+        } else if (week.value && week.value !== '') {
             postData['week'] = week.value;
-        }
-        else if (day.value && day.value !== '') {
+        } else if (day.value && day.value !== '') {
             postData['day'] = day.value;
         }
 
@@ -70,6 +69,9 @@ class VideoSearchModal extends Component {
         if (this.state.customDate && this.state.endDateFormatted) {
             postData['until'] = this.state.endDateFormatted
         }
+        this.setState({
+            filters: postData
+        });
 
         if (this.state.source === '') {
             this.setState({
@@ -79,51 +81,51 @@ class VideoSearchModal extends Component {
             this.setState({
                 error: 'Please fill video source and either id, description, day,  week or video title'
             })
-        } else {
-            this.setState({
-                isLoading: true
-            });
-
-            axios.post('https://nasinsightserver.herokuapp.com/api/video/' + this.state.source + '/50', postData).then(async (v) => {
-                if (v.data.length > 0) {
-                    this.setState({
-                        isLoading: false,
-                        error: false,
-                        noOfPages: Math.ceil(v.data.length / 5),
-                        currentPage: 1
-                    });
-
-                    let fetches = [];
-                    let currentVideos = [];
-                    let allVideos = [];
-
-                    for (const video of v.data) {
-                        fetches.push(axios.get('https://nasinsightserver.herokuapp.com/api/videos/video_insights/' + this.state.source + '/' + video.id).then((r) => {
-                            if (currentVideos.length < 5) {
-                                currentVideos.push({video: video, stats: r.data})
-                            }
-                            allVideos.push({video: video, stats: r.data})
-                        }))
-                    }
-
-                    await Promise.all(fetches).then(function () {
-                    }).catch((e) => {
-                        console.log(e)
-                    });
-                    this.setState({
-                        currentVideos: currentVideos,
-                        allVideos: allVideos
-                    })
-                } else {
-                    this.setState({
-                        currentVideos: [],
-                        isLoading: false,
-                        error: false,
-                        noOfPages: false
-                    });
-                }
-            })
         }
+
+        this.getVideo(this.state.source, postData,1);
+    }
+
+    getVideo(source, postData, page) {
+        this.setState({
+            loading: true
+        });
+        axios.post('https://nasinsightserver.herokuapp.com/api/video/' + source + '/5/' + page, postData).then(async (v) => {
+            if (v.data.videos.length > 0) {
+                this.setState({
+                    noOfPages: v.data.count,
+                    currentPage: 1
+                });
+
+                let fetches = [];
+                let currentVideos = [];
+
+                for (const video of v.data.videos) {
+                    fetches.push(axios.get('https://nasinsightserver.herokuapp.com/api/videos/video_insights/' + this.state.source + '/' + video.id).then((r) => {
+                        if (currentVideos.length < 5) {
+                            currentVideos.push({video: video, stats: r.data})
+                        }
+                    }))
+                }
+
+                await Promise.all(fetches).then(function () {
+                }).catch((e) => {
+                    console.log(e)
+                });
+                this.setState({
+                    currentVideos: currentVideos,
+                    loading: false,
+                    error: false
+                })
+            } else {
+                this.setState({
+                    currentVideos: [],
+                    loading: false,
+                    error: false,
+                    noOfPages: false
+                });
+            }
+        })
     }
 
     renderVideo() {
@@ -137,133 +139,134 @@ class VideoSearchModal extends Component {
         };
         let videoList;
         if (currentVideos.length > 0) {
-            videoList = currentVideos.map((video) =>
-            {
-                if (video.stats.stats.length > 0) {
-                    const demographicStats = [
-                        {
-                            label: "View time By City (Mins)",
-                            data: video.stats.stats.filter(x => x.name ===
-                                'total_video_view_time_by_region_id')[0].values[0].value,
-                            period: "ms"
-                        },
-                        {
-                            label: "View time By Country (Mins)",
-                            data: video.stats.stats.filter(x => x.name ===
-                                'total_video_view_time_by_country_id')[0].values[0].value,
-                            period: "minutes"
-                        },
-                        {
-                            label: "View time By Gender-Age (Mins)",
-                            data: video.stats.stats.filter(x => x.name ===
-                                'total_video_view_time_by_age_bucket_and_gender')[0].values[0].value,
-                            period: "ms"
-                        }
-                    ];
+            videoList = currentVideos.map((video) => {
+                    if (video.stats.stats.length > 0) {
+                        const demographicStats = [
+                            {
+                                label: "View time By City (Mins)",
+                                data: video.stats.stats.filter(x => x.name ===
+                                    'total_video_view_time_by_region_id')[0].values[0].value,
+                                period: "ms"
+                            },
+                            {
+                                label: "View time By Country (Mins)",
+                                data: video.stats.stats.filter(x => x.name ===
+                                    'total_video_view_time_by_country_id')[0].values[0].value,
+                                period: "minutes"
+                            },
+                            {
+                                label: "View time By Gender-Age (Mins)",
+                                data: video.stats.stats.filter(x => x.name ===
+                                    'total_video_view_time_by_age_bucket_and_gender')[0].values[0].value,
+                                period: "ms"
+                            }
+                        ];
 
-                    return <div className="search-video">
-                        <Collapsible trigger={video.video.title} key={video.video.title} className="video-dropdown">
-                            <div className="answer">
-                                <div className='fifty-width left'>
-                                    <p>Published on: {new Date(video.video.created_time).toISOString().slice(0, 10)} - Video ID: {video.video.id}</p>
-                                    <FacebookPlayer
-                                        width={600}
-                                        height={400}
-                                        appId={880756785680649}
-                                        videoId={video.video.id}
-                                        id={`video-id-${video.video.id}`}
-                                        onReady={this.onPlayerReady}
-                                        autoplay={false}
-                                        allowfullscreen
-                                    />
-                                    <br/>
-                                    <br/>
-                                    <div className="ms-panel-body p-0">
-                                        <div className="ms-social-media-followers">
-                                            <div className="ms-social-grid">
-                                                <div className="section-icon"><i className="fa fa-tv"></i></div>
-                                                <p className="ms-text-dark">{video.stats.stats.filter(x => x.name === 'total_video_30s_views')[0].values[0].value.toLocaleString()}</p>
-                                                <span>30 secs Views</span>
+                        return <div className="search-video">
+                            <Collapsible trigger={video.video.title} key={video.video.title} className="video-dropdown">
+                                <div className="answer">
+                                    <div className='fifty-width left'>
+                                        <p>Published on: {new Date(video.video.created_time).toISOString().slice(0, 10)} -
+                                            Video ID: {video.video.id}</p>
+                                        <FacebookPlayer
+                                            width={600}
+                                            height={400}
+                                            appId={880756785680649}
+                                            videoId={video.video.id}
+                                            id={`video-id-${video.video.id}`}
+                                            onReady={this.onPlayerReady}
+                                            autoplay={false}
+                                            allowfullscreen
+                                        />
+                                        <br/>
+                                        <br/>
+                                        <div className="ms-panel-body p-0">
+                                            <div className="ms-social-media-followers">
+                                                <div className="ms-social-grid">
+                                                    <div className="section-icon"><i className="fa fa-tv"></i></div>
+                                                    <p className="ms-text-dark">{video.stats.stats.filter(x => x.name === 'total_video_30s_views')[0].values[0].value.toLocaleString()}</p>
+                                                    <span>30 secs Views</span>
 
+                                                </div>
+                                                <div className="ms-social-grid">
+                                                    <div className="section-icon"><i className="fa fa-tv"></i></div>
+                                                    <p className="ms-text-dark">{video.stats.stats.filter(x => x.name === 'total_video_complete_views')[0].values[0].value.toLocaleString()}</p>
+                                                    <span>Complete views (95% length)</span>
+                                                </div>
                                             </div>
-                                            <div className="ms-social-grid">
-                                                <div className="section-icon"><i className="fa fa-tv"></i></div>
-                                                <p className="ms-text-dark">{video.stats.stats.filter(x => x.name === 'total_video_complete_views')[0].values[0].value.toLocaleString()}</p>
-                                                <span>Complete views (95% length)</span>
+                                        </div>
+                                        <div className="ms-panel-body p-0">
+                                            <div className="ms-social-media-followers">
+                                                <div className="ms-social-grid">
+                                                    <div className="section-icon"><i className="fa fa-tv"></i></div>
+                                                    <p className="ms-text-dark">{Math.round(video.stats.stats.filter(x => x.name === 'total_video_avg_time_watched')[0].values[0].value / 1000).toLocaleString()}</p>
+                                                    <span>Average time watched (secs)</span>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
-                                    <div className="ms-panel-body p-0">
-                                        <div className="ms-social-media-followers">
-                                            <div className="ms-social-grid">
-                                                <div className="section-icon"><i className="fa fa-tv"></i></div>
-                                                <p className="ms-text-dark">{Math.round(video.stats.stats.filter(x => x.name === 'total_video_avg_time_watched')[0].values[0].value/1000).toLocaleString()}</p>
-                                                <span>Average time watched (secs)</span>
+                                    <div className='fifty-width'>
+                                        <div className="ms-panel-body p-0">
+                                            <div className="ms-social-media-followers">
+                                                <div className="ms-social-grid">
+                                                    <div className="section-icon"><i className="fa fa-tv"></i></div>
+                                                    <p className="ms-text-dark">{video.stats.stats.filter(x => x.name === 'total_video_views')[0].values[0].value.toLocaleString()}</p>
+                                                    <span>Total Views</span>
+
+                                                </div>
+                                                <div className="ms-social-grid">
+                                                    <div className="section-icon"><i className="fa fa-tv"></i></div>
+                                                    <p className="ms-text-dark">{video.stats.stats.filter(x => x.name === 'total_video_views_unique')[0].values[0].value.toLocaleString()}</p>
+                                                    <span>Unique views</span>
+                                                </div>
                                             </div>
+                                        </div>
+                                        <div className="ms-panel-body p-0">
+                                            <div className="ms-social-media-followers">
+                                                <div className="ms-social-grid">
+                                                    <div className="section-icon"><i className="fa fa-thumbs-up"></i></div>
+                                                    <p className="ms-text-dark">{(video.stats.stats.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value.share +
+                                                        video.stats.stats.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value.like +
+                                                        video.stats.stats.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value.comment).toLocaleString()
+                                                    }</p>
+                                                    <span>Engagement (Likes, shares, comments)</span>
+                                                </div>
+                                                <div className="ms-social-grid">
+                                                    <div className="section-icon"><i className="fa fa-user"></i></div>
+                                                    <p className="ms-text-dark">{video.stats.stats.filter(x => x.name ===
+                                                        'total_video_impressions_unique')[0].values[0].value.toLocaleString()}</p>
+                                                    <span>Reach</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div className="ms-panel-body p-0">
+                                            <Slider {...settings}>
+                                                {demographicStats.map((stat, index) => (
+                                                    <DemographicVideoChart data={stat.data} label={stat.label}
+                                                                           period={stat.period}/>
+                                                ))}
+                                            </Slider>
                                         </div>
                                     </div>
                                 </div>
-                                <div className='fifty-width'>
-                                    <div className="ms-panel-body p-0">
-                                        <div className="ms-social-media-followers">
-                                            <div className="ms-social-grid">
-                                                <div className="section-icon"><i className="fa fa-tv"></i></div>
-                                                <p className="ms-text-dark">{video.stats.stats.filter(x => x.name === 'total_video_views')[0].values[0].value.toLocaleString()}</p>
-                                                <span>Total Views</span>
-
-                                            </div>
-                                            <div className="ms-social-grid">
-                                                <div className="section-icon"><i className="fa fa-tv"></i></div>
-                                                <p className="ms-text-dark">{video.stats.stats.filter(x => x.name === 'total_video_views_unique')[0].values[0].value.toLocaleString()}</p>
-                                                <span>Unique views</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="ms-panel-body p-0">
-                                        <div className="ms-social-media-followers">
-                                            <div className="ms-social-grid">
-                                                <div className="section-icon"><i className="fa fa-thumbs-up"></i></div>
-                                                <p className="ms-text-dark">{(video.stats.stats.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value.share +
-                                                video.stats.stats.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value.like +
-                                                video.stats.stats.filter(x => x.name === 'total_video_stories_by_action_type')[0].values[0].value.comment).toLocaleString()
-                                                }</p>
-                                                <span>Engagement (Likes, shares, comments)</span>
-                                            </div>
-                                            <div className="ms-social-grid">
-                                                <div className="section-icon"><i className="fa fa-user"></i></div>
-                                                <p className="ms-text-dark">{video.stats.stats.filter(x => x.name ===
-                                                    'total_video_impressions_unique')[0].values[0].value.toLocaleString()}</p>
-                                                <span>Reach</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="ms-panel-body p-0">
-                                        <Slider {...settings}>
-                                            {demographicStats.map((stat, index) => (
-                                                <DemographicVideoChart data={stat.data} label={stat.label} period={stat.period}/>
-                                            ))}
-                                        </Slider>
-                                    </div>
-                                </div>
-                            </div>
-                        </Collapsible>
-                        <p className="click-for-more">Click to see stats</p>
-                    </div>
+                            </Collapsible>
+                            <p className="click-for-more">Click to see stats</p>
+                        </div>
+                    } else {
+                        return <div></div>
+                    }
                 }
-                else {return <div></div>}
-            }
-
             )
 
         }
 
-        if (currentVideos && currentVideos.length > 0) {
+        if (currentVideos && currentVideos.length > 0 && !this.state.loading) {
             return videoList
-        } else if (currentVideos.length === 0) {
+        } else if (currentVideos.length === 0 && !this.state.loading) {
             return <div className="error-msg">No video found</div>
         }
 
-        if (this.state.isLoading) {
+        if (this.state.loading) {
             return <Loading/>
         }
         if (this.state.error) {
@@ -336,7 +339,8 @@ class VideoSearchModal extends Component {
                             return <input type="text" placeholder="Week" key={input} name="week"
                                           className="ui-input-desc"/>;
                         case 'Day':
-                            return <input type="text" placeholder="Day (For videos before Day 1000)" key={input} name="day"
+                            return <input type="text" placeholder="Day (For videos before Day 1000)" key={input}
+                                          name="day"
                                           className="ui-input-desc"/>;
                         default:
                             return <input type="text" placeholder={input} key={input} name={input.toLowerCase()}
@@ -344,7 +348,7 @@ class VideoSearchModal extends Component {
                     }
                 })}
 
-                {this.state.customDate?
+                {this.state.customDate ?
                     (<div className="date-picker">
                         <div className="start-date">
                             <span className="filter-desc">From</span>
@@ -360,9 +364,9 @@ class VideoSearchModal extends Component {
                                 onChange={this.handleEndDateChange}
                             />
                         </div>
-                    <p onClick={this.changeDateMode} className="remove">Remove date</p>
-                    </div>) : (<p onClick={this.changeDateMode} className="remove" >Choose date</p>)
-                            }
+                        <p onClick={this.changeDateMode} className="remove">Remove date</p>
+                    </div>) : (<p onClick={this.changeDateMode} className="remove">Choose date</p>)
+                }
                 <button type="submit" className="ui-button-squared">
                     Search
                 </button>
@@ -378,11 +382,7 @@ class VideoSearchModal extends Component {
     }
 
     _handlePageChange(pageNumber) {
-        let allVideos = this.state.allVideos;
-        this.setState({
-            currentPage: pageNumber,
-            currentVideos: allVideos.slice((pageNumber-1)*5, pageNumber*5)
-        })
+       this.getVideo(this.state.source, this.state.filters, pageNumber);
     }
 
     render() {
@@ -412,15 +412,15 @@ class VideoSearchModal extends Component {
                         {this.renderVideo()}
 
                         {
-                            this.state.allVideos && this.state.allVideos.length > 0 ? (
+                            this.state.currentVideos.length > 0 ? (
                                 <div className="pagination-div">
                                     <Pagination itemClass="page-item"
                                                 linkClass="page-link"
-                                        activePage={this.state.currentPage}
-                                        itemsCountPerPage={5}
-                                        totalItemsCount={this.state.allVideos.length}
-                                        pageRangeDisplayed={2}
-                                        onChange={this.handlePageChange}
+                                                activePage={this.state.currentPage}
+                                                itemsCountPerPage={5}
+                                                totalItemsCount={this.state.noOfPages}
+                                                pageRangeDisplayed={2}
+                                                onChange={this.handlePageChange}
                                     />
                                 </div>
                             ) : (<div/>)

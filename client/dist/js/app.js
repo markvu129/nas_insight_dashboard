@@ -29434,21 +29434,22 @@ var VideoSearchModal = function (_Component) {
 
         _this.state = {
             currentVideos: false,
-            allVideos: false,
             modalIsOpen: _this.props.modalIsOpen,
             isFormSending: false,
             source: '',
             error: false,
             currentStats: false,
-            isLoading: false,
+            loading: false,
             currentPage: 1,
             startDate: new Date(),
             endDate: new Date(),
             customDate: false,
             startDateFormatted: new Date().toISOString().slice(0, 10),
-            endDateFormatted: new Date().toISOString().slice(0, 10)
+            endDateFormatted: new Date().toISOString().slice(0, 10),
+            filters: {}
         };
         _this.fetchVideo = _this.fetchVideo.bind(_this);
+        _this.getVideo = _this.getVideo.bind(_this);
         _this.closeModal = _this.closeModal.bind(_this);
         _this.renderVideo = _this.renderVideo.bind(_this);
         _this.onSelectSource = _this.onSelectSource.bind(_this);
@@ -29463,8 +29464,6 @@ var VideoSearchModal = function (_Component) {
     _createClass(VideoSearchModal, [{
         key: 'fetchVideo',
         value: function fetchVideo(event) {
-            var _this2 = this;
-
             event.preventDefault();
             var _event$target = event.target,
                 title = _event$target.title,
@@ -29493,6 +29492,9 @@ var VideoSearchModal = function (_Component) {
             if (this.state.customDate && this.state.endDateFormatted) {
                 postData['until'] = this.state.endDateFormatted;
             }
+            this.setState({
+                filters: postData
+            });
 
             if (this.state.source === '') {
                 this.setState({
@@ -29502,77 +29504,80 @@ var VideoSearchModal = function (_Component) {
                 this.setState({
                     error: 'Please fill video source and either id, description, day,  week or video title'
                 });
-            } else {
-                this.setState({
-                    isLoading: true
-                });
+            }
 
-                _axios2.default.post('https://nasinsightserver.herokuapp.com/api/video/' + this.state.source + '/50', postData).then(async function (v) {
-                    if (v.data.length > 0) {
-                        await async function () {
-                            _this2.setState({
-                                isLoading: false,
-                                error: false,
-                                noOfPages: Math.ceil(v.data.length / 5),
-                                currentPage: 1
-                            });
+            this.getVideo(this.state.source, postData, 1);
+        }
+    }, {
+        key: 'getVideo',
+        value: function getVideo(source, postData, page) {
+            var _this2 = this;
 
-                            var fetches = [];
-                            var currentVideos = [];
-                            var allVideos = [];
+            this.setState({
+                loading: true
+            });
+            _axios2.default.post('https://nasinsightserver.herokuapp.com/api/video/' + source + '/5/' + page, postData).then(async function (v) {
+                if (v.data.videos.length > 0) {
+                    await async function () {
+                        _this2.setState({
+                            noOfPages: v.data.count,
+                            currentPage: 1
+                        });
 
-                            var _iteratorNormalCompletion = true;
-                            var _didIteratorError = false;
-                            var _iteratorError = undefined;
+                        var fetches = [];
+                        var currentVideos = [];
 
+                        var _iteratorNormalCompletion = true;
+                        var _didIteratorError = false;
+                        var _iteratorError = undefined;
+
+                        try {
+                            var _loop = function _loop() {
+                                var video = _step.value;
+
+                                fetches.push(_axios2.default.get('https://nasinsightserver.herokuapp.com/api/videos/video_insights/' + _this2.state.source + '/' + video.id).then(function (r) {
+                                    if (currentVideos.length < 5) {
+                                        currentVideos.push({ video: video, stats: r.data });
+                                    }
+                                }));
+                            };
+
+                            for (var _iterator = v.data.videos[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+                                _loop();
+                            }
+                        } catch (err) {
+                            _didIteratorError = true;
+                            _iteratorError = err;
+                        } finally {
                             try {
-                                var _loop = function _loop() {
-                                    var video = _step.value;
-
-                                    fetches.push(_axios2.default.get('https://nasinsightserver.herokuapp.com/api/videos/video_insights/' + _this2.state.source + '/' + video.id).then(function (r) {
-                                        if (currentVideos.length < 5) {
-                                            currentVideos.push({ video: video, stats: r.data });
-                                        }
-                                        allVideos.push({ video: video, stats: r.data });
-                                    }));
-                                };
-
-                                for (var _iterator = v.data[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
-                                    _loop();
+                                if (!_iteratorNormalCompletion && _iterator.return) {
+                                    _iterator.return();
                                 }
-                            } catch (err) {
-                                _didIteratorError = true;
-                                _iteratorError = err;
                             } finally {
-                                try {
-                                    if (!_iteratorNormalCompletion && _iterator.return) {
-                                        _iterator.return();
-                                    }
-                                } finally {
-                                    if (_didIteratorError) {
-                                        throw _iteratorError;
-                                    }
+                                if (_didIteratorError) {
+                                    throw _iteratorError;
                                 }
                             }
+                        }
 
-                            await Promise.all(fetches).then(function () {}).catch(function (e) {
-                                console.log(e);
-                            });
-                            _this2.setState({
-                                currentVideos: currentVideos,
-                                allVideos: allVideos
-                            });
-                        }();
-                    } else {
-                        _this2.setState({
-                            currentVideos: [],
-                            isLoading: false,
-                            error: false,
-                            noOfPages: false
+                        await Promise.all(fetches).then(function () {}).catch(function (e) {
+                            console.log(e);
                         });
-                    }
-                });
-            }
+                        _this2.setState({
+                            currentVideos: currentVideos,
+                            loading: false,
+                            error: false
+                        });
+                    }();
+                } else {
+                    _this2.setState({
+                        currentVideos: [],
+                        loading: false,
+                        error: false,
+                        noOfPages: false
+                    });
+                }
+            });
         }
     }, {
         key: 'renderVideo',
@@ -29837,7 +29842,8 @@ var VideoSearchModal = function (_Component) {
                                                 _reactSlick2.default,
                                                 settings,
                                                 demographicStats.map(function (stat, index) {
-                                                    return _react2.default.createElement(_DemographicVideoChart2.default, { data: stat.data, label: stat.label, period: stat.period });
+                                                    return _react2.default.createElement(_DemographicVideoChart2.default, { data: stat.data, label: stat.label,
+                                                        period: stat.period });
                                                 })
                                             )
                                         )
@@ -29856,9 +29862,9 @@ var VideoSearchModal = function (_Component) {
                 });
             }
 
-            if (currentVideos && currentVideos.length > 0) {
+            if (currentVideos && currentVideos.length > 0 && !this.state.loading) {
                 return videoList;
-            } else if (currentVideos.length === 0) {
+            } else if (currentVideos.length === 0 && !this.state.loading) {
                 return _react2.default.createElement(
                     'div',
                     { className: 'error-msg' },
@@ -29866,7 +29872,7 @@ var VideoSearchModal = function (_Component) {
                 );
             }
 
-            if (this.state.isLoading) {
+            if (this.state.loading) {
                 return _react2.default.createElement(_Loading2.default, null);
             }
             if (this.state.error) {
@@ -29945,7 +29951,8 @@ var VideoSearchModal = function (_Component) {
                             return _react2.default.createElement('input', { type: 'text', placeholder: 'Week', key: input, name: 'week',
                                 className: 'ui-input-desc' });
                         case 'Day':
-                            return _react2.default.createElement('input', { type: 'text', placeholder: 'Day (For videos before Day 1000)', key: input, name: 'day',
+                            return _react2.default.createElement('input', { type: 'text', placeholder: 'Day (For videos before Day 1000)', key: input,
+                                name: 'day',
                                 className: 'ui-input-desc' });
                         default:
                             return _react2.default.createElement('input', { type: 'text', placeholder: input, key: input, name: input.toLowerCase(),
@@ -30008,11 +30015,7 @@ var VideoSearchModal = function (_Component) {
     }, {
         key: '_handlePageChange',
         value: function _handlePageChange(pageNumber) {
-            var allVideos = this.state.allVideos;
-            this.setState({
-                currentPage: pageNumber,
-                currentVideos: allVideos.slice((pageNumber - 1) * 5, pageNumber * 5)
-            });
+            this.getVideo(this.state.source, this.state.filters, pageNumber);
         }
     }, {
         key: 'render',
@@ -30048,14 +30051,14 @@ var VideoSearchModal = function (_Component) {
                         this.renderForm(),
                         _react2.default.createElement('br', null),
                         this.renderVideo(),
-                        this.state.allVideos && this.state.allVideos.length > 0 ? _react2.default.createElement(
+                        this.state.currentVideos.length > 0 ? _react2.default.createElement(
                             'div',
                             { className: 'pagination-div' },
                             _react2.default.createElement(_reactJsPagination2.default, { itemClass: 'page-item',
                                 linkClass: 'page-link',
                                 activePage: this.state.currentPage,
                                 itemsCountPerPage: 5,
-                                totalItemsCount: this.state.allVideos.length,
+                                totalItemsCount: this.state.noOfPages,
                                 pageRangeDisplayed: 2,
                                 onChange: this.handlePageChange
                             })
