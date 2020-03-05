@@ -28,7 +28,7 @@ class FacebookInsight extends Component {
             prevMonthIgData: false,
             monthlyIgGraphData: [],
             igMetric: 'reach',
-            pages: ['nasDailyFB', 'nasDailyFBVN', 'nasDailyFBPH', 'nasDailyFBSP', 'nasDailyFBTH', 'nasDailyFBARB', 'nasDailyFBCH'],
+            pages: ['nasDailyFB', 'nasDailyFBVN', 'nasDailyFBPH', 'nasDailyFBSP', 'nasDailyFBTH', 'nasDailyFBARB'],
             startDate: new Date(),
             endDate: new Date(),
             startDateFormatted: new Date(),
@@ -350,8 +350,6 @@ class FacebookInsight extends Component {
                                                  thLabels={this.state.monthlyGraphData['nasDailyFBTH']['labels']}
                                                  arbData={this.state.monthlyGraphData['nasDailyFBARB']['data']}
                                                  arbLabels={this.state.monthlyGraphData['nasDailyFBARB']['labels']}
-                                                 chData={this.state.monthlyGraphData['nasDailyFBCH']['data']}
-                                                 chLabels={this.state.monthlyGraphData['nasDailyFBCH']['labels']}
                                         />
                                     </div>
                                 </li>

@@ -17,8 +17,7 @@ class DemographicChart extends Component {
                 'nasDailyFBTH': 'age_gender_stats_nasDailyFBTH',
                 'nasDailyFBPH': 'age_gender_stats_nasDailyFBPH',
                 'nasDailyFBARB': 'age_gender_stats_nasDailyFBARB',
-                'nasDailyFBSP': 'age_gender_stats_nasDailyFBSP',
-                'nasDailyFBCH': 'age_gender_stats_nasDailyFBCH'
+                'nasDailyFBSP': 'age_gender_stats_nasDailyFBSP'
             },
             countrySourceList: {
                 'nasDailyFB': 'country_stats_nasDailyFB',
@@ -26,8 +25,7 @@ class DemographicChart extends Component {
                 'nasDailyFBTH': 'country_stats_nasDailyFBTH',
                 'nasDailyFBPH': 'country_stats_nasDailyFBPH',
                 'nasDailyFBARB': 'country_stats_nasDailyFBARB',
-                'nasDailyFBSP': 'country_stats_nasDailyFBSP',
-                'nasDailyFBCH': 'country_stats_nasDailyFBCH'
+                'nasDailyFBSP': 'country_stats_nasDailyFBSP'
             },
             currentAgeGenderSource: 'nasDailyFB',
             currentCountrySource: 'nasDailyFB',
@@ -91,7 +89,6 @@ class DemographicChart extends Component {
                 {"label": "Nas Daily Thai", "value": "nasDailyFBTH"},
                 {"label": "Nas Daily Arabic", "value": "nasDailyFBARB"},
                 {"label": "Nas Daily Spanish", "value": "nasDailyFBSP"},
-                {"label": "Nas Daily Chinese", "value": "nasDailyFBCH"},
                 {"label": "Nas Daily Tagalog", "value": "nasDailyFBPH"},
             ];
 

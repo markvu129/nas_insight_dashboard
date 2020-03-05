@@ -14,7 +14,7 @@ class TopVideos extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            source: "nasDailyFB",
+            source: "NasDaily",
             recentVideos: [],
             currentVideo: {},
             modalIsOpen: false,
@@ -48,7 +48,7 @@ class TopVideos extends Component {
     }
 
     componentDidMount() {
-        this.fetchVideos(this.state.source);
+        this.fetchVideos("nasDailyFB");
     }
 
     shouldComponentUpdate(nextProps, nextState, nextContent) {
@@ -200,7 +200,6 @@ class TopVideos extends Component {
             let sourceOptions = [{"label": "NasDaily", "value": "nasDailyFB"},
                 {"label": "NasDaily Vietnamese", "value": "nasDailyFBVN"},
                 {"label": "NasDaily Spanish", "value": "nasDailyFBSP"},
-                {"label": "NasDaily Chinese", "value": "nasDailyFBCH"},
                 {"label": "NasDaily Tagalog", "value": "nasDailyFBPH"},
                 {"label": "NasDaily Arabic", "value": "nasDailyFBARB"},
                 {"label": "NasDaily Thai", "value": "nasDailyFBTH"}
@@ -292,7 +291,7 @@ class TopVideos extends Component {
             return (
                 <div>
                     <Select className="select-video-source-mobile"
-                            placeholder={this.state.source ? "Video source: " + this.state.source : "Select source"}
+                            placeholder={this.state.source ? "Video source: " + this.state.source : "Select video source"}
                             options={sourceOptions}
                             onChange={(value) => this.onSelectMetrics(value)}/>
                     <table>
@@ -302,7 +301,7 @@ class TopVideos extends Component {
                                 <p className="video-column-title">Video</p>
                                 <p>
                                     <Select className="select-video-source"
-                                            placeholder={this.state.source ? this.state.source : "Nas Daily"}
+                                            placeholder={this.state.source ? this.state.source : "Select video source"}
                                             options={sourceOptions}
                                             onChange={(value) => this.onSelectMetrics(value)}/>
                                     <i className="fa fa-search fa-search-icon" onClick={this.openSearchVideo}></i>

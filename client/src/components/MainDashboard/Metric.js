@@ -13,15 +13,16 @@ class Metric extends Component {
             prevIgReach: false,
             currentIgProfileViews: false,
             prevIgProfileViews: false,
-            pages: ['nasDailyFB', 'nasDailyFBVN', 'nasDailyFBPH', 'nasDailyFBSP', 'nasDailyFBTH', 'nasDailyFBARB', 'nasDailyFBCH'],
+            pages: ['nasDailyFB', 'nasDailyFBVN', 'nasDailyFBPH', 'nasDailyFBSP', 'nasDailyFBTH', 'nasDailyFBARB', 'nasDailyFBPT', 'nasDailyFBID'],
             title: {
                 'nasDailyFB': 'Nas Daily',
                 'nasDailyFBVN': 'NasDaily Vietnamese',
                 'nasDailyFBARB': 'NasDaily Arabic',
                 'nasDailyFBTH': 'NasDaily Thai',
                 'nasDailyFBPH': 'NasDaily Tagalog',
-                'nasDailyFBCH': 'NasDaily Chinese',
                 'nasDailyFBSP': 'NasDaily Spanish',
+                'nasDailyFBID': 'NasDaily Bahasa',
+                'nasDailyFBPT': 'NasDaily Portuguese',
                 'all': 'All Pages'
             },
             activePage: 'nasDailyFB',
@@ -55,6 +56,7 @@ class Metric extends Component {
             fetches.push(axios.get(uri)
                 .then(response => {
                     let data = {};
+                    console.log(response.data)
                     data['all_data'] = response.data;
                     let view = response.data[0].stats[0].stats.filter(x => x.name === 'page_video_views')[0].values[0].value;
 
@@ -143,7 +145,7 @@ class Metric extends Component {
 
     render() {
         if (this.state.currentIgProfileViews && this.state.dailyData.nasDailyFBVN
-            && this.state.dailyData.nasDailyFBCH && this.state.dailyData.nasDailyFBARB && this.state.dailyData.nasDailyFBTH
+            && this.state.dailyData.nasDailyFBARB && this.state.dailyData.nasDailyFBTH
             && this.state.dailyData.nasDailyFBPH && this.state.dailyData.nasDailyFBSP && this.state.dailyData.nasDailyFB) {
             return (
                 <div className="col-xl-4 col-md-12">
@@ -262,23 +264,30 @@ class Metric extends Component {
 
                             <div className="ms-social-media-followers">
                                 <div className="ms-social-grid">
-                                    <p className="source-name">Chinese</p>
-                                    <img src="/assets/img/images/nasdaily_logo.png" alt="nasdaily-chinese"
-                                         border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBCH')}/>
+                                    <p className="source-name">Bahasa</p>
+                                    <img src="/assets/img/images/nasdaily_logo.png" alt="nasdaily-bahasa" border="0"
+                                         className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBID')}/>
                                     {this.state.followerCounts ?
-                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyFBCH']}</p> :
+                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyFBID']}</p> :
                                         <p></p>}
                                     <span>Followers</span>
-                                    {this.state.dailyData.nasDailyFBCH ?
-                                        <p className="ms-text-dark">{this.state.dailyData.nasDailyFBCH.currentFbViews.toLocaleString()}</p> :
+                                    {this.state.dailyData.nasDailyFBID ?
+                                        <p className="ms-text-dark">{this.state.dailyData.nasDailyFBID.currentFbViews.toLocaleString()}</p> :
                                         <p></p>}
                                     <span>Video views</span>
                                 </div>
                                 <div className="ms-social-grid">
                                     <p className="source-name">Portuguese</p>
-                                    <img src="/assets/img/images/nasdaily_logo.png" alt="nasdaily-bahasa"
-                                         border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBTH')}/>
-                                    <p className="ms-text-dark">Coming soon</p>
+                                    <img src="/assets/img/images/nasdaily_logo.png" alt="nasdaily-portuguese" border="0"
+                                         className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBPT')}/>
+                                    {this.state.followerCounts ?
+                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyFBPT']}</p> :
+                                        <p></p>}
+                                    <span>Followers</span>
+                                    {this.state.dailyData.nasDailyFBPT ?
+                                        <p className="ms-text-dark">{this.state.dailyData.nasDailyFBPT.currentFbViews.toLocaleString()}</p> :
+                                        <p></p>}
+                                    <span>Video views</span>
                                 </div>
                             </div>
                         </div>

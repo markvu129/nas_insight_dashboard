@@ -522,26 +522,6 @@ var FbChart = function (_Component) {
                         pointRadius: 1,
                         pointHitRadius: 10,
                         data: this.props.arbData
-                    }, {
-                        label: 'NasDailyCN',
-                        fill: false,
-                        lineTension: 0.1,
-                        backgroundColor: '#d68215',
-                        borderColor: '#d68215',
-                        borderCapStyle: 'butt',
-                        borderDash: [],
-                        borderDashOffset: 0.0,
-                        borderJoinStyle: 'miter',
-                        pointBorderColor: '#fff',
-                        pointBackgroundColor: '#fff',
-                        pointBorderWidth: 1,
-                        pointHoverRadius: 5,
-                        pointHoverBackgroundColor: '#2F323B',
-                        pointHoverBorderColor: 'rgba(220,220,220,1)',
-                        pointHoverBorderWidth: 2,
-                        pointRadius: 1,
-                        pointHitRadius: 10,
-                        data: this.props.chData
                     }]
                 };
 
@@ -16253,7 +16233,7 @@ var TopVideos = function (_Component) {
         var _this = _possibleConstructorReturn(this, (TopVideos.__proto__ || Object.getPrototypeOf(TopVideos)).call(this, props));
 
         _this.state = {
-            source: "nasDailyFB",
+            source: "NasDaily",
             recentVideos: [],
             currentVideo: {},
             modalIsOpen: false,
@@ -16292,7 +16272,7 @@ var TopVideos = function (_Component) {
     }, {
         key: 'componentDidMount',
         value: function componentDidMount() {
-            this.fetchVideos(this.state.source);
+            this.fetchVideos("nasDailyFB");
         }
     }, {
         key: 'shouldComponentUpdate',
@@ -16561,7 +16541,7 @@ var TopVideos = function (_Component) {
 
             if (this.state.recentVideos.length > 0) {
 
-                var sourceOptions = [{ "label": "NasDaily", "value": "nasDailyFB" }, { "label": "NasDaily Vietnamese", "value": "nasDailyFBVN" }, { "label": "NasDaily Spanish", "value": "nasDailyFBSP" }, { "label": "NasDaily Chinese", "value": "nasDailyFBCH" }, { "label": "NasDaily Tagalog", "value": "nasDailyFBPH" }, { "label": "NasDaily Arabic", "value": "nasDailyFBARB" }, { "label": "NasDaily Thai", "value": "nasDailyFBTH" }];
+                var sourceOptions = [{ "label": "NasDaily", "value": "nasDailyFB" }, { "label": "NasDaily Vietnamese", "value": "nasDailyFBVN" }, { "label": "NasDaily Spanish", "value": "nasDailyFBSP" }, { "label": "NasDaily Tagalog", "value": "nasDailyFBPH" }, { "label": "NasDaily Arabic", "value": "nasDailyFBARB" }, { "label": "NasDaily Thai", "value": "nasDailyFBTH" }];
 
                 var plugins = [{
                     afterDraw: function afterDraw(chartInstance, easing) {
@@ -16652,7 +16632,7 @@ var TopVideos = function (_Component) {
                     'div',
                     null,
                     _react2.default.createElement(_reactSelect2.default, { className: 'select-video-source-mobile',
-                        placeholder: this.state.source ? "Video source: " + this.state.source : "Select source",
+                        placeholder: this.state.source ? "Video source: " + this.state.source : "Select video source",
                         options: sourceOptions,
                         onChange: function onChange(value) {
                             return _this4.onSelectMetrics(value);
@@ -16678,7 +16658,7 @@ var TopVideos = function (_Component) {
                                         'p',
                                         null,
                                         _react2.default.createElement(_reactSelect2.default, { className: 'select-video-source',
-                                            placeholder: this.state.source ? this.state.source : "Nas Daily",
+                                            placeholder: this.state.source ? this.state.source : "Select video source",
                                             options: sourceOptions,
                                             onChange: function onChange(value) {
                                                 return _this4.onSelectMetrics(value);
@@ -38011,7 +37991,7 @@ var FacebookInsight = function (_Component) {
             prevMonthIgData: false,
             monthlyIgGraphData: [],
             igMetric: 'reach',
-            pages: ['nasDailyFB', 'nasDailyFBVN', 'nasDailyFBPH', 'nasDailyFBSP', 'nasDailyFBTH', 'nasDailyFBARB', 'nasDailyFBCH'],
+            pages: ['nasDailyFB', 'nasDailyFBVN', 'nasDailyFBPH', 'nasDailyFBSP', 'nasDailyFBTH', 'nasDailyFBARB'],
             startDate: new Date(),
             endDate: new Date(),
             startDateFormatted: new Date(),
@@ -38382,9 +38362,7 @@ var FacebookInsight = function (_Component) {
                                             thData: this.state.monthlyGraphData['nasDailyFBTH']['data'],
                                             thLabels: this.state.monthlyGraphData['nasDailyFBTH']['labels'],
                                             arbData: this.state.monthlyGraphData['nasDailyFBARB']['data'],
-                                            arbLabels: this.state.monthlyGraphData['nasDailyFBARB']['labels'],
-                                            chData: this.state.monthlyGraphData['nasDailyFBCH']['data'],
-                                            chLabels: this.state.monthlyGraphData['nasDailyFBCH']['labels']
+                                            arbLabels: this.state.monthlyGraphData['nasDailyFBARB']['labels']
                                         })
                                     )
                                 ),
@@ -47026,15 +47004,16 @@ var Metric = function (_Component) {
             prevIgReach: false,
             currentIgProfileViews: false,
             prevIgProfileViews: false,
-            pages: ['nasDailyFB', 'nasDailyFBVN', 'nasDailyFBPH', 'nasDailyFBSP', 'nasDailyFBTH', 'nasDailyFBARB', 'nasDailyFBCH'],
+            pages: ['nasDailyFB', 'nasDailyFBVN', 'nasDailyFBPH', 'nasDailyFBSP', 'nasDailyFBTH', 'nasDailyFBARB', 'nasDailyFBPT', 'nasDailyFBID'],
             title: {
                 'nasDailyFB': 'Nas Daily',
                 'nasDailyFBVN': 'NasDaily Vietnamese',
                 'nasDailyFBARB': 'NasDaily Arabic',
                 'nasDailyFBTH': 'NasDaily Thai',
                 'nasDailyFBPH': 'NasDaily Tagalog',
-                'nasDailyFBCH': 'NasDaily Chinese',
                 'nasDailyFBSP': 'NasDaily Spanish',
+                'nasDailyFBID': 'NasDaily Bahasa',
+                'nasDailyFBPT': 'NasDaily Portuguese',
                 'all': 'All Pages'
             },
             activePage: 'nasDailyFB',
@@ -47069,6 +47048,7 @@ var Metric = function (_Component) {
                 var uri = "https://nasinsightserver.herokuapp.com/api/info/overview/" + page + "/day/" + new Date().getFullYear() + "/page_impressions/2";
                 fetches.push(_axios2.default.get(uri).then(function (response) {
                     var data = {};
+                    console.log(response.data);
                     data['all_data'] = response.data;
                     var view = response.data[0].stats[0].stats.filter(function (x) {
                         return x.name === 'page_video_views';
@@ -47191,7 +47171,7 @@ var Metric = function (_Component) {
     }, {
         key: 'render',
         value: function render() {
-            if (this.state.currentIgProfileViews && this.state.dailyData.nasDailyFBVN && this.state.dailyData.nasDailyFBCH && this.state.dailyData.nasDailyFBARB && this.state.dailyData.nasDailyFBTH && this.state.dailyData.nasDailyFBPH && this.state.dailyData.nasDailyFBSP && this.state.dailyData.nasDailyFB) {
+            if (this.state.currentIgProfileViews && this.state.dailyData.nasDailyFBVN && this.state.dailyData.nasDailyFBARB && this.state.dailyData.nasDailyFBTH && this.state.dailyData.nasDailyFBPH && this.state.dailyData.nasDailyFBSP && this.state.dailyData.nasDailyFB) {
                 return _react2.default.createElement(
                     'div',
                     { className: 'col-xl-4 col-md-12' },
@@ -47483,24 +47463,24 @@ var Metric = function (_Component) {
                                     _react2.default.createElement(
                                         'p',
                                         { className: 'source-name' },
-                                        'Chinese'
+                                        'Bahasa'
                                     ),
-                                    _react2.default.createElement('img', { src: '/assets/img/images/nasdaily_logo.png', alt: 'nasdaily-chinese',
-                                        border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBCH') }),
+                                    _react2.default.createElement('img', { src: '/assets/img/images/nasdaily_logo.png', alt: 'nasdaily-bahasa', border: '0',
+                                        className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBID') }),
                                     this.state.followerCounts ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark highlight-text' },
-                                        this.state.followerCounts['nasDailyFBCH']
+                                        this.state.followerCounts['nasDailyFBID']
                                     ) : _react2.default.createElement('p', null),
                                     _react2.default.createElement(
                                         'span',
                                         null,
                                         'Followers'
                                     ),
-                                    this.state.dailyData.nasDailyFBCH ? _react2.default.createElement(
+                                    this.state.dailyData.nasDailyFBID ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark' },
-                                        this.state.dailyData.nasDailyFBCH.currentFbViews.toLocaleString()
+                                        this.state.dailyData.nasDailyFBID.currentFbViews.toLocaleString()
                                     ) : _react2.default.createElement('p', null),
                                     _react2.default.createElement(
                                         'span',
@@ -47516,12 +47496,27 @@ var Metric = function (_Component) {
                                         { className: 'source-name' },
                                         'Portuguese'
                                     ),
-                                    _react2.default.createElement('img', { src: '/assets/img/images/nasdaily_logo.png', alt: 'nasdaily-bahasa',
-                                        border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBTH') }),
+                                    _react2.default.createElement('img', { src: '/assets/img/images/nasdaily_logo.png', alt: 'nasdaily-portuguese', border: '0',
+                                        className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBPT') }),
+                                    this.state.followerCounts ? _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark highlight-text' },
+                                        this.state.followerCounts['nasDailyFBPT']
+                                    ) : _react2.default.createElement('p', null),
                                     _react2.default.createElement(
+                                        'span',
+                                        null,
+                                        'Followers'
+                                    ),
+                                    this.state.dailyData.nasDailyFBPT ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark' },
-                                        'Coming soon'
+                                        this.state.dailyData.nasDailyFBPT.currentFbViews.toLocaleString()
+                                    ) : _react2.default.createElement('p', null),
+                                    _react2.default.createElement(
+                                        'span',
+                                        null,
+                                        'Video views'
                                     )
                                 )
                             )
@@ -82760,8 +82755,7 @@ var DemographicChart = function (_Component) {
                 'nasDailyFBTH': 'age_gender_stats_nasDailyFBTH',
                 'nasDailyFBPH': 'age_gender_stats_nasDailyFBPH',
                 'nasDailyFBARB': 'age_gender_stats_nasDailyFBARB',
-                'nasDailyFBSP': 'age_gender_stats_nasDailyFBSP',
-                'nasDailyFBCH': 'age_gender_stats_nasDailyFBCH'
+                'nasDailyFBSP': 'age_gender_stats_nasDailyFBSP'
             },
             countrySourceList: {
                 'nasDailyFB': 'country_stats_nasDailyFB',
@@ -82769,8 +82763,7 @@ var DemographicChart = function (_Component) {
                 'nasDailyFBTH': 'country_stats_nasDailyFBTH',
                 'nasDailyFBPH': 'country_stats_nasDailyFBPH',
                 'nasDailyFBARB': 'country_stats_nasDailyFBARB',
-                'nasDailyFBSP': 'country_stats_nasDailyFBSP',
-                'nasDailyFBCH': 'country_stats_nasDailyFBCH'
+                'nasDailyFBSP': 'country_stats_nasDailyFBSP'
             },
             currentAgeGenderSource: 'nasDailyFB',
             currentCountrySource: 'nasDailyFB',
@@ -82835,7 +82828,7 @@ var DemographicChart = function (_Component) {
 
                 var monthNames = ["January", "February", "March", "April", "May", "Jun", "July", "August", "September", "October", "November", "December"];
 
-                var demographicSourceOption = [{ "label": "Nas Daily", "value": "nasDailyFB" }, { "label": "Nas Daily Vietnamese", "value": "nasDailyFBVN" }, { "label": "Nas Daily Thai", "value": "nasDailyFBTH" }, { "label": "Nas Daily Arabic", "value": "nasDailyFBARB" }, { "label": "Nas Daily Spanish", "value": "nasDailyFBSP" }, { "label": "Nas Daily Chinese", "value": "nasDailyFBCH" }, { "label": "Nas Daily Tagalog", "value": "nasDailyFBPH" }];
+                var demographicSourceOption = [{ "label": "Nas Daily", "value": "nasDailyFB" }, { "label": "Nas Daily Vietnamese", "value": "nasDailyFBVN" }, { "label": "Nas Daily Thai", "value": "nasDailyFBTH" }, { "label": "Nas Daily Arabic", "value": "nasDailyFBARB" }, { "label": "Nas Daily Spanish", "value": "nasDailyFBSP" }, { "label": "Nas Daily Tagalog", "value": "nasDailyFBPH" }];
 
                 var timeOptions = [{ "label": "This month", "value": monthNames[new Date().getMonth()] }];
 
