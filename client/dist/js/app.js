@@ -47048,7 +47048,6 @@ var Metric = function (_Component) {
                 var uri = "https://nasinsightserver.herokuapp.com/api/info/overview/" + page + "/day/" + new Date().getFullYear() + "/page_impressions/2";
                 fetches.push(_axios2.default.get(uri).then(function (response) {
                     var data = {};
-                    console.log(response.data);
                     data['all_data'] = response.data;
                     var view = response.data[0].stats[0].stats.filter(function (x) {
                         return x.name === 'page_video_views';
@@ -81357,6 +81356,10 @@ var _Utils = __webpack_require__("dlHz");
 
 var _Utils2 = _interopRequireDefault(_Utils);
 
+var _reactDatepicker = __webpack_require__("COZL");
+
+var _reactDatepicker2 = _interopRequireDefault(_reactDatepicker);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -81379,31 +81382,91 @@ var Detail = function (_Component) {
             countryData: false,
             cityData: false,
             demographicSince: false,
-            demographicUntil: false
+            demographicUntil: false,
+            startDate: new Date(),
+            endDate: new Date(),
+            startDateFormatted: new Date().toISOString().slice(0, 10),
+            endDateFormatted: new Date().toISOString().slice(0, 10),
+            filter: false,
+            allData: false,
+            title: {
+                'Nas Daily': 'nasDailyFB',
+                'NasDaily Vietnamese': 'nasDailyFBVN',
+                'NasDaily Arabic': 'nasDailyFBARB',
+                'NasDaily Thai': 'nasDailyFBTH',
+                'NasDaily Tagalog': 'nasDailyFBPH',
+                'NasDaily Spanish': 'nasDailyFBSP',
+                'NasDaily Bahasa': 'nasDailyFBID',
+                'NasDaily Portuguese': 'nasDailyFBPT'
+            }
         };
         _this.fetchDemoGraphicData = _this.fetchDemoGraphicData.bind(_this);
+        _this.fetchDemoGraphicData = _this.fetchDemoGraphicData.bind(_this);
+        _this.fetchDataByDate = _this.fetchDataByDate.bind(_this);
+        _this.handleStartDateChange = _this.handleStartDateChange.bind(_this);
+        _this.handleEndDateChange = _this.handleEndDateChange.bind(_this);
         return _this;
     }
 
     _createClass(Detail, [{
         key: 'componentDidUpdate',
-        value: function componentDidUpdate(prevProps) {
+        value: function componentDidUpdate(prevProps, prevState) {
             if (this.props.modalIsOpen !== prevProps.modalIsOpen) {
                 this.setState({
-                    modalIsOpen: this.props.modalIsOpen
+                    modalIsOpen: this.props.modalIsOpen,
+                    filter: false
                 });
+            }
+            if (this.state.allData !== prevState.allData) {
+                this.setState({
+                    allData: this.state.allData
+                });
+            }
+        }
+    }, {
+        key: 'handleStartDateChange',
+        value: function handleStartDateChange(date) {
+            this.setState({
+                startDate: date,
+                startDateFormatted: new Date(date).toISOString().slice(0, 10)
+            });
+        }
+    }, {
+        key: 'handleEndDateChange',
+        value: function handleEndDateChange(date) {
+            this.setState({
+                endDate: date,
+                endDateFormatted: new Date(date).toISOString().slice(0, 10)
+            });
+        }
+    }, {
+        key: 'fetchDataByDate',
+        value: function fetchDataByDate(since, until) {
+            var _this2 = this;
+
+            _axios2.default.get("https://nasinsightserver.herokuapp.com/api/info/overview/" + this.state.title[this.props.activePage] + "/month/range/" + since + "/" + until + "/page_video_views,page_video_views_unique,page_video_view_time,page_impressions_unique").then(function (r) {
+                if (r.data.stats.length > 0) {
+                    _this2.setState({
+                        allData: r.data,
+                        filter: true
+                    });
+                }
+            });
+            var dateDifference = new Date(this.state.endDateFormatted).getTime() - new Date(this.state.startDateFormatted).getTime();
+            if (dateDifference / (1000 * 3600 * 24) >= 11) {
+                this.fetchDemoGraphicData(this.state.startDateFormatted, this.state.endDateFormatted);
             }
         }
     }, {
         key: 'fetchDemoGraphicData',
         value: function fetchDemoGraphicData(since, until) {
-            var _this2 = this;
+            var _this3 = this;
 
             if (this.props.activePage !== 'All Pages') {
                 _axios2.default.get("https://nasinsightserver.herokuapp.com/api/info/overview/nasDailyFB/day/range/" + since + "/" + until + "/page_impressions_by_country_unique,page_impressions_by_city_unique,page_impressions_by_age_gender_unique").then(function (r) {
 
                     if (r.data.stats[0].stats.length > 0) {
-                        _this2.setState({
+                        _this3.setState({
                             demographicSince: since,
                             demographicUntil: until,
                             genderData: r.data.stats[0].stats.filter(function (x) {
@@ -81430,6 +81493,7 @@ var Detail = function (_Component) {
     }, {
         key: 'render',
         value: function render() {
+            var _this4 = this;
 
             var settings = {
                 dots: true,
@@ -81445,27 +81509,44 @@ var Detail = function (_Component) {
                 reach = void 0,
                 metric_time = void 0;
             var active_page = this.props.activePage;
-            if (active_page === 'All Pages') {
-                metric_time = new Date(this.props.allData.updatedAt).toISOString().slice(0, 10);
-                views = this.props.allData['total_views'].toLocaleString();
-                views_unique = this.props.allData['total_views_unique'].toLocaleString();
-                view_time = this.props.allData['total_view_time'].toLocaleString();
-                reach = this.props.allData['total_reach'].toLocaleString();
+            if (!this.state.filter) {
+                if (active_page === 'All Pages') {
+                    metric_time = new Date(this.props.allData.updatedAt).toISOString().slice(0, 10);
+                    views = this.props.allData['total_views'].toLocaleString();
+                    views_unique = this.props.allData['total_views_unique'].toLocaleString();
+                    view_time = this.props.allData['total_view_time'].toLocaleString();
+                    reach = this.props.allData['total_reach'].toLocaleString();
+                } else {
+                    var stats = this.props.allData[0].stats[0].stats;
+                    metric_time = new Date(this.props.allData[0].updatedAt).toISOString().slice(0, 10);
+                    views = stats.filter(function (x) {
+                        return x.name === 'page_video_views';
+                    })[0].values[0].value.toLocaleString();
+                    views_unique = stats.filter(function (x) {
+                        return x.name === 'page_video_views_unique';
+                    })[0].values[0].value.toLocaleString();
+                    view_time = Math.round(stats.filter(function (x) {
+                        return x.name === 'page_video_view_time';
+                    })[0].values[0].value / 60000).toLocaleString();
+                    reach = stats.filter(function (x) {
+                        return x.name === 'page_impressions_unique';
+                    })[0].values[0].value.toLocaleString();
+                }
             } else {
-                var stats = this.props.allData[0].stats[0].stats;
-                metric_time = new Date(this.props.allData[0].updatedAt).toISOString().slice(0, 10);
-                views = stats.filter(function (x) {
+                var _stats = this.state.allData.stats[0].stats;
+                metric_time = this.state.startDateFormatted + " - " + this.state.endDateFormatted;
+                views = _stats.filter(function (x) {
                     return x.name === 'page_video_views';
-                })[0].values[0].value.toLocaleString();
-                views_unique = stats.filter(function (x) {
+                })[0].value.toLocaleString();
+                views_unique = _stats.filter(function (x) {
                     return x.name === 'page_video_views_unique';
-                })[0].values[0].value.toLocaleString();
-                view_time = Math.round(stats.filter(function (x) {
+                })[0].value.toLocaleString();
+                view_time = Math.round(_stats.filter(function (x) {
                     return x.name === 'page_video_view_time';
-                })[0].values[0].value / 60000).toLocaleString();
-                reach = stats.filter(function (x) {
+                })[0].value / 60000).toLocaleString();
+                reach = _stats.filter(function (x) {
                     return x.name === 'page_impressions_unique';
-                })[0].values[0].value.toLocaleString();
+                })[0].value.toLocaleString();
             }
 
             return _react2.default.createElement(
@@ -81481,6 +81562,40 @@ var Detail = function (_Component) {
                         ': ',
                         metric_time
                     ),
+                    active_page !== 'All Pages' ? _react2.default.createElement(
+                        'div',
+                        { style: { marginBottom: '40px' } },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'start-date' },
+                            _react2.default.createElement(
+                                'span',
+                                { className: 'filter-desc' },
+                                'From'
+                            ),
+                            _react2.default.createElement(_reactDatepicker2.default, {
+                                selected: this.state.startDate,
+                                onChange: this.handleStartDateChange
+                            })
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'end-date' },
+                            _react2.default.createElement(
+                                'span',
+                                { className: 'filter-desc' },
+                                'To'
+                            ),
+                            _react2.default.createElement(_reactDatepicker2.default, {
+                                selected: this.state.endDate,
+                                onChange: this.handleEndDateChange
+                            })
+                        ),
+                        _react2.default.createElement('i', { className: 'fa fa-search fa-search-icon', style: { marginTop: '-25px' },
+                            onClick: function onClick() {
+                                return _this4.fetchDataByDate(_this4.state.startDateFormatted, _this4.state.endDateFormatted);
+                            } })
+                    ) : _react2.default.createElement('div', null),
                     _react2.default.createElement(
                         'div',
                         { className: 'ms-panel-body p-0' },
@@ -81576,9 +81691,15 @@ var Detail = function (_Component) {
                     this.state.genderData && this.state.countryData && this.state.cityData ? _react2.default.createElement(
                         _reactSlick2.default,
                         settings,
-                        _react2.default.createElement(_DemographicVideoChart2.default, { label: 'Reach by country (' + this.state.demographicSince + '/' + this.state.demographicUntil + ')', data: this.state.countryData }),
-                        _react2.default.createElement(_DemographicVideoChart2.default, { label: 'Reach by city (' + this.state.demographicSince + '/' + this.state.demographicUntil + ')', data: this.state.cityData }),
-                        _react2.default.createElement(_DemographicVideoChart2.default, { label: 'Reach by gender-age (' + this.state.demographicSince + '/' + this.state.demographicUntil + ')', data: this.state.genderData })
+                        _react2.default.createElement(_DemographicVideoChart2.default, {
+                            label: 'Reach by country (' + this.state.demographicSince + '/' + this.state.demographicUntil + ')',
+                            data: this.state.countryData }),
+                        _react2.default.createElement(_DemographicVideoChart2.default, {
+                            label: 'Reach by city (' + this.state.demographicSince + '/' + this.state.demographicUntil + ')',
+                            data: this.state.cityData }),
+                        _react2.default.createElement(_DemographicVideoChart2.default, {
+                            label: 'Reach by gender-age (' + this.state.demographicSince + '/' + this.state.demographicUntil + ')',
+                            data: this.state.genderData })
                     ) : _react2.default.createElement('div', null)
                 )
             );

@@ -56,7 +56,6 @@ class Metric extends Component {
             fetches.push(axios.get(uri)
                 .then(response => {
                     let data = {};
-                    console.log(response.data)
                     data['all_data'] = response.data;
                     let view = response.data[0].stats[0].stats.filter(x => x.name === 'page_video_views')[0].values[0].value;
 

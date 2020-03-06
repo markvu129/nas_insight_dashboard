@@ -7,6 +7,7 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick-theme.css";
 import "slick-carousel/slick/slick.css";
 import Utils from "../../../modules/Utils";
+import DatePicker from "react-datepicker";
 
 class Detail extends Component {
     constructor(props) {
@@ -18,22 +19,76 @@ class Detail extends Component {
             cityData: false,
             demographicSince: false,
             demographicUntil: false,
+            startDate: new Date(),
+            endDate: new Date(),
+            startDateFormatted: new Date().toISOString().slice(0, 10),
+            endDateFormatted: new Date().toISOString().slice(0, 10),
+            filter: false,
+            allData: false,
+            title: {
+                'Nas Daily': 'nasDailyFB',
+                'NasDaily Vietnamese': 'nasDailyFBVN',
+                'NasDaily Arabic': 'nasDailyFBARB',
+                'NasDaily Thai': 'nasDailyFBTH',
+                'NasDaily Tagalog': 'nasDailyFBPH',
+                'NasDaily Spanish': 'nasDailyFBSP',
+                'NasDaily Bahasa': 'nasDailyFBID',
+                'NasDaily Portuguese': 'nasDailyFBPT'
+            }
         };
         this.fetchDemoGraphicData = this.fetchDemoGraphicData.bind(this);
+        this.fetchDemoGraphicData = this.fetchDemoGraphicData.bind(this);
+        this.fetchDataByDate = this.fetchDataByDate.bind(this);
+        this.handleStartDateChange = this.handleStartDateChange.bind(this);
+        this.handleEndDateChange = this.handleEndDateChange.bind(this);
     }
 
-    componentDidUpdate(prevProps) {
+    componentDidUpdate(prevProps, prevState) {
         if (this.props.modalIsOpen !== prevProps.modalIsOpen) {
             this.setState({
-                modalIsOpen: this.props.modalIsOpen
+                modalIsOpen: this.props.modalIsOpen,
+                filter: false
+            })
+        }
+        if (this.state.allData !== prevState.allData) {
+            this.setState({
+                allData: this.state.allData
             })
         }
     }
 
-    fetchDemoGraphicData(since, until){
+    handleStartDateChange(date) {
+        this.setState({
+            startDate: date,
+            startDateFormatted: new Date(date).toISOString().slice(0, 10)
+        });
+    };
+
+    handleEndDateChange(date) {
+        this.setState({
+            endDate: date,
+            endDateFormatted: new Date(date).toISOString().slice(0, 10)
+        })
+    };
+
+    fetchDataByDate(since, until) {
+        axios.get("https://nasinsightserver.herokuapp.com/api/info/overview/" + this.state.title[this.props.activePage] + "/month/range/" + since + "/" + until + "/page_video_views,page_video_views_unique,page_video_view_time,page_impressions_unique").then((r) => {
+            if (r.data.stats.length > 0) {
+                this.setState({
+                    allData: r.data,
+                    filter: true
+                })
+            }
+        });
+        const dateDifference = new Date(this.state.endDateFormatted).getTime() - new Date(this.state.startDateFormatted).getTime();
+        if (dateDifference/(1000 * 3600 * 24) >= 11) {
+            this.fetchDemoGraphicData(this.state.startDateFormatted, this.state.endDateFormatted);
+        }
+    }
+
+    fetchDemoGraphicData(since, until) {
         if (this.props.activePage !== 'All Pages') {
-            axios.get("https://nasinsightserver.herokuapp.com/api/info/overview/nasDailyFB/day/range/" + since + "/" + until + "/page_impressions_by_country_unique,page_impressions_by_city_unique,page_impressions_by_age_gender_unique").
-            then((r) => {
+            axios.get("https://nasinsightserver.herokuapp.com/api/info/overview/nasDailyFB/day/range/" + since + "/" + until + "/page_impressions_by_country_unique,page_impressions_by_city_unique,page_impressions_by_age_gender_unique").then((r) => {
 
                 if (r.data.stats[0].stats.length > 0) {
                     this.setState({
@@ -48,11 +103,13 @@ class Detail extends Component {
         }
     }
 
+
     componentDidMount() {
         const until = new Date(this.props.allData[0].updatedAt).toISOString().slice(0, 10);
         const since = Utils.subtractCertainDay(until, 11);
         this.fetchDemoGraphicData(since, until);
     }
+
 
     render() {
 
@@ -66,25 +123,56 @@ class Detail extends Component {
 
         let views, views_unique, view_time, reach, metric_time;
         let active_page = this.props.activePage;
-        if (active_page === 'All Pages') {
-            metric_time = new Date(this.props.allData.updatedAt).toISOString().slice(0, 10);
-            views = this.props.allData['total_views'].toLocaleString();
-            views_unique = this.props.allData['total_views_unique'].toLocaleString();
-            view_time = this.props.allData['total_view_time'].toLocaleString();
-            reach = this.props.allData['total_reach'].toLocaleString();
+        if (!this.state.filter) {
+            if (active_page === 'All Pages') {
+                metric_time = new Date(this.props.allData.updatedAt).toISOString().slice(0, 10);
+                views = this.props.allData['total_views'].toLocaleString();
+                views_unique = this.props.allData['total_views_unique'].toLocaleString();
+                view_time = this.props.allData['total_view_time'].toLocaleString();
+                reach = this.props.allData['total_reach'].toLocaleString();
+            } else {
+                const stats = this.props.allData[0].stats[0].stats;
+                metric_time = new Date(this.props.allData[0].updatedAt).toISOString().slice(0, 10);
+                views = stats.filter(x => x.name === 'page_video_views')[0].values[0].value.toLocaleString();
+                views_unique = stats.filter(x => x.name === 'page_video_views_unique')[0].values[0].value.toLocaleString();
+                view_time = Math.round((stats.filter(x => x.name === 'page_video_view_time')[0].values[0].value) / 60000).toLocaleString();
+                reach = stats.filter(x => x.name === 'page_impressions_unique')[0].values[0].value.toLocaleString();
+            }
         } else {
-            const stats = this.props.allData[0].stats[0].stats;
-            metric_time = new Date(this.props.allData[0].updatedAt).toISOString().slice(0, 10);
-            views = stats.filter(x => x.name === 'page_video_views')[0].values[0].value.toLocaleString();
-            views_unique = stats.filter(x => x.name === 'page_video_views_unique')[0].values[0].value.toLocaleString();
-            view_time = Math.round((stats.filter(x => x.name === 'page_video_view_time')[0].values[0].value) / 60000).toLocaleString();
-            reach = stats.filter(x => x.name === 'page_impressions_unique')[0].values[0].value.toLocaleString();
+            const stats = this.state.allData.stats[0].stats;
+            metric_time = this.state.startDateFormatted + " - " + this.state.endDateFormatted;
+            views = stats.filter(x => x.name === 'page_video_views')[0].value.toLocaleString();
+            views_unique = stats.filter(x => x.name === 'page_video_views_unique')[0].value.toLocaleString();
+            view_time = Math.round((stats.filter(x => x.name === 'page_video_view_time')[0].value) / 60000).toLocaleString();
+            reach = stats.filter(x => x.name === 'page_impressions_unique')[0].value.toLocaleString();
         }
 
         return (
             <Modal id='stats' show={this.state.modalIsOpen} onHide={this.props.closeModal} animation={false}>
                 <Modal.Body>
                     <h2 className="daily-detail-title" style={{'color': '#e8c552'}}>{active_page}: {metric_time}</h2>
+                    {
+                        active_page !== 'All Pages' ? (
+                            <div style={{marginBottom: '40px'}}>
+                                <div className="start-date">
+                                    <span className="filter-desc">From</span>
+                                    <DatePicker
+                                        selected={this.state.startDate}
+                                        onChange={this.handleStartDateChange}
+                                    />
+                                </div>
+                                <div className="end-date">
+                                    <span className="filter-desc">To</span>
+                                    <DatePicker
+                                        selected={this.state.endDate}
+                                        onChange={this.handleEndDateChange}
+                                    />
+                                </div>
+                                <i className="fa fa-search fa-search-icon" style={{marginTop: '-25px'}}
+                                   onClick={() => this.fetchDataByDate(this.state.startDateFormatted, this.state.endDateFormatted)}></i>
+                            </div>
+                        ) : (<div/>)
+                    }
                     <div className="ms-panel-body p-0">
                         <div className="ms-social-media-followers">
                             <div className="ms-social-grid">
@@ -117,9 +205,15 @@ class Detail extends Component {
                     {
                         this.state.genderData && this.state.countryData && this.state.cityData ? (
                             <Slider {...settings}>
-                                <DemographicVideoChart label={'Reach by country (' + this.state.demographicSince + '/' + this.state.demographicUntil + ')'} data={this.state.countryData}/>
-                                <DemographicVideoChart label={'Reach by city (' + this.state.demographicSince + '/' + this.state.demographicUntil + ')'} data={this.state.cityData}/>
-                                <DemographicVideoChart label={'Reach by gender-age (' + this.state.demographicSince + '/' + this.state.demographicUntil + ')'} data={this.state.genderData}/>
+                                <DemographicVideoChart
+                                    label={'Reach by country (' + this.state.demographicSince + '/' + this.state.demographicUntil + ')'}
+                                    data={this.state.countryData}/>
+                                <DemographicVideoChart
+                                    label={'Reach by city (' + this.state.demographicSince + '/' + this.state.demographicUntil + ')'}
+                                    data={this.state.cityData}/>
+                                <DemographicVideoChart
+                                    label={'Reach by gender-age (' + this.state.demographicSince + '/' + this.state.demographicUntil + ')'}
+                                    data={this.state.genderData}/>
                             </Slider>
                         ) : (<div/>)
                     }
