@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import axios from "axios";
 import './css/Metric.css';
 import Detail from "./Modal/Detail";
+import YoutubeDetail from "./Modal/YoutubeDetail";
 
 class Metric extends Component {
 
@@ -28,21 +29,33 @@ class Metric extends Component {
             activePage: 'nasDailyFB',
             modalIsOpen: {},
             followerCounts: {},
-            totalFollowerCount: 0
+            totalFollowerCount: 0,
+            youtubeData: {},
+            youtubeModalIsOpen: false
         };
         this.fetchFbData = this.fetchFbData.bind(this);
         this.fetchIgData = this.fetchIgData.bind(this);
         this.fetchFollowers = this.fetchFollowers.bind(this);
         this.openModal = this.openModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
+        this.fetchYTData = this.fetchYTData.bind(this);
+        this.openYoutubeModal = this.openYoutubeModal.bind(this);
+        this.closeYoutubeModal = this.closeYoutubeModal.bind(this);
+    }
+
+    fetchYTData(channel) {
+        axios.get(`https://nasinsightserver.herokuapp.com/api/stats/youtube/all/${channel}/1`)
+            .then((yt_data) => {
+                this.setState({
+                    youtubeData: yt_data.data[0]
+                });
+            });
     }
 
     fetchFbData() {
         let fbData = {};
         let fetches = [];
-        let totalData = {
-        };
-
+        let totalData = {};
         const that = this;
         let total_views = 0;
         let total_views_unique = 0;
@@ -65,7 +78,7 @@ class Metric extends Component {
                     total_impressions = total_impressions + response.data[0].stats[0].stats.filter(x => x.name === 'page_impressions')[0].values[0].value;
                     total_reach = total_reach + response.data[0].stats[0].stats.filter(x => x.name === 'page_impressions_unique')[0].values[0].value;
                     total_views_unique = total_views_unique + response.data[0].stats[0].stats.filter(x => x.name === 'page_video_views_unique')[0].values[0].value;
-                    total_view_time = total_view_time + Math.round((response.data[0].stats[0].stats.filter(x => x.name === 'page_video_view_time')[0].values[0].value)/60000);
+                    total_view_time = total_view_time + Math.round((response.data[0].stats[0].stats.filter(x => x.name === 'page_video_view_time')[0].values[0].value) / 60000);
                     total_engaged_users = total_engaged_users + response.data[0].stats[0].stats.filter(x => x.name === 'page_engaged_users')[0].values[0].value;
 
                     // Calculate current data for each site
@@ -95,7 +108,7 @@ class Metric extends Component {
         })
     }
 
-    fetchFollowers(){
+    fetchFollowers() {
         axios.get('https://nasinsightserver.herokuapp.com/api/followers/all').then(response => {
             let data = response.data[0];
             this.setState({
@@ -118,7 +131,7 @@ class Metric extends Component {
             .catch(err => console.log(err))
     }
 
-    openModal(page){
+    openModal(page) {
         let currentModalIsOpen = this.state.modalIsOpen;
         currentModalIsOpen[page] = true;
         this.setState({
@@ -127,7 +140,7 @@ class Metric extends Component {
         })
     }
 
-    closeModal(){
+    closeModal() {
         let currentModalIsOpen = this.state.modalIsOpen;
         currentModalIsOpen[this.state.activePage] = false;
         this.setState({
@@ -135,10 +148,23 @@ class Metric extends Component {
         })
     }
 
+    openYoutubeModal() {
+        this.setState({
+            youtubeModalIsOpen: true
+        })
+    }
+
+    closeYoutubeModal() {
+        this.setState({
+            youtubeModalIsOpen: false
+        });
+    }
+
     componentWillMount() {
         this.fetchFbData();
         this.fetchIgData();
         this.fetchFollowers();
+        this.fetchYTData('UCJsUvAqDzczYv2UpFmu4PcA')
     }
 
 
@@ -156,7 +182,8 @@ class Metric extends Component {
                         <div className="ms-panel-body p-0">
                             <div className="ms-social-media-followers">
                                 <div className="ms-social-grid">
-                                    <i className="fa fa-facebook-f bg-facebook" onClick={this.openModal.bind(null, 'all')}></i>
+                                    <i className="fa fa-facebook-f bg-facebook"
+                                       onClick={this.openModal.bind(null, 'all')}></i>
                                     {this.state.followerCounts ?
                                         <p className="ms-text-dark highlight-text">{this.state.followerCounts['all']}</p> :
                                         <p></p>}
@@ -178,7 +205,8 @@ class Metric extends Component {
                             <div className="ms-social-media-followers">
                                 <div className="ms-social-grid">
                                     <p className="source-name">Main</p>
-                                    <img className="flag-icon" src="/assets/img/images/nasdaily_logo.png" onClick={this.openModal.bind(null, 'nasDailyFB')}></img>
+                                    <img className="flag-icon" src="/assets/img/images/nasdaily_logo.png"
+                                         onClick={this.openModal.bind(null, 'nasDailyFB')}></img>
                                     {this.state.followerCounts ?
                                         <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyFB']}</p> :
                                         <p></p>}
@@ -191,7 +219,8 @@ class Metric extends Component {
                                 <div className="ms-social-grid">
                                     <p className="source-name">Thai</p>
                                     <img src="/assets/img/images/nasdaily_logo.png" alt="nasdaily-thailand"
-                                         border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBTH')}/>
+                                         border="0" className="flag-icon"
+                                         onClick={this.openModal.bind(null, 'nasDailyFBTH')}/>
                                     {this.state.followerCounts ?
                                         <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyFBTH']}</p> :
                                         <p></p>}
@@ -207,7 +236,8 @@ class Metric extends Component {
                                 <div className="ms-social-grid">
                                     <p className="source-name">Vietnamese</p>
                                     <img src="/assets/img/images/nasdaily_logo.png" alt="nasdaily-vn"
-                                         border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBVN')}/>
+                                         border="0" className="flag-icon"
+                                         onClick={this.openModal.bind(null, 'nasDailyFBVN')}/>
                                     {this.state.followerCounts ?
                                         <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyFBVN']}</p> :
                                         <p></p>}
@@ -220,7 +250,8 @@ class Metric extends Component {
                                 <div className="ms-social-grid">
                                     <p className="source-name">Tagalog</p>
                                     <img src="/assets/img/images/nasdaily_logo.png" alt="nasdaily-ph"
-                                         border="0" className="flag-icon" onClick={this.openModal.bind(null, 'nasDailyFBPH')}/>
+                                         border="0" className="flag-icon"
+                                         onClick={this.openModal.bind(null, 'nasDailyFBPH')}/>
                                     {this.state.followerCounts ?
                                         <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyFBPH']}</p> :
                                         <p></p>}
@@ -289,8 +320,29 @@ class Metric extends Component {
                                     <span>Video views</span>
                                 </div>
                             </div>
+
+                            <div className="ms-social-media-followers">
+                                <div className="ms-social-grid">
+                                    <i className="fa fa-youtube-play bg-youtube" alt="nasdaily-youtube" border="0" onClick={this.openYoutubeModal}/>
+                                    {this.state.followerCounts ?
+                                        <p className="ms-text-dark highlight-text">{this.state.followerCounts['nasDailyYT']}</p> :
+                                        <p></p>}
+                                    <span>Subscribers</span>
+                                    {this.state.youtubeData.stats && this.state.youtubeData.stats[0] ? <p className="ms-text-dark highlight-text">{this.state.youtubeData.stats[0][1].toLocaleString()}</p> :
+                                        <p></p>}
+                                    <span>Views</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+                    {this.state.followerCounts ? (
+                    <YoutubeDetail
+                        subscribers={this.state.followerCounts['nasDailyYT']}
+                        data={this.state.youtubeData}
+                        modalIsOpen={this.state.youtubeModalIsOpen}
+                        closeModal={this.closeYoutubeModal}
+                        />) : (<div/>) }
 
                     <Detail modalIsOpen={this.state.modalIsOpen[this.state.activePage]}
                             closeModal={this.closeModal}

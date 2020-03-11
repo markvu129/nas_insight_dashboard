@@ -34,7 +34,8 @@ class Detail extends Component {
                 'NasDaily Spanish': 'nasDailyFBSP',
                 'NasDaily Bahasa': 'nasDailyFBID',
                 'NasDaily Portuguese': 'nasDailyFBPT'
-            }
+            },
+            activePage: this.props.activePage
         };
         this.fetchDemoGraphicData = this.fetchDemoGraphicData.bind(this);
         this.fetchDemoGraphicData = this.fetchDemoGraphicData.bind(this);
@@ -50,9 +51,20 @@ class Detail extends Component {
                 filter: false
             })
         }
+        if (this.props.activePage !== prevProps.activePage) {
+            this.fetchCurrentDemographicData();
+            this.setState({
+                activePage: this.props.activePage
+            })
+        }
         if (this.state.allData !== prevState.allData) {
             this.setState({
                 allData: this.state.allData
+            })
+        }
+        if (this.state.genderData !== prevState.genderData) {
+            this.setState({
+                genderData: this.state.genderData
             })
         }
     }
@@ -82,37 +94,38 @@ class Detail extends Component {
         });
         const dateDifference = new Date(this.state.endDateFormatted).getTime() - new Date(this.state.startDateFormatted).getTime();
         if (dateDifference/(1000 * 3600 * 24) >= 11) {
-            this.fetchDemoGraphicData(this.state.startDateFormatted, this.state.endDateFormatted);
+            this.fetchDemoGraphicData(this.props.activePage, this.state.startDateFormatted, this.state.endDateFormatted);
         }
     }
 
-    fetchDemoGraphicData(since, until) {
-        if (this.props.activePage !== 'All Pages') {
-            axios.get("https://nasinsightserver.herokuapp.com/api/info/overview/nasDailyFB/day/range/" + since + "/" + until + "/page_impressions_by_country_unique,page_impressions_by_city_unique,page_impressions_by_age_gender_unique").then((r) => {
-
+    fetchDemoGraphicData(activePage, since, until) {
+        if (activePage !== 'All Pages') {
+            axios.get("https://nasinsightserver.herokuapp.com/api/info/overview/"+ this.state.title[this.props.activePage] + "/day/range/" + since + "/" + until + "/page_impressions_by_country_unique,page_impressions_by_city_unique,page_impressions_by_age_gender_unique").then((r) => {
                 if (r.data.stats[0].stats.length > 0) {
                     this.setState({
                         demographicSince: since,
                         demographicUntil: until,
-                        genderData: r.data.stats[0].stats.filter(x => x.name === 'page_impressions_by_age_gender_unique')[0].values[0].value,
-                        countryData: r.data.stats[0].stats.filter(x => x.name === 'page_impressions_by_country_unique')[0].values[0].value,
-                        cityData: r.data.stats[0].stats.filter(x => x.name === 'page_impressions_by_city_unique')[0].values[0].value
+                        genderData: Utils.combineDemographicPeriodData(r.data.stats[0].stats.filter(x => x.name === 'page_impressions_by_age_gender_unique')[0].values),
+                        countryData: Utils.combineDemographicPeriodData(r.data.stats[0].stats.filter(x => x.name === 'page_impressions_by_country_unique')[0].values),
+                        cityData: Utils.combineDemographicPeriodData(r.data.stats[0].stats.filter(x => x.name === 'page_impressions_by_city_unique')[0].values)
                     })
                 }
             });
         }
     }
 
-
-    componentDidMount() {
+    fetchCurrentDemographicData() {
         const until = new Date(this.props.allData[0].updatedAt).toISOString().slice(0, 10);
         const since = Utils.subtractCertainDay(until, 11);
-        this.fetchDemoGraphicData(since, until);
+        this.fetchDemoGraphicData(this.props.activePage, since, until);
     }
 
 
-    render() {
+    componentDidMount() {
+        this.fetchCurrentDemographicData();
+    }
 
+    render() {
         const settings = {
             dots: true,
             infinite: true,

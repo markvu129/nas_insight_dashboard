@@ -46888,6 +46888,366 @@ function createMemoryHistory(props) {
 
 /***/ }),
 
+/***/ "acCN":
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+    value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__("GiK3");
+
+var _react2 = _interopRequireDefault(_react);
+
+var _Modal = __webpack_require__("GMga");
+
+var _Modal2 = _interopRequireDefault(_Modal);
+
+__webpack_require__("Y7y/");
+
+var _reactDatepicker = __webpack_require__("COZL");
+
+var _reactDatepicker2 = _interopRequireDefault(_reactDatepicker);
+
+var _axios = __webpack_require__("mtWM");
+
+var _axios2 = _interopRequireDefault(_axios);
+
+var _Utils = __webpack_require__("dlHz");
+
+var _Utils2 = _interopRequireDefault(_Utils);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var YoutubeDetail = function (_Component) {
+    _inherits(YoutubeDetail, _Component);
+
+    function YoutubeDetail(props) {
+        _classCallCheck(this, YoutubeDetail);
+
+        var _this = _possibleConstructorReturn(this, (YoutubeDetail.__proto__ || Object.getPrototypeOf(YoutubeDetail)).call(this, props));
+
+        _this.state = {
+            modalIsOpen: _this.props.modalIsOpen,
+            updatedAt: _this.props.data.updatedAt,
+            views: _this.props.data.stats[0][1],
+            likes: _this.props.data.stats[0][2],
+            dislikes: _this.props.data.stats[0][3],
+            shares: _this.props.data.stats[0][4],
+            avg_view_duration: _this.props.data.stats[0][5],
+            subscribers: _this.props.subscribers,
+            subscribers_gain: _this.props.data.stats[0][7],
+            subscribers_lost: _this.props.data.stats[0][8],
+            startDate: new Date(),
+            endDate: new Date(),
+            startDateFormatted: new Date().toISOString().slice(0, 10),
+            endDateFormatted: new Date().toISOString().slice(0, 10),
+            channel: "UCJsUvAqDzczYv2UpFmu4PcA"
+        };
+        _this.fetchDataByDate = _this.fetchDataByDate.bind(_this);
+        _this.handleStartDateChange = _this.handleStartDateChange.bind(_this);
+        _this.handleEndDateChange = _this.handleEndDateChange.bind(_this);
+        return _this;
+    }
+
+    _createClass(YoutubeDetail, [{
+        key: 'componentDidUpdate',
+        value: function componentDidUpdate(prevProps, prevState) {
+            if (this.props.modalIsOpen !== prevProps.modalIsOpen) {
+                this.setState({
+                    modalIsOpen: this.props.modalIsOpen
+                });
+            }
+            if (this.state.views !== prevState.views) {
+                this.setState({
+                    views: this.state.views
+                });
+            }
+        }
+    }, {
+        key: 'handleStartDateChange',
+        value: function handleStartDateChange(date) {
+            this.setState({
+                startDate: date,
+                startDateFormatted: new Date(date).toISOString().slice(0, 10)
+            });
+        }
+    }, {
+        key: 'handleEndDateChange',
+        value: function handleEndDateChange(date) {
+            this.setState({
+                endDate: date,
+                endDateFormatted: new Date(date).toISOString().slice(0, 10)
+            });
+        }
+    }, {
+        key: 'fetchDataByDate',
+        value: function fetchDataByDate(start, end) {
+            var _this2 = this;
+
+            _axios2.default.get("https://nasinsightserver.herokuapp.com/api/info/youtube/" + this.state.channel + "/views,likes,dislikes,shares,averageViewDuration,estimatedMinutesWatched,subscribersGained,subscribersLost/day/day/" + start + "/" + end).then(function (res) {
+                if (res.data.stats.length > 0) {
+                    var ytData = _Utils2.default.combineYouTubeData(res.data.stats);
+                    _this2.setState({
+                        updatedAt: ytData['start'] + " - " + ytData['end'],
+                        views: ytData['views'],
+                        likes: ytData['likes'],
+                        dislikes: ytData['dislikes'],
+                        shares: ytData['shares'],
+                        avg_view_duration: ytData['averageViewDuration'],
+                        subscribers: _this2.props.subscribers,
+                        subscribers_gain: ytData['subscribersGained'],
+                        subscribers_lost: ytData['subscribersLost']
+                    });
+                }
+            });
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var _this3 = this;
+
+            return _react2.default.createElement(
+                _Modal2.default,
+                { show: this.state.modalIsOpen, onHide: this.props.closeModal, animation: false },
+                _react2.default.createElement(
+                    _Modal2.default.Body,
+                    null,
+                    _react2.default.createElement(
+                        'h2',
+                        { className: 'daily-detail-title', style: { 'color': '#e8c552' } },
+                        'Youtube: ',
+                        this.state.updatedAt
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { style: { marginBottom: '40px' } },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'start-date' },
+                            _react2.default.createElement(
+                                'span',
+                                { className: 'filter-desc' },
+                                'From'
+                            ),
+                            _react2.default.createElement(_reactDatepicker2.default, {
+                                selected: this.state.startDate,
+                                onChange: this.handleStartDateChange
+                            })
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'end-date' },
+                            _react2.default.createElement(
+                                'span',
+                                { className: 'filter-desc' },
+                                'To'
+                            ),
+                            _react2.default.createElement(_reactDatepicker2.default, {
+                                selected: this.state.endDate,
+                                onChange: this.handleEndDateChange
+                            })
+                        ),
+                        _react2.default.createElement('i', { className: 'fa fa-search fa-search-icon', style: { marginTop: '-25px' },
+                            onClick: function onClick() {
+                                return _this3.fetchDataByDate(_this3.state.startDateFormatted, _this3.state.endDateFormatted);
+                            } })
+                    ),
+                    _react2.default.createElement(
+                        'div',
+                        { className: 'ms-panel-body p-0' },
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'ms-social-media-followers' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'ms-social-grid' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'section-icon' },
+                                    _react2.default.createElement('i', { className: 'fa fa-tv' })
+                                ),
+                                _react2.default.createElement(
+                                    'p',
+                                    { className: 'ms-text-dark' },
+                                    this.state.views.toLocaleString()
+                                ),
+                                _react2.default.createElement(
+                                    'span',
+                                    null,
+                                    'Views'
+                                )
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'ms-social-grid' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'section-icon' },
+                                    _react2.default.createElement('i', { className: 'fa fa-tv' })
+                                ),
+                                _react2.default.createElement(
+                                    'p',
+                                    { className: 'ms-text-dark' },
+                                    this.state.likes.toLocaleString()
+                                ),
+                                _react2.default.createElement(
+                                    'span',
+                                    null,
+                                    'Likes'
+                                )
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'ms-social-media-followers' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'ms-social-grid' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'section-icon' },
+                                    _react2.default.createElement('i', { className: 'fa fa-tv' })
+                                ),
+                                _react2.default.createElement(
+                                    'p',
+                                    { className: 'ms-text-dark' },
+                                    this.state.dislikes.toLocaleString()
+                                ),
+                                _react2.default.createElement(
+                                    'span',
+                                    null,
+                                    'Dislikes'
+                                )
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'ms-social-grid' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'section-icon' },
+                                    _react2.default.createElement('i', { className: 'fa fa-tv' })
+                                ),
+                                _react2.default.createElement(
+                                    'p',
+                                    { className: 'ms-text-dark' },
+                                    this.state.shares.toLocaleString()
+                                ),
+                                _react2.default.createElement(
+                                    'span',
+                                    null,
+                                    'Shares'
+                                )
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'ms-social-media-followers' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'ms-social-grid' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'section-icon' },
+                                    _react2.default.createElement('i', { className: 'fa fa-tv' })
+                                ),
+                                _react2.default.createElement(
+                                    'p',
+                                    { className: 'ms-text-dark' },
+                                    this.state.avg_view_duration.toLocaleString()
+                                ),
+                                _react2.default.createElement(
+                                    'span',
+                                    null,
+                                    'Average view duration (secs)'
+                                )
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'ms-social-grid' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'section-icon' },
+                                    _react2.default.createElement('i', { className: 'fa fa-tv' })
+                                ),
+                                _react2.default.createElement(
+                                    'p',
+                                    { className: 'ms-text-dark' },
+                                    this.props.subscribers.toLocaleString()
+                                ),
+                                _react2.default.createElement(
+                                    'span',
+                                    null,
+                                    'Subscribers'
+                                )
+                            )
+                        ),
+                        _react2.default.createElement(
+                            'div',
+                            { className: 'ms-social-media-followers' },
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'ms-social-grid' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'section-icon' },
+                                    _react2.default.createElement('i', { className: 'fa fa-tv' })
+                                ),
+                                _react2.default.createElement(
+                                    'p',
+                                    { className: 'ms-text-dark' },
+                                    this.state.subscribers_gain
+                                ),
+                                _react2.default.createElement(
+                                    'span',
+                                    null,
+                                    'Subscribers gained'
+                                )
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'ms-social-grid' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'section-icon' },
+                                    _react2.default.createElement('i', { className: 'fa fa-tv' })
+                                ),
+                                _react2.default.createElement(
+                                    'p',
+                                    { className: 'ms-text-dark' },
+                                    this.state.subscribers_lost
+                                ),
+                                _react2.default.createElement(
+                                    'span',
+                                    null,
+                                    'Subscribers lost'
+                                )
+                            )
+                        )
+                    )
+                )
+            );
+        }
+    }]);
+
+    return YoutubeDetail;
+}(_react.Component);
+
+exports.default = YoutubeDetail;
+
+/***/ }),
+
 /***/ "agim":
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -46982,6 +47342,10 @@ var _Detail = __webpack_require__("tsZ6");
 
 var _Detail2 = _interopRequireDefault(_Detail);
 
+var _YoutubeDetail = __webpack_require__("acCN");
+
+var _YoutubeDetail2 = _interopRequireDefault(_YoutubeDetail);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -47019,23 +47383,38 @@ var Metric = function (_Component) {
             activePage: 'nasDailyFB',
             modalIsOpen: {},
             followerCounts: {},
-            totalFollowerCount: 0
+            totalFollowerCount: 0,
+            youtubeData: {},
+            youtubeModalIsOpen: false
         };
         _this.fetchFbData = _this.fetchFbData.bind(_this);
         _this.fetchIgData = _this.fetchIgData.bind(_this);
         _this.fetchFollowers = _this.fetchFollowers.bind(_this);
         _this.openModal = _this.openModal.bind(_this);
         _this.closeModal = _this.closeModal.bind(_this);
+        _this.fetchYTData = _this.fetchYTData.bind(_this);
+        _this.openYoutubeModal = _this.openYoutubeModal.bind(_this);
+        _this.closeYoutubeModal = _this.closeYoutubeModal.bind(_this);
         return _this;
     }
 
     _createClass(Metric, [{
+        key: 'fetchYTData',
+        value: function fetchYTData(channel) {
+            var _this2 = this;
+
+            _axios2.default.get('https://nasinsightserver.herokuapp.com/api/stats/youtube/all/' + channel + '/1').then(function (yt_data) {
+                _this2.setState({
+                    youtubeData: yt_data.data[0]
+                });
+            });
+        }
+    }, {
         key: 'fetchFbData',
         value: function fetchFbData() {
             var fbData = {};
             var fetches = [];
             var totalData = {};
-
             var that = this;
             var total_views = 0;
             var total_views_unique = 0;
@@ -47107,11 +47486,11 @@ var Metric = function (_Component) {
     }, {
         key: 'fetchFollowers',
         value: function fetchFollowers() {
-            var _this2 = this;
+            var _this3 = this;
 
             _axios2.default.get('https://nasinsightserver.herokuapp.com/api/followers/all').then(function (response) {
                 var data = response.data[0];
-                _this2.setState({
+                _this3.setState({
                     followerCounts: data
                 });
             });
@@ -47119,11 +47498,11 @@ var Metric = function (_Component) {
     }, {
         key: 'fetchIgData',
         value: function fetchIgData() {
-            var _this3 = this;
+            var _this4 = this;
 
             var uri = "https://nasinsightserver.herokuapp.com/api/info/overview/nasDailyIG/day/" + new Date().getFullYear() + '/page_impressions/2';
             _axios2.default.get(uri).then(function (response) {
-                _this3.setState({
+                _this4.setState({
                     currentIgReach: response.data[0].stats[0].stats.filter(function (x) {
                         return x.name === 'reach';
                     })[0].values,
@@ -47161,11 +47540,26 @@ var Metric = function (_Component) {
             });
         }
     }, {
+        key: 'openYoutubeModal',
+        value: function openYoutubeModal() {
+            this.setState({
+                youtubeModalIsOpen: true
+            });
+        }
+    }, {
+        key: 'closeYoutubeModal',
+        value: function closeYoutubeModal() {
+            this.setState({
+                youtubeModalIsOpen: false
+            });
+        }
+    }, {
         key: 'componentWillMount',
         value: function componentWillMount() {
             this.fetchFbData();
             this.fetchIgData();
             this.fetchFollowers();
+            this.fetchYTData('UCJsUvAqDzczYv2UpFmu4PcA');
         }
     }, {
         key: 'render',
@@ -47207,7 +47601,8 @@ var Metric = function (_Component) {
                                 _react2.default.createElement(
                                     'div',
                                     { className: 'ms-social-grid' },
-                                    _react2.default.createElement('i', { className: 'fa fa-facebook-f bg-facebook', onClick: this.openModal.bind(null, 'all') }),
+                                    _react2.default.createElement('i', { className: 'fa fa-facebook-f bg-facebook',
+                                        onClick: this.openModal.bind(null, 'all') }),
                                     this.state.followerCounts ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark highlight-text' },
@@ -47266,7 +47661,8 @@ var Metric = function (_Component) {
                                         { className: 'source-name' },
                                         'Main'
                                     ),
-                                    _react2.default.createElement('img', { className: 'flag-icon', src: '/assets/img/images/nasdaily_logo.png', onClick: this.openModal.bind(null, 'nasDailyFB') }),
+                                    _react2.default.createElement('img', { className: 'flag-icon', src: '/assets/img/images/nasdaily_logo.png',
+                                        onClick: this.openModal.bind(null, 'nasDailyFB') }),
                                     this.state.followerCounts ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark highlight-text' },
@@ -47297,7 +47693,8 @@ var Metric = function (_Component) {
                                         'Thai'
                                     ),
                                     _react2.default.createElement('img', { src: '/assets/img/images/nasdaily_logo.png', alt: 'nasdaily-thailand',
-                                        border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBTH') }),
+                                        border: '0', className: 'flag-icon',
+                                        onClick: this.openModal.bind(null, 'nasDailyFBTH') }),
                                     this.state.followerCounts ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark highlight-text' },
@@ -47332,7 +47729,8 @@ var Metric = function (_Component) {
                                         'Vietnamese'
                                     ),
                                     _react2.default.createElement('img', { src: '/assets/img/images/nasdaily_logo.png', alt: 'nasdaily-vn',
-                                        border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBVN') }),
+                                        border: '0', className: 'flag-icon',
+                                        onClick: this.openModal.bind(null, 'nasDailyFBVN') }),
                                     this.state.followerCounts ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark highlight-text' },
@@ -47363,7 +47761,8 @@ var Metric = function (_Component) {
                                         'Tagalog'
                                     ),
                                     _react2.default.createElement('img', { src: '/assets/img/images/nasdaily_logo.png', alt: 'nasdaily-ph',
-                                        border: '0', className: 'flag-icon', onClick: this.openModal.bind(null, 'nasDailyFBPH') }),
+                                        border: '0', className: 'flag-icon',
+                                        onClick: this.openModal.bind(null, 'nasDailyFBPH') }),
                                     this.state.followerCounts ? _react2.default.createElement(
                                         'p',
                                         { className: 'ms-text-dark highlight-text' },
@@ -47518,9 +47917,44 @@ var Metric = function (_Component) {
                                         'Video views'
                                     )
                                 )
+                            ),
+                            _react2.default.createElement(
+                                'div',
+                                { className: 'ms-social-media-followers' },
+                                _react2.default.createElement(
+                                    'div',
+                                    { className: 'ms-social-grid' },
+                                    _react2.default.createElement('i', { className: 'fa fa-youtube-play bg-youtube', alt: 'nasdaily-youtube', border: '0', onClick: this.openYoutubeModal }),
+                                    this.state.followerCounts ? _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark highlight-text' },
+                                        this.state.followerCounts['nasDailyYT']
+                                    ) : _react2.default.createElement('p', null),
+                                    _react2.default.createElement(
+                                        'span',
+                                        null,
+                                        'Subscribers'
+                                    ),
+                                    this.state.youtubeData.stats && this.state.youtubeData.stats[0] ? _react2.default.createElement(
+                                        'p',
+                                        { className: 'ms-text-dark highlight-text' },
+                                        this.state.youtubeData.stats[0][1].toLocaleString()
+                                    ) : _react2.default.createElement('p', null),
+                                    _react2.default.createElement(
+                                        'span',
+                                        null,
+                                        'Views'
+                                    )
+                                )
                             )
                         )
                     ),
+                    this.state.followerCounts ? _react2.default.createElement(_YoutubeDetail2.default, {
+                        subscribers: this.state.followerCounts['nasDailyYT'],
+                        data: this.state.youtubeData,
+                        modalIsOpen: this.state.youtubeModalIsOpen,
+                        closeModal: this.closeYoutubeModal
+                    }) : _react2.default.createElement('div', null),
                     _react2.default.createElement(_Detail2.default, { modalIsOpen: this.state.modalIsOpen[this.state.activePage],
                         closeModal: this.closeModal,
                         activePage: this.state.title[this.state.activePage],
@@ -49275,6 +49709,118 @@ var Utils = function () {
       var date = new Date(dateString);
       date = date.setDate(date.getDate() - counter);
       return new Date(date).toISOString().slice(0, 10);
+    }
+  }, {
+    key: "combineDemographicPeriodData",
+    value: function combineDemographicPeriodData(values) {
+      var country_values = {};
+      var _iteratorNormalCompletion = true;
+      var _didIteratorError = false;
+      var _iteratorError = undefined;
+
+      try {
+        for (var _iterator = values[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+          var value = _step.value;
+          var _iteratorNormalCompletion2 = true;
+          var _didIteratorError2 = false;
+          var _iteratorError2 = undefined;
+
+          try {
+            for (var _iterator2 = Object.keys(value.value)[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+              var country = _step2.value;
+
+              if (country in country_values) {
+                country_values[country] = country_values[country] + value.value[country];
+              } else {
+                country_values[country] = value.value[country];
+              }
+            }
+          } catch (err) {
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
+          } finally {
+            try {
+              if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                _iterator2.return();
+              }
+            } finally {
+              if (_didIteratorError2) {
+                throw _iteratorError2;
+              }
+            }
+          }
+        }
+      } catch (err) {
+        _didIteratorError = true;
+        _iteratorError = err;
+      } finally {
+        try {
+          if (!_iteratorNormalCompletion && _iterator.return) {
+            _iterator.return();
+          }
+        } finally {
+          if (_didIteratorError) {
+            throw _iteratorError;
+          }
+        }
+      }
+
+      return this.sortKeys(country_values);
+    }
+  }, {
+    key: "sortKeys",
+    value: function sortKeys(obj_1) {
+      var key = Object.keys(obj_1).sort(function (a, b) {
+        return obj_1[b] - obj_1[a];
+      });
+
+      // Taking the object in 'temp' object
+      // and deleting the original object.
+      var temp = {};
+
+      for (var i = 0; i < key.length; i++) {
+        temp[key[i]] = obj_1[key[i]];
+        delete obj_1[key[i]];
+      }
+
+      // Copying the object from 'temp' to
+      // 'original object'.
+      for (var _i = 0; _i < key.length; _i++) {
+        obj_1[key[_i]] = temp[key[_i]];
+      }
+      return obj_1;
+    }
+  }, {
+    key: "combineYouTubeData",
+    value: function combineYouTubeData(values) {
+      var ytData = {
+        'views': 0,
+        'subscribersGained': 0,
+        'subscribersLost': 0,
+        'likes': 0,
+        'shares': 0,
+        'dislikes': 0,
+        'averageViewDuration': 0,
+        'start': '',
+        'false': ''
+      };
+      for (var i = 0; i < values.length; i++) {
+        ytData['views'] = ytData['views'] + values[i][1];
+        ytData['likes'] = ytData['likes'] + values[i][2];
+        ytData['dislikes'] = ytData['dislikes'] + values[i][3];
+        ytData['shares'] = ytData['shares'] + values[i][4];
+        ytData['averageViewDuration'] = ytData['averageViewDuration'] + values[i][5];
+        ytData['subscribersGained'] = ytData['subscribersGained'] + values[i][7];
+        ytData['subscribersLost'] = ytData['subscribersLost'] + values[i][8];
+
+        if (i === values.length - 1) {
+          ytData['end'] = values[i][0];
+        }
+        if (i === 0) {
+          ytData['start'] = values[i][0];
+        }
+      }
+      return ytData;
     }
   }]);
 
@@ -81398,7 +81944,8 @@ var Detail = function (_Component) {
                 'NasDaily Spanish': 'nasDailyFBSP',
                 'NasDaily Bahasa': 'nasDailyFBID',
                 'NasDaily Portuguese': 'nasDailyFBPT'
-            }
+            },
+            activePage: _this.props.activePage
         };
         _this.fetchDemoGraphicData = _this.fetchDemoGraphicData.bind(_this);
         _this.fetchDemoGraphicData = _this.fetchDemoGraphicData.bind(_this);
@@ -81417,9 +81964,20 @@ var Detail = function (_Component) {
                     filter: false
                 });
             }
+            if (this.props.activePage !== prevProps.activePage) {
+                this.fetchCurrentDemographicData();
+                this.setState({
+                    activePage: this.props.activePage
+                });
+            }
             if (this.state.allData !== prevState.allData) {
                 this.setState({
                     allData: this.state.allData
+                });
+            }
+            if (this.state.genderData !== prevState.genderData) {
+                this.setState({
+                    genderData: this.state.genderData
                 });
             }
         }
@@ -81454,41 +82012,45 @@ var Detail = function (_Component) {
             });
             var dateDifference = new Date(this.state.endDateFormatted).getTime() - new Date(this.state.startDateFormatted).getTime();
             if (dateDifference / (1000 * 3600 * 24) >= 11) {
-                this.fetchDemoGraphicData(this.state.startDateFormatted, this.state.endDateFormatted);
+                this.fetchDemoGraphicData(this.props.activePage, this.state.startDateFormatted, this.state.endDateFormatted);
             }
         }
     }, {
         key: 'fetchDemoGraphicData',
-        value: function fetchDemoGraphicData(since, until) {
+        value: function fetchDemoGraphicData(activePage, since, until) {
             var _this3 = this;
 
-            if (this.props.activePage !== 'All Pages') {
-                _axios2.default.get("https://nasinsightserver.herokuapp.com/api/info/overview/nasDailyFB/day/range/" + since + "/" + until + "/page_impressions_by_country_unique,page_impressions_by_city_unique,page_impressions_by_age_gender_unique").then(function (r) {
-
+            if (activePage !== 'All Pages') {
+                _axios2.default.get("https://nasinsightserver.herokuapp.com/api/info/overview/" + this.state.title[this.props.activePage] + "/day/range/" + since + "/" + until + "/page_impressions_by_country_unique,page_impressions_by_city_unique,page_impressions_by_age_gender_unique").then(function (r) {
                     if (r.data.stats[0].stats.length > 0) {
                         _this3.setState({
                             demographicSince: since,
                             demographicUntil: until,
-                            genderData: r.data.stats[0].stats.filter(function (x) {
+                            genderData: _Utils2.default.combineDemographicPeriodData(r.data.stats[0].stats.filter(function (x) {
                                 return x.name === 'page_impressions_by_age_gender_unique';
-                            })[0].values[0].value,
-                            countryData: r.data.stats[0].stats.filter(function (x) {
+                            })[0].values),
+                            countryData: _Utils2.default.combineDemographicPeriodData(r.data.stats[0].stats.filter(function (x) {
                                 return x.name === 'page_impressions_by_country_unique';
-                            })[0].values[0].value,
-                            cityData: r.data.stats[0].stats.filter(function (x) {
+                            })[0].values),
+                            cityData: _Utils2.default.combineDemographicPeriodData(r.data.stats[0].stats.filter(function (x) {
                                 return x.name === 'page_impressions_by_city_unique';
-                            })[0].values[0].value
+                            })[0].values)
                         });
                     }
                 });
             }
         }
     }, {
-        key: 'componentDidMount',
-        value: function componentDidMount() {
+        key: 'fetchCurrentDemographicData',
+        value: function fetchCurrentDemographicData() {
             var until = new Date(this.props.allData[0].updatedAt).toISOString().slice(0, 10);
             var since = _Utils2.default.subtractCertainDay(until, 11);
-            this.fetchDemoGraphicData(since, until);
+            this.fetchDemoGraphicData(this.props.activePage, since, until);
+        }
+    }, {
+        key: 'componentDidMount',
+        value: function componentDidMount() {
+            this.fetchCurrentDemographicData();
         }
     }, {
         key: 'render',
