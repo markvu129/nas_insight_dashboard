@@ -122,7 +122,9 @@ class Detail extends Component {
 
 
     componentDidMount() {
-        this.fetchCurrentDemographicData();
+        if (activePage !== 'All Pages') {
+            this.fetchCurrentDemographicData();
+        }
     }
 
     render() {

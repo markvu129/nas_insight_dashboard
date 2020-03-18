@@ -82050,7 +82050,9 @@ var Detail = function (_Component) {
     }, {
         key: 'componentDidMount',
         value: function componentDidMount() {
-            this.fetchCurrentDemographicData();
+            if (activePage !== 'All Pages') {
+                this.fetchCurrentDemographicData();
+            }
         }
     }, {
         key: 'render',
